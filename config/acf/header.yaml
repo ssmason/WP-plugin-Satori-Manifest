@@ -1,0 +1,49 @@
+# Header — layout, navigation and call-to-action for a client page.
+#
+# Navigation links themselves are managed under Appearance → Menus.
+
+title: Header
+screen:
+  tab: header
+  label: Header
+  icon: dashicons-align-wide
+  description: How the top of your page looks. Your navigation links are edited under Appearance → Menus.
+fields:
+  - name: sm_header_layout
+    label: Layout
+    type: button_group
+    default_value: ''
+    choices:
+      '': Design default
+      split: Logo left
+      centered: Centered
+      stacked: Large name
+      hidden: No header
+
+  - name: sm_header_show_nav
+    label: Show navigation
+    type: true_false
+    ui: true
+    default_value: 1
+    instructions: Turn off for a standalone page with no links to another website.
+    wrapper: { width: 50 }
+
+  - name: sm_header_sticky
+    label: Keep header visible when scrolling
+    type: true_false
+    ui: true
+    default_value: 0
+    wrapper: { width: 50 }
+
+  - name: sm_header_cta_label
+    label: Button text
+    type: text
+    placeholder: Book now
+    instructions: Optional button on the right of the header.
+    wrapper: { width: 50 }
+
+  - name: sm_header_cta_url
+    label: Button link
+    type: url
+    placeholder: https://
+    wrapper: { width: 50 }

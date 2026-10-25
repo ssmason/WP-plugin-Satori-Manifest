@@ -1,0 +1,18 @@
+# Mono — typographic, minimal, numbered. Made for standalone pages.
+
+title: Mono
+description: Typographic and minimal — an oversized name, numbered sections and monospaced prices. Ideal as a standalone page.
+best_for: Cafés & standalone pages
+order: 5
+tags: [minimal, typographic, cafe, standalone]
+header: stacked
+palette:
+  background: '#F1EEE6'
+  surface: '#E6E1D5'
+  text: '#161616'
+  muted: '#6E6A62'
+  accent: '#161616'
+  accent_text: '#F1EEE6'
+fonts:
+  heading: space-grotesk
+  body: ibm-plex-mono

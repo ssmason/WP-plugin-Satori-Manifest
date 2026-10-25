@@ -1,0 +1,37 @@
+# Demo client — Bloom design, standalone page (no navigation), euro pricing.
+
+user:
+  login: petalpolish
+  email: hi@petalpolish.test
+  name: Petal & Polish Nail Bar
+design: bloom
+brand:
+  sm_brand_name: Petal & Polish
+  sm_brand_tagline: Nail bar & lashes
+  sm_currency_symbol: €
+  sm_currency_position: after
+  sm_header_cta_label: Book online
+  sm_header_cta_url: https://petalpolish.example/book
+  sm_footer_phone: 01 555 0177
+  sm_footer_email: hi@petalpolish.test
+  sm_footer_hours: |-
+    Mon–Sat 10am – 7pm
+    Thu late until 9pm
+  sm_social_instagram: https://instagram.com/petalpolish
+sections:
+  - title: Hands
+    items:
+      - { label: Gel manicure, description: "Shape, cuticle care and gel colour", price: 35, badge: Popular }
+      - { label: BIAB overlay, price: 42 }
+      - { label: Acrylic full set, price: 50, price_prefix: from }
+      - { label: Nail art, description: Per nail, price: 3, price_prefix: from }
+  - title: Feet
+    items:
+      - { label: Gel pedicure, price: 45 }
+      - { label: Luxury spa pedicure, description: "Soak, scrub, mask and massage", price: 55, badge: New }
+  - title: Lashes & brows
+    description: Patch test required 48 hours before tints.
+    items:
+      - { label: Classic lash extensions, price: 65 }
+      - { label: Lash lift & tint, price: 45 }
+      - { label: Brow lamination, price: 40 }

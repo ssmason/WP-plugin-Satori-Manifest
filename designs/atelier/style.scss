@@ -1,0 +1,142 @@
+// Design: Atelier
+//
+// Warm ivory, Cormorant Garamond headings, centred layout and a classic
+// menu with dotted leaders. Section titles sit between fine rules.
+//
+// @package SatoriManifest
+// @since   2.0.0
+
+$b: ".satori-manifest-price-list";
+
+.sm-design-atelier {
+	--sm-background: #faf6f1;
+	--sm-surface: #f1eae1;
+	--sm-text: #2e2621;
+	--sm-muted: #8c7e72;
+	--sm-accent: #a0704c;
+	--sm-accent-text: #fff;
+	--sm-font-heading: "Cormorant Garamond", georgia, serif;
+	--sm-font-body: "Jost", sans-serif;
+	--sm-heading-weight: 400;
+	--sm-heading-tracking: 0.01em;
+	--sm-radius: 2px;
+	--sm-content: 40rem;
+
+	font-weight: 300;
+
+	.sm-header {
+		border-bottom: 0;
+		padding-block: 2rem 1.25rem;
+
+		.sm-nav__list {
+			justify-content: center;
+		}
+
+		.sm-nav a {
+			font-size: 0.78rem;
+			letter-spacing: 0.16em;
+			text-transform: uppercase;
+		}
+	}
+
+	.sm-brand__name {
+		font-size: 2rem;
+		font-style: italic;
+	}
+
+	.sm-button {
+		border-radius: 0;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		font-size: 0.75rem;
+	}
+
+	.sm-main h1 {
+		font-weight: 300;
+		font-size: clamp(2.8rem, 8vw, 4.4rem);
+	}
+
+	.sm-lead {
+		font-family: var(--sm-font-heading);
+		font-size: 1.4rem;
+		font-style: italic;
+	}
+
+	#{$b} {
+
+		&__section {
+			margin-bottom: 3rem;
+		}
+
+		#{$b}__section-title {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+			padding: 0;
+			border: 0;
+			color: var(--sm-accent);
+			font-size: 1.7rem !important; // stylelint-disable-line declaration-no-important
+			font-style: italic;
+			font-weight: 400 !important; // stylelint-disable-line declaration-no-important
+			text-align: center;
+
+			&::before,
+			&::after {
+				content: "";
+				flex: 1;
+				border-top: 1px solid var(--sm-border);
+			}
+		}
+
+		&__section-desc {
+			text-align: center;
+			font-style: italic;
+		}
+
+		&__item {
+			padding-block: 0.55rem;
+		}
+
+		&__item-name {
+			font-weight: 400;
+			letter-spacing: 0.02em;
+		}
+
+		&__item-price {
+			font-family: var(--sm-font-heading);
+			font-size: 1.25em;
+			font-weight: 500;
+		}
+
+		&__item-badge {
+			background: transparent;
+			color: var(--sm-accent);
+			border: 1px solid currentcolor;
+		}
+	}
+
+	.sm-footer {
+		text-align: center;
+
+		&__inner {
+			justify-items: center;
+		}
+
+		&__brand {
+			align-items: center;
+		}
+
+		&__name {
+			font-style: italic;
+			font-size: 1.6rem;
+		}
+	}
+
+	.sm-contact li {
+		justify-content: center;
+	}
+
+	.sm-social {
+		justify-content: center;
+	}
+}

@@ -1,0 +1,25 @@
+{
+	"extends": [ "plugin:@wordpress/eslint-plugin/recommended" ],
+	"env": {
+		"browser": true,
+		"es6": true
+	},
+	"globals": {
+		"wp": "readonly",
+		"satoriManifest": "readonly"
+	},
+	"settings": {
+		"import/core-modules": [
+			"@wordpress/blocks",
+			"@wordpress/block-editor",
+			"@wordpress/components",
+			"@wordpress/element",
+			"@wordpress/i18n",
+			"@wordpress/data",
+			"@wordpress/icons"
+		]
+	},
+	"rules": {
+		"no-console": "warn"
+	}
+}

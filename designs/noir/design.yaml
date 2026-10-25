@@ -1,0 +1,18 @@
+# Noir — dark, luxurious, gold accents. Bars, restaurants and evening venues.
+
+title: Noir
+description: Moody dark background with gold accents, Playfair Display headings and a two-column menu.
+best_for: Bars & restaurants
+order: 3
+tags: [dark, luxury, bar, restaurant, menu]
+header: centered
+palette:
+  background: '#121115'
+  surface: '#1C1A20'
+  text: '#F3EEE6'
+  muted: '#A49E94'
+  accent: '#C9A45C'
+  accent_text: '#121115'
+fonts:
+  heading: playfair-display
+  body: montserrat

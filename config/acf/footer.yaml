@@ -1,0 +1,77 @@
+# Footer — contact details, opening hours and social links for a client page.
+
+title: Footer
+screen:
+  tab: footer
+  label: Footer
+  icon: dashicons-location
+  description: Contact details and social links shown at the bottom of your page. Empty fields are hidden.
+fields:
+  - type: tab
+    label: Contact
+
+  - name: sm_footer_address
+    label: Address
+    type: textarea
+    rows: 3
+    wrapper: { width: 50 }
+
+  - name: sm_footer_hours
+    label: Opening hours
+    type: textarea
+    rows: 4
+    placeholder: |-
+      Mon–Fri 9am – 6pm
+      Sat 9am – 4pm
+    wrapper: { width: 50 }
+
+  - name: sm_footer_phone
+    label: Phone
+    type: text
+    wrapper: { width: 50 }
+
+  - name: sm_footer_email
+    label: Email
+    type: email
+    wrapper: { width: 50 }
+
+  - type: tab
+    label: Social
+
+  - name: sm_social_website
+    label: Website
+    type: url
+    placeholder: https://
+    wrapper: { width: 50 }
+
+  - name: sm_social_instagram
+    label: Instagram
+    type: url
+    placeholder: https://instagram.com/
+    wrapper: { width: 50 }
+
+  - name: sm_social_facebook
+    label: Facebook
+    type: url
+    placeholder: https://facebook.com/
+    wrapper: { width: 50 }
+
+  - name: sm_social_tiktok
+    label: TikTok
+    type: url
+    placeholder: https://tiktok.com/@
+    wrapper: { width: 50 }
+
+  - type: tab
+    label: Small print
+
+  - name: sm_footer_note
+    label: Footer note
+    type: text
+    instructions: e.g. "Prices may vary depending on hair length."
+
+  - name: sm_footer_show_credit
+    label: Show "Powered by Satori" credit
+    type: true_false
+    ui: true
+    default_value: 1

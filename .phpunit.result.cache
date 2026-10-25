@@ -1,0 +1,1 @@
+{"version":2,"defects":{"SanitizerTest::test_empty_sections_returns_empty_array":8},"times":{"SanitizerTest::test_empty_sections_returns_empty_array":0.01}}

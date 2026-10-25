@@ -1,0 +1,56 @@
+# Demo client — Atelier design, with navigation back to a main website.
+
+user:
+  login: willowrose
+  email: hello@willowandrose.test
+  name: Willow & Rose Hair Studio
+design: atelier
+brand:
+  sm_brand_name: Willow & Rose
+  sm_brand_tagline: Hair · Colour · Care
+  sm_header_cta_label: Book now
+  sm_header_cta_url: https://willowandrose.example/book
+  sm_footer_address: |-
+    14 Mill Lane
+    Harrogate HG1 2QT
+  sm_footer_phone: 01423 555 014
+  sm_footer_email: hello@willowandrose.test
+  sm_footer_hours: |-
+    Tue–Fri 9am – 7pm
+    Sat 8.30am – 4pm
+    Sun & Mon closed
+  sm_social_instagram: https://instagram.com/willowandrose
+  sm_social_facebook: https://facebook.com/willowandrose
+  sm_footer_note: Prices may vary with hair length and condition.
+menu:
+  - label: Home
+    url: https://willowandrose.example
+  - label: Our team
+    url: https://willowandrose.example/team
+  - label: Gallery
+    url: https://willowandrose.example/gallery
+  - label: Contact
+    url: https://willowandrose.example/contact
+sections:
+  - title: Cutting & styling
+    description: Every cut includes a consultation, wash and finish.
+    items:
+      - { label: Restyle, description: "Consultation, cut and finish", price: 68, price_prefix: from, badge: Popular }
+      - { label: Cut & finish, description: Long hair, price: 58 }
+      - { label: Cut & finish, description: Short hair, price: 48 }
+      - { label: Blow dry, price: 32 }
+      - { label: Occasion hair, description: Up-dos and styling for events, price: 55, price_prefix: from }
+  - title: Colour
+    description: Skin test required 48 hours before any colour service.
+    items:
+      - { label: Full head tint, price: 72, price_prefix: from }
+      - { label: Root tint, price: 55 }
+      - { label: Balayage, description: "Hand-painted, sun-kissed colour", price: 145, price_prefix: from, badge: Signature }
+      - { label: Half head highlights, price: 85 }
+      - { label: Full head highlights, price: 110 }
+      - { label: Toner, price: 25 }
+  - title: Treatments
+    items:
+      - { label: Olaplex bond repair, price: 30 }
+      - { label: Scalp ritual, description: Exfoliating massage and mask, price: 28, badge: New }
+      - { label: Keratin smoothing, price: 180, price_prefix: from }

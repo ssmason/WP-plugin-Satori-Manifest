@@ -1,0 +1,123 @@
+// Design: Studio
+//
+// Bold Manrope type, off-white background, logo-left header with a
+// call-to-action, and price cards topped with an accent bar.
+//
+// @package SatoriManifest
+// @since   2.0.0
+
+$b: ".satori-manifest-price-list";
+
+.sm-design-studio {
+	--sm-background: #f3f3f0;
+	--sm-surface: #fff;
+	--sm-text: #111;
+	--sm-muted: #6b6b6b;
+	--sm-accent: #e4572e;
+	--sm-accent-text: #fff;
+	--sm-font-heading: "Manrope", sans-serif;
+	--sm-font-body: "Manrope", sans-serif;
+	--sm-heading-weight: 800;
+	--sm-heading-tracking: -0.03em;
+	--sm-radius: 16px;
+	--sm-content: 72rem;
+	--sm-header-bg: var(--sm-text);
+	--sm-footer-bg: var(--sm-text);
+
+	.sm-header {
+		border-bottom: 0;
+		color: var(--sm-background);
+
+		.sm-brand__tagline {
+			color: color-mix(in srgb, var(--sm-background) 60%, transparent);
+		}
+	}
+
+	.sm-brand__name {
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: -0.02em;
+	}
+
+	.sm-button {
+		border-radius: 999px;
+	}
+
+	.sm-main h1 {
+		font-size: clamp(2.8rem, 9vw, 5.5rem);
+		line-height: 0.95;
+		text-transform: uppercase;
+	}
+
+	#{$b} {
+		&.is-layout-card-style #{$b}__manifest {
+			grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+			gap: 1.25rem;
+		}
+
+		&.is-layout-card-style #{$b}__section {
+			position: relative;
+			overflow: hidden;
+			padding: 1.75rem 1.5rem 1.25rem;
+			border: 0;
+			border-radius: var(--sm-radius);
+			background: var(--sm-surface);
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 12px 32px -18px rgba(0, 0, 0, 0.25);
+
+			&::before {
+				content: "";
+				position: absolute;
+				inset: 0 0 auto;
+				height: 5px;
+				background: var(--sm-accent);
+			}
+		}
+
+		#{$b}__section-title {
+			border-bottom: 0;
+			padding: 0;
+			font-size: 1.35rem !important; // stylelint-disable-line declaration-no-important
+			font-weight: 800 !important; // stylelint-disable-line declaration-no-important
+			letter-spacing: -0.02em;
+			text-transform: uppercase;
+		}
+
+		&__item {
+			padding-block: 0.7rem;
+
+			&:not(:last-child) {
+				border-bottom-style: dashed;
+			}
+		}
+
+		&__item-name {
+			font-weight: 700;
+		}
+
+		&__item-price {
+			padding: 0.2em 0.65em;
+			border-radius: 999px;
+			background: color-mix(in srgb, var(--sm-accent) 12%, transparent);
+			color: var(--sm-accent);
+			font-weight: 800;
+		}
+	}
+
+	.sm-footer {
+		color: var(--sm-background);
+
+		&__heading,
+		&__tagline,
+		&__bottom {
+			color: color-mix(in srgb, var(--sm-background) 60%, transparent);
+		}
+
+		&__bottom {
+			border-top-color: color-mix(in srgb, var(--sm-background) 15%, transparent);
+		}
+	}
+
+	.sm-social__link {
+		border-color: color-mix(in srgb, var(--sm-background) 25%, transparent);
+	}
+}

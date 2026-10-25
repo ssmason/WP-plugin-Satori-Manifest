@@ -1,0 +1,191 @@
+// Design screen: preview cards and apply bar.
+//
+// @package SatoriManifest
+// @since   2.0.0
+
+@use "variables" as *;
+
+$sm-preview-width: 1280px;
+$sm-preview-scale: 0.25;
+
+.sm-design-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	gap: $sm-space-lg;
+	margin-bottom: 120px;
+}
+
+.sm-design-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border: 2px solid $sm-color-border;
+	border-radius: 16px;
+	background: $sm-color-card;
+	box-shadow: $sm-shadow;
+	cursor: pointer;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+
+	&:hover {
+		transform: translateY(-2px);
+	}
+
+	&:has(:checked) {
+		border-color: $sm-color-primary;
+		box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15), $sm-shadow;
+	}
+
+	&__radio {
+		position: absolute;
+		top: 14px;
+		right: 14px;
+		z-index: 2;
+		width: 22px !important; // stylelint-disable-line declaration-no-important
+		height: 22px !important; // stylelint-disable-line declaration-no-important
+		margin: 0 !important; // stylelint-disable-line declaration-no-important
+		box-shadow: 0 0 0 4px #fff;
+	}
+
+	// The iframe renders the page at desktop width and is scaled down.
+	&__preview {
+		position: relative;
+		display: block;
+		height: 260px;
+		overflow: hidden;
+		border-bottom: 1px solid $sm-color-border;
+		background: $sm-color-bg;
+		pointer-events: none;
+
+		iframe {
+			width: $sm-preview-width;
+			height: calc(260px / #{$sm-preview-scale});
+			border: 0;
+			transform: scale($sm-preview-scale);
+			transform-origin: 0 0;
+		}
+
+		@supports (container-type: inline-size) {
+			container-type: inline-size;
+
+			iframe {
+				transform: scale(calc(100cqw / #{$sm-preview-width}));
+			}
+		}
+	}
+
+	&__body {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		padding: $sm-space-md $sm-space-lg $sm-space-lg;
+	}
+
+	&__heading {
+		display: flex;
+		align-items: center;
+		gap: $sm-space-sm;
+	}
+
+	&__title {
+		color: $sm-ink;
+		font-size: 17px;
+		font-weight: 600;
+	}
+
+	&__desc {
+		color: $sm-color-text-light;
+		font-size: 13px;
+		line-height: 1.5;
+	}
+
+	&__meta {
+		color: $sm-color-text;
+		font-size: 12px;
+	}
+
+	&__open {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		margin-top: 4px;
+		color: $sm-color-primary;
+		font-size: 12px;
+		font-weight: 600;
+		text-decoration: none;
+	}
+}
+
+.sm-swatches {
+	display: block;
+	margin: 4px 0;
+
+	circle {
+		stroke: #fff;
+		stroke-width: 2;
+	}
+}
+
+.sm-apply-bar {
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+	left: 180px;
+	z-index: 50;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: $sm-space-md;
+	padding: $sm-space-md $sm-space-lg;
+	border: 1px solid $sm-color-border;
+	border-radius: 16px;
+	background: rgba(255, 255, 255, 0.92);
+	box-shadow: 0 20px 50px -20px rgba(31, 35, 64, 0.45);
+	backdrop-filter: blur(8px);
+
+	.folded & {
+		left: 56px;
+	}
+
+	@media (max-width: 960px) {
+		left: 20px;
+	}
+
+	&__modes {
+		display: flex;
+		flex-wrap: wrap;
+		gap: $sm-space-md;
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+}
+
+.sm-choice {
+	display: flex;
+	align-items: flex-start;
+	gap: $sm-space-sm;
+	padding: 10px 14px;
+	border: 1px solid $sm-color-border;
+	border-radius: 10px;
+	cursor: pointer;
+
+	&:has(:checked) {
+		border-color: $sm-color-primary;
+		background: $sm-color-primary-lt;
+	}
+
+	input {
+		margin-top: 3px !important; // stylelint-disable-line declaration-no-important
+	}
+
+	strong,
+	small {
+		display: block;
+	}
+
+	small {
+		color: $sm-color-text-light;
+	}
+}

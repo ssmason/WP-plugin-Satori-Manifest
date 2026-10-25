@@ -1,0 +1,555 @@
+// Satori Manifest — client page base stylesheet
+//
+// Structure and sensible defaults for the theme-independent client page
+// (templates/client-page.php): tokens, header, navigation, content flow,
+// core blocks and footer. Designs (designs/{slug}/style.scss) override the
+// tokens and add their own character; brand settings override tokens again
+// via inline CSS variables.
+//
+// Root selector is .sm-client-page (the body); .sm-site-page shares the base. Inside the block editor the
+// same rules are rescoped to .editor-styles-wrapper by Editor::scoped_css().
+//
+// @package SatoriManifest
+// @author  Stephen Mason <steve@satori-digital.com>
+// @since   2.0.0
+
+$breakpoint-nav: 760px;
+
+// ─── Tokens ──────────────────────────────────────────────────────────────────
+
+// Shared with the public site pages (.sm-site-page), which reuse this base.
+.sm-client-page,
+.sm-site-page {
+	--sm-background: #fff;
+	--sm-surface: #f5f5f4;
+	--sm-text: #1c1c1e;
+	--sm-muted: #6b6b70;
+	--sm-accent: #1c1c1e;
+	--sm-accent-text: #fff;
+	--sm-font-heading: georgia, "Times New Roman", serif;
+	--sm-font-body: -apple-system, blinkmacsystemfont, "Segoe UI", roboto, sans-serif;
+	--sm-border: color-mix(in srgb, var(--sm-text) 14%, transparent);
+	--sm-radius: 14px;
+	--sm-content: 46rem;
+	--sm-wide: 72rem;
+	--sm-gutter: clamp(1.25rem, 4vw, 2.5rem);
+	--sm-header-bg: var(--sm-background);
+	--sm-footer-bg: var(--sm-surface);
+	--sm-heading-weight: 500;
+	--sm-heading-tracking: -0.01em;
+
+	margin: 0;
+	background: var(--sm-background);
+	color: var(--sm-text);
+	font-family: var(--sm-font-body);
+	font-size: 1.0625rem;
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizelegibility;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+
+	a {
+		color: inherit;
+		text-underline-offset: 0.2em;
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--sm-accent);
+		outline-offset: 3px;
+	}
+}
+
+// ─── Utilities ───────────────────────────────────────────────────────────────
+
+.sm-visually-hidden,
+.sm-skip-link:not(:focus) {
+	position: absolute !important; // stylelint-disable-line declaration-no-important
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+
+.sm-skip-link:focus {
+	position: fixed;
+	top: 1rem;
+	left: 1rem;
+	z-index: 100;
+	padding: 0.75rem 1rem;
+	background: var(--sm-accent);
+	color: var(--sm-accent-text);
+	border-radius: var(--sm-radius);
+}
+
+.sm-site {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+// "a.sm-button" outranks the base "a { color: inherit }" rule.
+a.sm-button,
+.sm-button,
+.sm-main .wp-block-button__link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	padding: 0.75em 1.4em;
+	border: 0;
+	border-radius: calc(var(--sm-radius) * 0.6);
+	background: var(--sm-accent);
+	color: var(--sm-accent-text);
+	font-family: var(--sm-font-body);
+	font-size: 0.9rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	line-height: 1.2;
+	text-decoration: none;
+	transition: transform 0.15s ease, filter 0.15s ease;
+
+	&:hover {
+		filter: brightness(1.08);
+		transform: translateY(-1px);
+	}
+}
+
+// ─── Header ──────────────────────────────────────────────────────────────────
+
+.sm-header {
+	position: relative;
+	z-index: 10;
+	padding-block: 1.25rem;
+	padding-inline: var(--sm-gutter);
+	background: var(--sm-header-bg);
+	border-bottom: 1px solid var(--sm-border);
+
+	&.is-sticky {
+		position: sticky;
+		top: 0;
+
+		.admin-bar & {
+			top: var(--wp-admin--admin-bar--height, 32px);
+		}
+
+		backdrop-filter: saturate(1.4) blur(8px);
+	}
+
+	&__inner {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem 2rem;
+		max-width: var(--sm-wide);
+		margin-inline: auto;
+	}
+
+	&__actions {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+	}
+
+	// Centered: brand on top, nav centred underneath.
+	&--centered &__inner,
+	&--stacked &__inner {
+		flex-direction: column;
+		text-align: center;
+	}
+
+	&--centered .sm-brand,
+	&--stacked .sm-brand {
+		align-items: center;
+	}
+
+	// Stacked: oversized business name, made for standalone pages.
+	&--stacked {
+		padding-block: clamp(2.5rem, 8vw, 5rem) 2rem;
+
+		.sm-brand__name {
+			font-size: clamp(2.6rem, 9vw, 5.5rem);
+			line-height: 0.95;
+		}
+	}
+}
+
+.sm-brand {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+
+	&__logo {
+		display: block;
+		width: var(--sm-logo-width, 160px);
+		max-width: 60vw;
+		height: auto;
+	}
+
+	&__name {
+		font-family: var(--sm-font-heading);
+		font-size: 1.6rem;
+		font-weight: var(--sm-heading-weight);
+		letter-spacing: var(--sm-heading-tracking);
+		line-height: 1.1;
+	}
+
+	&__tagline {
+		color: var(--sm-muted);
+		font-size: 0.78rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+}
+
+.sm-nav {
+
+	&__list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem 1.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	a {
+		display: inline-block;
+		padding-block: 0.35rem;
+		font-size: 0.92rem;
+		font-weight: 500;
+		text-decoration: none;
+		border-bottom: 1px solid transparent;
+		transition: border-color 0.15s ease, color 0.15s ease;
+
+		&:hover,
+		&[aria-current="page"] {
+			color: var(--sm-accent);
+			border-bottom-color: currentcolor;
+		}
+	}
+}
+
+.sm-nav-toggle {
+	display: none;
+	padding: 0.4rem;
+	border: 1px solid var(--sm-border);
+	border-radius: 999px;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+
+	&__close {
+		display: none;
+	}
+}
+
+@media (max-width: $breakpoint-nav) {
+
+	.sm-header.has-js.has-nav {
+
+		.sm-header__inner {
+			flex-direction: row;
+			text-align: left;
+		}
+
+		.sm-brand {
+			align-items: flex-start;
+		}
+
+		.sm-nav-toggle {
+			display: inline-flex;
+		}
+
+		.sm-nav {
+			position: absolute;
+			top: 100%;
+			right: 0;
+			left: 0;
+			display: none;
+			padding: 1rem var(--sm-gutter) 1.5rem;
+			background: var(--sm-header-bg);
+			border-bottom: 1px solid var(--sm-border);
+			box-shadow: 0 18px 30px -18px rgba(0, 0, 0, 0.25);
+		}
+
+		.sm-nav__list {
+			flex-direction: column;
+			gap: 0.25rem;
+		}
+
+		.sm-nav a {
+			font-size: 1.05rem;
+		}
+
+		&.is-nav-open {
+
+			.sm-nav {
+				display: block;
+			}
+
+			.sm-nav-toggle__open {
+				display: none;
+			}
+
+			.sm-nav-toggle__close {
+				display: block;
+			}
+		}
+	}
+
+	.sm-header__cta {
+		padding: 0.6em 1em;
+		font-size: 0.8rem;
+	}
+}
+
+// ─── Content ─────────────────────────────────────────────────────────────────
+
+.sm-main {
+	flex: 1;
+	padding-block: clamp(2.5rem, 7vw, 5rem);
+
+	> * {
+		max-width: var(--sm-content);
+		margin-inline: auto;
+		margin-block: 0 1.5rem;
+		padding-inline: var(--sm-gutter);
+	}
+
+	> .alignwide {
+		max-width: var(--sm-wide);
+	}
+
+	> .alignfull {
+		max-width: none;
+		padding-inline: 0;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4 {
+		margin-block: 0 0.5em;
+		font-family: var(--sm-font-heading);
+		font-weight: var(--sm-heading-weight);
+		letter-spacing: var(--sm-heading-tracking);
+		line-height: 1.12;
+	}
+
+	h1 {
+		font-size: clamp(2.4rem, 6vw, 3.6rem);
+	}
+
+	h2 {
+		font-size: clamp(1.7rem, 4vw, 2.3rem);
+	}
+
+	p {
+		margin-block: 0 1em;
+	}
+
+	.sm-eyebrow {
+		margin-bottom: 0.75rem;
+		color: var(--sm-accent);
+		font-size: 0.75rem;
+		font-weight: 600;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+	}
+
+	.sm-lead {
+		color: var(--sm-muted);
+		font-size: 1.15rem;
+	}
+
+	.sm-intro {
+		margin-bottom: clamp(2rem, 5vw, 3.5rem);
+	}
+
+	.sm-small-print {
+		margin-top: 2.5rem;
+		color: var(--sm-muted);
+		font-size: 0.85rem;
+	}
+
+	.wp-block-separator {
+		height: 0;
+		margin-block: 2.5rem;
+		border: 0;
+		border-top: 1px solid var(--sm-border);
+		opacity: 1;
+	}
+
+	.wp-block-image img {
+		border-radius: var(--sm-radius);
+	}
+
+	.wp-block-group.has-background {
+		padding: clamp(1.5rem, 4vw, 2.5rem);
+		border-radius: var(--sm-radius);
+	}
+
+	.wp-block-quote {
+		margin-inline: 0;
+		padding-left: 1.25rem;
+		border-left: 3px solid var(--sm-accent);
+		font-family: var(--sm-font-heading);
+		font-size: 1.25rem;
+	}
+
+	.satori-manifest-price-list {
+		margin-block: 0 2rem;
+	}
+
+	// The block's "no background" option zeroes its padding; keep the page gutter.
+	> .satori-manifest-price-list.has-no-background {
+		padding-inline: var(--sm-gutter) !important; // stylelint-disable-line declaration-no-important
+	}
+}
+
+// ─── Footer ──────────────────────────────────────────────────────────────────
+
+.sm-footer {
+	padding: clamp(2.5rem, 6vw, 4rem) var(--sm-gutter) 1.5rem;
+	background: var(--sm-footer-bg);
+	color: var(--sm-text);
+	font-size: 0.95rem;
+
+	&__inner {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+		gap: 2rem;
+		max-width: var(--sm-wide);
+		margin-inline: auto;
+	}
+
+	&__brand {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	&__name {
+		font-family: var(--sm-font-heading);
+		font-size: 1.35rem;
+		font-weight: var(--sm-heading-weight);
+	}
+
+	&__tagline {
+		color: var(--sm-muted);
+		font-size: 0.85rem;
+	}
+
+	&__heading {
+		margin: 0 0 0.75rem;
+		color: var(--sm-muted);
+		font-family: var(--sm-font-body);
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+	}
+
+	&__hours {
+		margin: 0;
+		line-height: 1.8;
+	}
+
+	&__bottom {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.5rem 2rem;
+		max-width: var(--sm-wide);
+		margin: 2.5rem auto 0;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--sm-border);
+		color: var(--sm-muted);
+		font-size: 0.8rem;
+
+		p {
+			margin: 0;
+		}
+	}
+}
+
+.sm-contact {
+	display: grid;
+	gap: 0.6rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		display: flex;
+		gap: 0.6rem;
+		align-items: flex-start;
+	}
+
+	.sm-icon {
+		flex-shrink: 0;
+		margin-top: 0.2em;
+		color: var(--sm-accent);
+	}
+
+	a {
+		text-decoration: none;
+
+		&:hover {
+			color: var(--sm-accent);
+		}
+	}
+}
+
+.sm-social {
+	display: flex;
+	gap: 0.5rem;
+	margin: 1rem 0 0;
+	padding: 0;
+	list-style: none;
+
+	&__link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.4rem;
+		height: 2.4rem;
+		border: 1px solid var(--sm-border);
+		border-radius: 999px;
+		transition: background 0.15s ease, color 0.15s ease;
+
+		&:hover {
+			background: var(--sm-accent);
+			color: var(--sm-accent-text);
+			border-color: var(--sm-accent);
+		}
+	}
+}
+
+@media print {
+
+	.sm-header__actions,
+	.sm-footer__bottom {
+		display: none;
+	}
+}
+
+// Respect reduced motion.
+@media (prefers-reduced-motion: reduce) {
+
+	.sm-client-page *,
+	.sm-site-page * {
+		transition: none !important; // stylelint-disable-line declaration-no-important
+	}
+}

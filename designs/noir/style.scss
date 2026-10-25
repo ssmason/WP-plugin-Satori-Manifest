@@ -1,0 +1,143 @@
+// Design: Noir
+//
+// Near-black background, champagne-gold accents, Playfair Display headings
+// and widely tracked uppercase labels. Two-column menu on wide screens.
+//
+// @package SatoriManifest
+// @since   2.0.0
+
+$b: ".satori-manifest-price-list";
+
+.sm-design-noir {
+	--sm-background: #121115;
+	--sm-surface: #1c1a20;
+	--sm-text: #f3eee6;
+	--sm-muted: #a49e94;
+	--sm-accent: #c9a45c;
+	--sm-accent-text: #121115;
+	--sm-font-heading: "Playfair Display", georgia, serif;
+	--sm-font-body: "Montserrat", sans-serif;
+	--sm-heading-weight: 400;
+	--sm-border: color-mix(in srgb, var(--sm-accent) 22%, transparent);
+	--sm-radius: 4px;
+	--sm-content: 64rem;
+
+	font-size: 0.98rem;
+	font-weight: 300;
+
+	.sm-header {
+		border-bottom-color: var(--sm-border);
+
+		.sm-nav__list {
+			justify-content: center;
+		}
+
+		.sm-nav a {
+			font-size: 0.72rem;
+			letter-spacing: 0.24em;
+			text-transform: uppercase;
+		}
+	}
+
+	.sm-brand__name {
+		font-size: 2.1rem;
+		color: var(--sm-accent);
+	}
+
+	.sm-brand__tagline {
+		letter-spacing: 0.3em;
+	}
+
+	.sm-button {
+		border: 1px solid var(--sm-accent);
+		border-radius: 0;
+		background: transparent;
+		color: var(--sm-accent);
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		font-size: 0.7rem;
+
+		&:hover {
+			background: var(--sm-accent);
+			color: var(--sm-accent-text);
+		}
+	}
+
+	.sm-main h1 {
+		font-size: clamp(2.8rem, 8vw, 4.8rem);
+		font-style: italic;
+	}
+
+	.sm-eyebrow {
+		letter-spacing: 0.4em;
+	}
+
+	#{$b} {
+		&.is-layout-two-column #{$b}__manifest {
+			column-gap: clamp(2rem, 6vw, 5rem);
+			row-gap: 2.5rem;
+		}
+
+		#{$b}__section-title {
+			margin-bottom: 1.25rem;
+			padding: 0 0 0.75rem;
+			border-bottom: 1px solid var(--sm-accent);
+			color: var(--sm-accent);
+			font-family: var(--sm-font-body) !important; // stylelint-disable-line declaration-no-important
+			font-size: 0.8rem !important; // stylelint-disable-line declaration-no-important
+			font-weight: 600 !important; // stylelint-disable-line declaration-no-important
+			letter-spacing: 0.3em;
+			text-transform: uppercase;
+		}
+
+		&__item {
+			padding-block: 0.8rem;
+			border-bottom-color: color-mix(in srgb, var(--sm-text) 8%, transparent);
+		}
+
+		&__item-name {
+			font-family: var(--sm-font-heading);
+			font-size: 1.15em;
+			font-weight: 400;
+		}
+
+		&__item-desc {
+			font-size: 0.82em;
+			letter-spacing: 0.02em;
+		}
+
+		&__item-price {
+			color: var(--sm-accent);
+			font-weight: 500;
+			letter-spacing: 0.05em;
+		}
+
+		&__item-badge {
+			background: transparent;
+			color: var(--sm-accent);
+			border: 1px solid var(--sm-border);
+		}
+	}
+
+	.sm-footer {
+		border-top: 1px solid var(--sm-border);
+		text-align: center;
+
+		&__inner {
+			justify-items: center;
+		}
+
+		&__brand {
+			align-items: center;
+		}
+
+		&__name {
+			color: var(--sm-accent);
+		}
+	}
+
+	.sm-contact li,
+	.sm-social {
+		justify-content: center;
+	}
+}

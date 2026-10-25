@@ -1,0 +1,12 @@
+/.claude
+/CLAUDE.md
+/node_modules
+/vendor
+
+# wp-env
+/.wp-env
+
+# Cypress generated output
+/cypress/screenshots
+/cypress/videos
+/cypress/downloads

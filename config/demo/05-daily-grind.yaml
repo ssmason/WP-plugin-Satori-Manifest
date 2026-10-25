@@ -1,0 +1,36 @@
+# Demo client — Mono design, standalone page (no navigation, no header button).
+
+user:
+  login: dailygrind
+  email: coffee@dailygrind.test
+  name: Daily Grind Coffee
+design: mono
+brand:
+  sm_brand_name: Daily Grind
+  sm_brand_tagline: Small-batch coffee, roasted in Sheffield
+  sm_header_show_nav: false
+  sm_footer_address: 88 Division Street, Sheffield S1 4GF
+  sm_footer_hours: |-
+    Mon–Fri 7am – 4pm
+    Sat–Sun 8am – 3pm
+  sm_social_instagram: https://instagram.com/dailygrind
+  sm_footer_show_credit: false
+sections:
+  - title: Coffee
+    items:
+      - { label: Espresso, price: 2.4 }
+      - { label: Flat white, price: 3.4, badge: Popular }
+      - { label: Cortado, price: 3.2 }
+      - { label: Batch brew, description: Ask about today's single origin, price: 2.8 }
+      - { label: Pour-over, price: 4.2, price_prefix: from }
+  - title: Not coffee
+    items:
+      - { label: Hot chocolate, price: 3.5 }
+      - { label: Chai latte, price: 3.6 }
+      - { label: Loose-leaf tea, price: 2.6 }
+  - title: Bakes
+    description: Baked fresh every morning by our neighbours at Rise.
+    items:
+      - { label: Cardamom bun, price: 3.5, badge: Vegan }
+      - { label: Almond croissant, price: 3.8 }
+      - { label: Banana bread, price: 3.2 }

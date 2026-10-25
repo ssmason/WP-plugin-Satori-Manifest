@@ -1,0 +1,169 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "satori-manifest/price-list",
+	"version": "2",
+	"title": "Manifest",
+	"category": "widgets",
+	"icon": "list-view",
+	"description": "Display a structured price list with sections and items. On a client page it shows that client’s price list automatically. Powered by Satori Manifest.",
+	"keywords": [
+		"price",
+		"list",
+		"menu",
+		"services",
+		"manifest"
+	],
+	"textdomain": "satori-manifest",
+	"usesContext": [
+		"postId",
+		"postType"
+	],
+	"render": "file:./render.php",
+	"editorScript": "file:../build/block/index.js",
+	"editorStyle": "file:../build/css/editor.css",
+	"style": "file:../build/css/frontend.css",
+	"attributes": {
+		"manifestIds": {
+			"type": "array",
+			"description": "IDs of the manifest posts to display. Empty = the current client page’s own manifest.",
+			"items": {
+				"type": "number"
+			},
+			"default": []
+		},
+		"layout": {
+			"type": "string",
+			"description": "Display layout preset.",
+			"default": "single-column",
+			"enum": [
+				"single-column",
+				"two-column",
+				"card-style",
+				"minimal",
+				"leaders"
+			]
+		},
+		"colorScheme": {
+			"type": "string",
+			"description": "Colour scheme applied to the block wrapper. \"brand\" follows the client page design and brand colours.",
+			"default": "default",
+			"enum": [
+				"default",
+				"brand",
+				"warm",
+				"terracotta",
+				"dark",
+				"minimal",
+				"custom"
+			]
+		},
+		"showPrices": {
+			"type": "boolean",
+			"description": "Whether to display item prices.",
+			"default": true
+		},
+		"showDescriptions": {
+			"type": "boolean",
+			"description": "Whether to display item description lines.",
+			"default": true
+		},
+		"showSectionDescriptions": {
+			"type": "boolean",
+			"description": "Whether to display section intro text.",
+			"default": true
+		},
+		"showBadges": {
+			"type": "boolean",
+			"description": "Whether to display item badges such as \"Popular\".",
+			"default": true
+		},
+		"pricePrefix": {
+			"type": "string",
+			"description": "Global price prefix override (e.g. 'from'). Overrides per-item prefix when set.",
+			"default": ""
+		},
+		"customBgColor": {
+			"type": "string",
+			"description": "Custom scheme background colour (hex). Used when colorScheme is 'custom'.",
+			"default": ""
+		},
+		"customAccentColor": {
+			"type": "string",
+			"description": "Custom scheme accent/text colour (hex). Used when colorScheme is 'custom'.",
+			"default": ""
+		},
+		"customTitleColor": {
+			"type": "string",
+			"description": "Custom scheme section title colour (hex). Falls back to customAccentColor when empty.",
+			"default": ""
+		},
+		"customCardColor": {
+			"type": "string",
+			"description": "Custom scheme section/card background colour (hex). Falls back to a semi-transparent white when empty.",
+			"default": ""
+		},
+		"showBackground": {
+			"type": "boolean",
+			"description": "Whether to render the scheme background colour on the wrapper.",
+			"default": true
+		},
+		"cardPadding": {
+			"type": "boolean",
+			"description": "Whether to apply padding inside each section card.",
+			"default": true
+		},
+		"titlePadding": {
+			"type": "boolean",
+			"description": "Whether to apply padding to the section title heading.",
+			"default": true
+		},
+		"showItemBorder": {
+			"type": "boolean",
+			"description": "Whether to show the border-bottom underline on each list item.",
+			"default": true
+		},
+		"titleBgColor": {
+			"type": "string",
+			"description": "Background colour applied to section title headings (hex).",
+			"default": ""
+		},
+		"titleFontSize": {
+			"type": "number",
+			"description": "Section title font size in pixels. 0 means inherit from scheme.",
+			"default": 0
+		},
+		"titleFontWeight": {
+			"type": "string",
+			"description": "Section title font weight (e.g. '700'). Empty means inherit from scheme.",
+			"default": ""
+		},
+		"titleFontFamily": {
+			"type": "string",
+			"description": "Section title font family stack. Empty means inherit from theme.",
+			"default": ""
+		},
+		"itemFontSize": {
+			"type": "number",
+			"description": "List item name font size in pixels. 0 means inherit.",
+			"default": 0
+		},
+		"itemFontWeight": {
+			"type": "string",
+			"description": "List item name font weight. Empty means inherit from scheme.",
+			"default": ""
+		},
+		"itemFontFamily": {
+			"type": "string",
+			"description": "List item name font family stack. Empty means inherit from theme.",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [
+			"wide",
+			"full"
+		]
+	}
+}

@@ -1,0 +1,109 @@
+// Branding screen: ACF form beside a live preview.
+//
+// @package SatoriManifest
+// @since   2.0.0
+
+@use "variables" as *;
+
+.sm-branding-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+	gap: $sm-space-lg;
+	align-items: start;
+
+	@media (max-width: 1100px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.sm-branding-form {
+	// ACF seamless groups: tidy spacing and tabs inside our panel.
+	.acf-fields > .acf-field {
+		padding: $sm-space-md 0;
+		border-top-color: $sm-color-border;
+	}
+
+	.acf-tab-wrap {
+		margin-bottom: $sm-space-sm;
+	}
+
+	.acf-tab-group {
+		padding: 0;
+		border-bottom-color: $sm-color-border;
+
+		li a {
+			border-radius: 8px 8px 0 0;
+			font-size: 13px;
+		}
+	}
+
+	.acf-field .acf-label label {
+		color: $sm-ink;
+		font-weight: 600;
+	}
+
+	.acf-form-submit {
+		position: sticky;
+		bottom: 0;
+		margin-top: $sm-space-lg;
+		padding: $sm-space-md 0 0;
+		border-top: 1px solid $sm-color-border;
+		background: $sm-color-card;
+	}
+
+	.acf-button-group label.selected {
+		border-color: $sm-color-primary;
+		background: $sm-color-primary;
+	}
+}
+
+.sm-preview-panel {
+	position: sticky;
+	top: 46px;
+	padding: 0;
+	overflow: hidden;
+
+	&__bar {
+		display: flex;
+		align-items: center;
+		gap: $sm-space-sm;
+		padding: 10px 14px;
+		border-bottom: 1px solid $sm-color-border;
+		background: $sm-color-bg;
+	}
+
+	&__dots {
+		display: inline-flex;
+		gap: 5px;
+
+		i {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			background: #d6d8e2;
+		}
+	}
+
+	&__label {
+		color: $sm-color-text-light;
+		font-size: 12px;
+		font-weight: 600;
+	}
+
+	// Phone-sized preview: what a customer sees after scanning the QR code.
+	&__frame {
+		display: flex;
+		justify-content: center;
+		padding: $sm-space-lg;
+		background: $sm-color-bg;
+
+		iframe {
+			width: 390px;
+			max-width: 100%;
+			height: 720px;
+			border: 10px solid $sm-ink;
+			border-radius: 36px;
+			background: #fff;
+		}
+	}
+}

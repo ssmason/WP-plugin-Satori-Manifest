@@ -1,0 +1,128 @@
+// Design: Mono
+//
+// Oversized Space Grotesk name, IBM Plex Mono body, numbered sections with
+// heavy rules and tabular prices. Built to stand alone without navigation.
+//
+// @package SatoriManifest
+// @since   2.0.0
+
+$b: ".satori-manifest-price-list";
+
+.sm-design-mono {
+	--sm-background: #f1eee6;
+	--sm-surface: #e6e1d5;
+	--sm-text: #161616;
+	--sm-muted: #6e6a62;
+	--sm-accent: #161616;
+	--sm-accent-text: #f1eee6;
+	--sm-font-heading: "Space Grotesk", sans-serif;
+	--sm-font-body: "IBM Plex Mono", ui-monospace, monospace;
+	--sm-heading-weight: 600;
+	--sm-heading-tracking: -0.04em;
+	--sm-radius: 0;
+	--sm-content: 48rem;
+	--sm-border: var(--sm-text);
+
+	font-size: 0.95rem;
+
+	// Header and footer share the narrow content column for a poster-like page.
+	.sm-header__inner,
+	.sm-footer__inner,
+	.sm-footer__bottom {
+		max-width: calc(var(--sm-content) - 2 * var(--sm-gutter));
+	}
+
+	.sm-header {
+		border-bottom: 3px solid var(--sm-text);
+
+		&--stacked .sm-header__inner,
+		&--stacked .sm-brand {
+			align-items: flex-start;
+			text-align: left;
+		}
+	}
+
+	.sm-brand__tagline {
+		letter-spacing: 0.04em;
+		text-transform: none;
+	}
+
+	.sm-button {
+		border-radius: 0;
+		font-family: var(--sm-font-body);
+		text-transform: uppercase;
+	}
+
+	.sm-lead {
+		color: var(--sm-text);
+		font-size: 1rem;
+	}
+
+	#{$b} {
+		counter-reset: sm-section;
+
+		&__section {
+			counter-increment: sm-section;
+			margin-bottom: 2.5rem;
+		}
+
+		#{$b}__section-title {
+			display: flex;
+			align-items: baseline;
+			gap: 0.75rem;
+			padding: 0.75rem 0 0.5rem;
+			border-top: 3px solid var(--sm-text);
+			border-bottom: 0;
+			color: var(--sm-text);
+			font-size: 1.6rem !important; // stylelint-disable-line declaration-no-important
+			font-weight: 600 !important; // stylelint-disable-line declaration-no-important
+			letter-spacing: -0.03em;
+			text-transform: none;
+
+			&::before {
+				content: counter(sm-section, decimal-leading-zero);
+				font-family: var(--sm-font-body);
+				font-size: 0.55em;
+				font-weight: 500;
+				letter-spacing: 0;
+			}
+		}
+
+		&__section-desc {
+			color: var(--sm-muted);
+			opacity: 1;
+		}
+
+		&__item {
+			padding-block: 0.5rem;
+
+			&:not(:last-child) {
+				border-bottom: 1px solid color-mix(in srgb, var(--sm-text) 15%, transparent);
+			}
+		}
+
+		&__item-name {
+			color: var(--sm-text);
+			font-weight: 500;
+		}
+
+		&__item-price {
+			font-variant-numeric: tabular-nums;
+			font-weight: 500;
+		}
+
+		&__item-badge {
+			border-radius: 0;
+		}
+	}
+
+	.sm-footer {
+		border-top: 3px solid var(--sm-text);
+		background: var(--sm-background);
+	}
+
+	.sm-social__link {
+		border-radius: 0;
+		border-color: var(--sm-text);
+	}
+}

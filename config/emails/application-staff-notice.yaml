@@ -1,0 +1,20 @@
+# Sent to staff (site admin email) when a new application arrives.
+# Placeholders: plan, business_name, contact_name, email, phone, website, business_type, design, message, review_url.
+
+subject: "New application: {{business_name}}"
+preheader: "{{contact_name}} ({{email}}) has registered {{business_name}}."
+heading: New application to review
+body: |
+  Plan: {{plan}}
+  Business: {{business_name}}
+  Contact: {{contact_name}}
+  Email: {{email}}
+  Phone: {{phone}}
+  Website: {{website}}
+  Type: {{business_type}}
+  Preferred design: {{design}}
+
+  {{message}}
+button_label: Review application
+button_url: "{{review_url}}"
+footer: Sent by {{site_name}}.

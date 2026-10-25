@@ -1,0 +1,43 @@
+{
+	"name": "satori-digital/satori-manifest",
+	"description": "WordPress plugin for structured price lists with a Gutenberg block.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "Stephen Mason",
+			"email": "steve@satori-digital.com",
+			"homepage": "https://satori-digital.com",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=8.1"
+	},
+	"require-dev": {
+		"wp-coding-standards/wpcs": "^3.0",
+		"phpcsstandards/phpcsutils": "^1.0",
+		"phpcsstandards/phpcsextra": "^1.0",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"yoast/phpunit-polyfills": "^2.0"
+	},
+	"autoload": {
+		"classmap": [
+			"includes/",
+			"admin/"
+		]
+	},
+	"autoload-dev": {
+		"classmap": [
+			"tests/"
+		]
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"scripts": {
+		"lint:php": "phpcs --standard=.phpcs.xml ."
+	}
+}

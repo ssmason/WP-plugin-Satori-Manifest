@@ -1,0 +1,38 @@
+# Demo client — Noir design, standalone page (no navigation).
+
+user:
+  login: obsidianbar
+  email: bar@obsidian.test
+  name: Obsidian Cocktail Bar
+design: noir
+brand:
+  sm_brand_name: Obsidian
+  sm_brand_tagline: Cocktail bar
+  sm_header_show_nav: false
+  sm_footer_address: |-
+    Basement, 21 Castle Street
+    York YO1 9RN
+  sm_footer_hours: |-
+    Wed–Thu 5pm – midnight
+    Fri–Sat 5pm – 2am
+  sm_social_instagram: https://instagram.com/obsidianbar
+sections:
+  - title: Signatures
+    items:
+      - { label: Black Velvet Negroni, description: "Gin, Campari, cacao-infused vermouth", price: 12, badge: Signature }
+      - { label: Smoke & Mirrors, description: "Mezcal, pineapple, chipotle honey, lime", price: 13 }
+      - { label: Midnight Garden, description: "Vodka, elderflower, cucumber, prosecco", price: 11.5 }
+  - title: Classics
+    items:
+      - { label: Old Fashioned, price: 11 }
+      - { label: Espresso Martini, price: 11, badge: Popular }
+      - { label: Margarita, price: 10.5 }
+      - { label: Daiquiri, price: 10 }
+  - title: Zero proof
+    items:
+      - { label: Garden Spritz, description: "Seedlip, elderflower tonic", price: 7.5 }
+      - { label: Virgin Mojito, price: 6.5 }
+  - title: Bar snacks
+    items:
+      - { label: Truffle fries, price: 6 }
+      - { label: Smoked almonds, price: 4 }

@@ -1,0 +1,200 @@
+// Shared admin components: page header, panels, notices, tabs, badges.
+//
+// @package SatoriManifest
+// @since   2.0.0
+
+@use "variables" as *;
+
+.sm-admin {
+	max-width: 1280px;
+	color: $sm-color-text;
+
+	.button .sm-icon,
+	.button .dashicons {
+		vertical-align: middle;
+		margin-top: -2px;
+	}
+}
+
+.sm-eyebrow {
+	margin: 0 0 $sm-space-xs;
+	color: $sm-color-primary;
+	font-size: $sm-font-sm;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.sm-page-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: $sm-space-md;
+	margin: $sm-space-lg 0;
+
+	&__title {
+		margin: 0;
+		padding: 0;
+		color: $sm-ink;
+		font-size: 28px;
+		font-weight: 600;
+		line-height: 1.2;
+	}
+
+	&__lead {
+		max-width: 640px;
+		margin: $sm-space-sm 0 0;
+		color: $sm-color-text-light;
+		font-size: 14px;
+	}
+}
+
+.sm-panel {
+	padding: $sm-space-lg;
+	border: 1px solid $sm-color-border;
+	border-radius: $sm-radius-lg;
+	background: $sm-color-card;
+	box-shadow: $sm-shadow;
+
+	&--flush {
+		padding: 0;
+		overflow: hidden;
+	}
+
+	&__title {
+		margin: 0 0 $sm-space-md;
+		font-size: 16px;
+	}
+
+	&__intro {
+		margin: 0 0 $sm-space-lg;
+		color: $sm-color-text-light;
+		font-size: 14px;
+	}
+}
+
+.sm-notice {
+	display: flex;
+	align-items: center;
+	gap: $sm-space-sm;
+	margin: 0 0 $sm-space-lg;
+	padding: 12px $sm-space-md;
+	border-radius: $sm-radius;
+	font-size: 14px;
+
+	&--success {
+		background: $sm-color-success-lt;
+		color: $sm-color-success;
+	}
+
+	&--warning {
+		background: $sm-color-warning-lt;
+		color: $sm-color-warning;
+	}
+}
+
+.sm-empty {
+	padding: 48px $sm-space-lg;
+	border: 2px dashed $sm-color-border;
+	border-radius: $sm-radius-lg;
+	color: $sm-color-text-light;
+	text-align: center;
+
+	.dashicons {
+		width: 32px;
+		height: 32px;
+		font-size: 32px;
+	}
+}
+
+.sm-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 999px;
+	background: $sm-color-primary-lt;
+	color: $sm-color-primary;
+	font-size: $sm-font-sm;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.sm-muted {
+	color: $sm-color-text-light;
+}
+
+.sm-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: $sm-space-xs;
+	margin: 0 0 $sm-space-lg;
+	padding: $sm-space-xs;
+	border-radius: $sm-radius-lg;
+	background: #eceef6;
+	width: fit-content;
+
+	&__tab {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 8px 16px;
+		border-radius: 8px;
+		color: $sm-color-text-light;
+		font-size: 14px;
+		font-weight: 500;
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: $sm-ink;
+		}
+
+		&.is-active {
+			background: $sm-color-card;
+			color: $sm-ink;
+			box-shadow: $sm-shadow;
+		}
+	}
+}
+
+.sm-client-picker {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: $sm-space-sm;
+	padding: $sm-space-lg;
+	border: 1px solid $sm-color-border;
+	border-radius: $sm-radius-lg;
+	background: $sm-color-card;
+
+	label {
+		font-weight: 600;
+	}
+}
+
+.sm-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: $sm-font-sm;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+
+	&::before {
+		content: "";
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: currentcolor;
+	}
+
+	&.is-live {
+		color: $sm-color-success;
+	}
+
+	&.is-draft {
+		color: $sm-color-warning;
+	}
+}

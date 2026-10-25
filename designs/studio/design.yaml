@@ -1,0 +1,18 @@
+# Studio — bold, modern and graphic. Great for barbers and studios.
+
+title: Studio
+description: Bold modern sans-serif, a logo-left header with a call-to-action and price cards with a punchy accent.
+best_for: Barbers & studios
+order: 2
+tags: [modern, bold, barber, cards]
+header: split
+palette:
+  background: '#F3F3F0'
+  surface: '#FFFFFF'
+  text: '#111111'
+  muted: '#6B6B6B'
+  accent: '#E4572E'
+  accent_text: '#FFFFFF'
+fonts:
+  heading: manrope
+  body: manrope

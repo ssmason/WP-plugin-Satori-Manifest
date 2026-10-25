@@ -1,0 +1,34 @@
+// Client-only admin chrome.
+//
+// Visual tidy-ups for client users (body class .is-satori-client). The
+// server-side rules in Access_Control are what actually prevent access;
+// these rules only hide controls that would be redirected anyway.
+//
+// @package SatoriManifest
+// @since   2.0.0
+
+@use "variables" as *;
+
+.is-satori-client {
+	// Menus screen: one menu, no locations tab, no create/delete links.
+	&.nav-menus-php {
+
+		.nav-tab-wrapper,
+		.manage-menus,
+		.menu-delete,
+		.delete-action,
+		.menu-settings,
+		.add-new-menu-action {
+			display: none;
+		}
+	}
+
+	// Classic edit screens: no "Add New" buttons.
+	.page-title-action {
+		display: none;
+	}
+}
+
+#adminmenu .toplevel_page_satori-manifest-home .wp-menu-image::before {
+	color: #a5b4fc;
+}

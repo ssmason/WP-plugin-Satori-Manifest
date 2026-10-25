@@ -1,0 +1,204 @@
+// Applications screen.
+//
+// @package SatoriManifest
+// @since   2.1.0
+
+@use "variables" as *;
+
+.sm-tabs__count {
+	margin-left: 4px;
+	padding: 1px 7px;
+	border-radius: 999px;
+	background: $sm-color-bg;
+	color: $sm-color-text-light;
+	font-size: $sm-font-sm;
+	font-weight: 700;
+}
+
+.sm-badge--neutral {
+	background: $sm-color-bg;
+	color: $sm-color-text-light;
+}
+
+.sm-pill {
+	display: inline-block;
+	padding: 2px 9px;
+	border-radius: 999px;
+	font-size: $sm-font-sm;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+
+	&--pending {
+		background: $sm-color-warning-lt;
+		color: $sm-color-warning;
+	}
+
+	&--approved {
+		background: $sm-color-success-lt;
+		color: $sm-color-success;
+	}
+
+	&--declined {
+		background: $sm-color-danger-lt;
+		color: $sm-color-danger;
+	}
+}
+
+.sm-link-danger {
+	color: $sm-color-danger !important; // stylelint-disable-line declaration-no-important
+}
+
+.sm-app-list {
+	display: grid;
+	gap: $sm-space-md;
+}
+
+.sm-app {
+	padding: $sm-space-lg;
+	border: 1px solid $sm-color-border;
+	border-left: 4px solid $sm-color-warning;
+	border-radius: $sm-radius-lg;
+	background: $sm-color-card;
+	box-shadow: $sm-shadow;
+
+	&--approved {
+		border-left-color: $sm-color-success;
+	}
+
+	&--declined {
+		border-left-color: $sm-color-danger;
+		opacity: 0.85;
+	}
+
+	&__head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: $sm-space-md;
+	}
+
+	&__title {
+		margin: 0;
+		color: $sm-ink;
+		font-size: 18px;
+	}
+
+	&__meta {
+		margin: 4px 0 0;
+		color: $sm-color-text-light;
+	}
+
+	&__status {
+		display: flex;
+		align-items: center;
+		gap: $sm-space-sm;
+		color: $sm-color-text-light;
+		font-size: 12px;
+	}
+
+	&__details {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+		gap: $sm-space-md;
+		margin: $sm-space-md 0;
+		padding: $sm-space-md;
+		border-radius: $sm-radius;
+		background: $sm-color-bg;
+
+		dt {
+			color: $sm-color-text-light;
+			font-size: $sm-font-sm;
+			font-weight: 600;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+		}
+
+		dd {
+			margin: 2px 0 0;
+		}
+	}
+
+	&__message {
+		grid-column: 1 / -1;
+	}
+
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: $sm-space-md;
+
+		&--done {
+			justify-content: flex-start;
+			gap: $sm-space-sm;
+		}
+	}
+
+	&__approve {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		gap: $sm-space-sm $sm-space-md;
+
+		label > span {
+			display: block;
+			margin-bottom: 2px;
+			color: $sm-color-text-light;
+			font-size: $sm-font-sm;
+			font-weight: 600;
+		}
+
+		.button-primary {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+		}
+	}
+
+	&__check {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding-bottom: 6px;
+	}
+
+	&__decline {
+
+		summary {
+			color: $sm-color-danger;
+			cursor: pointer;
+		}
+
+		form {
+			display: grid;
+			gap: $sm-space-sm;
+			margin-top: $sm-space-sm;
+			min-width: 280px;
+		}
+	}
+
+	&__emails {
+		margin-top: $sm-space-md;
+		padding-top: $sm-space-sm;
+		border-top: 1px solid $sm-color-border;
+
+		summary {
+			color: $sm-color-text-light;
+			cursor: pointer;
+		}
+
+		ul {
+			margin: $sm-space-sm 0 0;
+		}
+
+		li {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px;
+			align-items: center;
+		}
+	}
+}

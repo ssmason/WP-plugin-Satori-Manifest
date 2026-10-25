@@ -1,0 +1,33 @@
+# Pricing plans offered on the registration form.
+#
+# The key (e.g. self-managed) is what is stored on the application.
+# price / period are display text only — no payment is taken yet.
+# Override by copying to {theme}/satori-manifest/plans.yaml.
+
+self-managed:
+  title: Self-managed
+  tagline: You build and update your own page.
+  price: £TBC
+  period: per month
+  features:
+    - Your own QR code, printed and posted to you
+    - Choice of five professional designs
+    - Your logo, colours, fonts and contact details
+    - Update prices and services any time, from any device
+    - Optional navigation back to your website
+    - Secure private login just for your page
+    - Email support
+
+managed:
+  title: Fully managed
+  tagline: We create and look after it for you.
+  price: £TBC
+  period: per month
+  badge: Hands-free
+  features:
+    - Everything in Self-managed
+    - We design and build your page from your price list
+    - Branding set up to match your business
+    - Updates made for you whenever you need them
+    - Seasonal and special-offer changes included
+    - Priority support

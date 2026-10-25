@@ -1,0 +1,47 @@
+# Demo client — Studio design, with navigation and a booking button.
+
+user:
+  login: faderepublic
+  email: crew@faderepublic.test
+  name: Fade Republic
+design: studio
+brand:
+  sm_brand_name: Fade Republic
+  sm_brand_tagline: Barbers since 2014
+  sm_currency_symbol: £
+  sm_header_cta_label: Book a chair
+  sm_header_cta_url: https://faderepublic.example/book
+  sm_header_sticky: true
+  sm_footer_address: |-
+    Unit 3, The Arches
+    Leeds LS1 4BR
+  sm_footer_phone: 0113 555 0193
+  sm_footer_hours: |-
+    Mon–Fri 9am – 8pm
+    Sat 9am – 6pm
+    Sun 10am – 4pm
+  sm_social_instagram: https://instagram.com/faderepublic
+  sm_social_tiktok: https://tiktok.com/@faderepublic
+menu:
+  - label: Home
+    url: https://faderepublic.example
+  - label: Barbers
+    url: https://faderepublic.example/barbers
+  - label: Shop
+    url: https://faderepublic.example/shop
+sections:
+  - title: Cuts
+    items:
+      - { label: Skin fade, price: 24, badge: Popular }
+      - { label: Scissor cut, price: 26 }
+      - { label: Clipper cut, description: One guard all over, price: 16 }
+      - { label: Kids cut, description: Under 12s, price: 15 }
+  - title: Beard
+    items:
+      - { label: Beard trim & line-up, price: 14 }
+      - { label: Hot towel shave, description: "Straight razor, hot towels, balm", price: 25, badge: Signature }
+  - title: Combos
+    description: Save when you book them together.
+    items:
+      - { label: Fade + beard, price: 34 }
+      - { label: The full works, description: "Cut, beard, hot towel and wash", price: 48, badge: Offer }

@@ -1,0 +1,117 @@
+# Brand — identity, colours, typography and currency for a client page.
+#
+# Field definitions are plain ACF settings. Keys are generated from the file
+# name and field name (field_sm_brand_<name>) so they can be omitted.
+# Colour and font fields left blank fall back to the selected design.
+#
+# Override this file by copying it to {theme}/satori-manifest/acf/brand.yaml.
+
+title: Brand
+screen:
+  tab: brand
+  label: Brand
+  icon: dashicons-art
+  description: Your logo, colours and fonts. Leave a colour or font empty to use the design's default.
+fields:
+  - type: tab
+    label: Identity
+
+  - name: sm_brand_name
+    label: Business name
+    type: text
+    instructions: Shown in the page header and browser tab.
+    required: true
+
+  - name: sm_brand_tagline
+    label: Tagline
+    type: text
+    instructions: A short line under your name, e.g. "Hair · Colour · Care".
+
+  - name: sm_brand_logo
+    label: Logo
+    type: image
+    return_format: id
+    preview_size: medium
+    library: uploadedTo
+    mime_types: jpg, jpeg, png, webp
+    instructions: Optional. A transparent PNG works best. Without a logo your business name is shown.
+
+  - name: sm_brand_logo_width
+    label: Logo width
+    type: number
+    append: px
+    default_value: 160
+    min: 40
+    max: 400
+
+  - name: sm_currency_symbol
+    label: Currency symbol
+    type: text
+    default_value: £
+    maxlength: 4
+    wrapper: { width: 50 }
+
+  - name: sm_currency_position
+    label: Symbol position
+    type: button_group
+    default_value: before
+    choices:
+      before: Before (£25)
+      after: After (25€)
+    wrapper: { width: 50 }
+
+  - type: tab
+    label: Colours
+
+  - name: sm_colour_background
+    label: Page background
+    type: color_picker
+    wrapper: { width: 33 }
+
+  - name: sm_colour_surface
+    label: Panels & cards
+    type: color_picker
+    wrapper: { width: 33 }
+
+  - name: sm_colour_text
+    label: Text
+    type: color_picker
+    wrapper: { width: 33 }
+
+  - name: sm_colour_muted
+    label: Secondary text
+    type: color_picker
+    wrapper: { width: 33 }
+
+  - name: sm_colour_accent
+    label: Accent
+    type: color_picker
+    instructions: Buttons, prices and highlights.
+    wrapper: { width: 33 }
+
+  - name: sm_colour_accent_text
+    label: Text on accent
+    type: color_picker
+    wrapper: { width: 33 }
+
+  - type: tab
+    label: Typography
+
+  - name: sm_font_heading
+    label: Heading font
+    type: select
+    allow_null: true
+    placeholder: Design default
+    ui: true
+    # Choices are populated from config/fonts.yaml.
+    choices: []
+    wrapper: { width: 50 }
+
+  - name: sm_font_body
+    label: Body font
+    type: select
+    allow_null: true
+    placeholder: Design default
+    ui: true
+    choices: []
+    wrapper: { width: 50 }

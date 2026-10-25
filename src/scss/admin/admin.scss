@@ -1,0 +1,17 @@
+// Satori Manifest — Admin stylesheet entry point
+//
+// One partial per admin area. Add new partials here as the plugin grows
+// rather than adding rules directly to this file.
+//
+// @package SatoriManifest
+// @author  Stephen Mason <steve@satori-digital.com>
+// @since   1.0.0
+
+@use "base";
+@use "home";
+@use "design";
+@use "branding";
+@use "clients";
+@use "applications";
+@use "meta-box";
+@use "client-chrome";

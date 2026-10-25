@@ -1,0 +1,15 @@
+# Sent to the applicant when staff decline an application (only if "notify" is ticked).
+# Placeholders: contact_name, business_name, reason.
+
+subject: Your application to {{site_name}}
+preheader: An update on your application for {{business_name}}.
+heading: An update on your application
+body: |
+  Hi {{contact_name}},
+
+  Thank you for your interest in {{site_name}}. Unfortunately we're unable to set up {{business_name}} at the moment.
+
+  {{reason}}
+
+  If you have any questions, just reply to this email.
+footer: You're receiving this because you registered on {{site_name}}.

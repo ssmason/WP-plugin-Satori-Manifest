@@ -1,0 +1,100 @@
+// Clients screen (staff).
+//
+// @package SatoriManifest
+// @since   2.0.0
+
+@use "variables" as *;
+
+.sm-clients-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 340px;
+	gap: $sm-space-lg;
+	align-items: start;
+
+	@media (max-width: 1200px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.sm-table {
+	width: 100%;
+	border-collapse: collapse;
+
+	th {
+		padding: 12px $sm-space-md;
+		border-bottom: 1px solid $sm-color-border;
+		background: $sm-color-bg;
+		color: $sm-color-text-light;
+		font-size: $sm-font-sm;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-align: left;
+		text-transform: uppercase;
+	}
+
+	td {
+		padding: 14px $sm-space-md;
+		border-bottom: 1px solid $sm-color-border;
+		vertical-align: top;
+	}
+
+	tr:last-child td {
+		border-bottom: 0;
+	}
+
+	&__name {
+		display: block;
+		color: $sm-ink;
+		font-size: 14px;
+	}
+
+	&__sub {
+		display: block;
+		color: $sm-color-text-light;
+		font-size: 12px;
+	}
+
+	&__url {
+		font-size: 12px;
+	}
+
+	&__actions {
+		text-align: right;
+		white-space: nowrap;
+
+		.button {
+			margin-left: 4px;
+		}
+	}
+}
+
+.sm-add-client {
+
+	.sm-field {
+		margin: 0 0 $sm-space-md;
+
+		label {
+			display: block;
+			margin-bottom: 4px;
+			font-weight: 600;
+		}
+
+		input[type="text"],
+		input[type="email"],
+		select {
+			width: 100%;
+			max-width: none;
+		}
+
+		&--inline {
+			display: flex;
+			align-items: center;
+			gap: $sm-space-sm;
+
+			label {
+				margin: 0;
+				font-weight: 400;
+			}
+		}
+	}
+}
