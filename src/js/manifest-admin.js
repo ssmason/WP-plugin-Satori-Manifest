@@ -108,6 +108,8 @@
 			}
 
 			return {
+				// Permanent id; empty for new sections (assigned on save).
+				id: section.dataset.smId || '',
 				title: valueOf(section, '.sm-section__title-input'),
 				description: valueOf(section, '.sm-section__description-input'),
 				sort_order: sectionIndex,

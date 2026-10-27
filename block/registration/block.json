@@ -7,12 +7,20 @@
 	"category": "widgets",
 	"icon": "id-alt",
 	"description": "Public sign-up form for new clients. Submissions arrive under Manifest → Applications for approval.",
-	"keywords": [ "register", "signup", "apply", "form" ],
+	"keywords": [
+		"register",
+		"signup",
+		"apply",
+		"form"
+	],
 	"textdomain": "satori-manifest",
 	"render": "file:./render.php",
+	"style": "file:../../build/css/registration.css",
 	"supports": {
 		"html": false,
 		"multiple": false,
-		"align": [ "wide" ]
+		"align": [
+			"wide"
+		]
 	}
 }

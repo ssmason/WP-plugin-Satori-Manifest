@@ -82,7 +82,7 @@ $satori_manifest_render_item = static function ( array $item ) use ( $satori_man
 $satori_manifest_render_section = static function ( array $section, bool $expanded ) use ( $satori_manifest_render_item ): void {
 	$items = isset( $section['items'] ) && is_array( $section['items'] ) ? $section['items'] : array();
 	?>
-	<section class="sm-section<?php echo $expanded ? '' : ' is-collapsed'; ?>">
+	<section class="sm-section<?php echo $expanded ? '' : ' is-collapsed'; ?>" data-sm-id="<?php echo esc_attr( (string) ( $section['id'] ?? '' ) ); ?>">
 		<header class="sm-section__head">
 			<button type="button" class="sm-section__toggle sm-icon-button" data-sm-action="section-toggle" aria-expanded="<?php echo $expanded ? 'true' : 'false'; ?>" aria-label="<?php esc_attr_e( 'Show or hide items', 'satori-manifest' ); ?>">
 				<span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>

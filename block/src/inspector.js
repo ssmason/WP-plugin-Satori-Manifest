@@ -216,11 +216,18 @@ const MANIFEST_QUERY = {
  * @param {Object}   props.attributes    Block attributes.
  * @param {Function} props.setAttributes Attribute setter.
  * @param {boolean}  props.isAuto        True when showing the page's own manifest automatically.
+ * @param {Array}    props.sections      Sections of the displayed price lists (for the section picker).
  * @return {JSX.Element} Inspector controls panel.
  */
-export default function Inspector({ attributes, setAttributes, isAuto }) {
+export default function Inspector({
+	attributes,
+	setAttributes,
+	isAuto,
+	sections = [],
+}) {
 	const {
 		manifestIds,
+		excludedSectionIds = [],
 		layout,
 		colorScheme,
 		showPrices,
@@ -315,6 +322,62 @@ export default function Inspector({ attributes, setAttributes, isAuto }) {
 							}
 						/>
 					))}
+			</PanelBody>
+
+			<PanelBody
+				title={__('Sections to hide', 'satori-manifest')}
+				initialOpen={excludedSectionIds.length > 0}
+			>
+				<p className="satori-manifest-auto-note">
+					{excludedSectionIds.length
+						? __(
+								'Ticked sections are hidden in this block. Add another price list block to show them with a different layout.',
+								'satori-manifest'
+							)
+						: __(
+								'All sections are shown. Tick a section to hide it here — e.g. hide drinks in this block and show them in another block with two columns.',
+								'satori-manifest'
+							)}
+				</p>
+				{sections.length === 0 && (
+					<p>
+						{__(
+							'Choose a price list to pick its sections.',
+							'satori-manifest'
+						)}
+					</p>
+				)}
+				{sections
+					.filter((section) => section.id)
+					.map((section) => (
+						<CheckboxControl
+							key={section.id}
+							label={
+								section.title ||
+								__('(untitled section)', 'satori-manifest')
+							}
+							checked={excludedSectionIds.includes(section.id)}
+							onChange={(checked) =>
+								setAttributes({
+									excludedSectionIds: checked
+										? [...excludedSectionIds, section.id]
+										: excludedSectionIds.filter(
+												(id) => id !== section.id
+											),
+								})
+							}
+						/>
+					))}
+				{excludedSectionIds.length > 0 && (
+					<Button
+						variant="link"
+						onClick={() =>
+							setAttributes({ excludedSectionIds: [] })
+						}
+					>
+						{__('Show all sections', 'satori-manifest')}
+					</Button>
+				)}
 			</PanelBody>
 
 			<PanelBody

@@ -8,7 +8,6 @@
  *   wp satori-manifest client create <name> <email> [--login=<login>] [--design=<slug>] [--password=<password>]
  *   wp satori-manifest client list
  *   wp satori-manifest designs
- *   wp satori-manifest site install [--reset]
  *   wp satori-manifest email test <template> <to>
  *
  * Demo clients are defined in config/demo/*.yaml (overridable from a theme).
@@ -169,41 +168,6 @@ class Cli {
 		}
 
 		\WP_CLI::success( sprintf( 'Created client #%d — %s', $user_id, get_permalink( Client_Repository::page_id( $user_id ) ) ) );
-	}
-
-	/**
-	 * Installs the public site pages (Home + Register) and sets the front page.
-	 *
-	 * ## OPTIONS
-	 *
-	 * <action>
-	 * : "install".
-	 *
-	 * [--reset]
-	 * : Rewrite the pages' content from the plugin templates (a revision is kept).
-	 *
-	 * ## EXAMPLES
-	 *
-	 *     wp satori-manifest site install
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.1.0
-	 * @param  array<int,string>    $args        Positional args.
-	 * @param  array<string,string> $assoc_args  Named args.
-	 * @return void
-	 */
-	public function site( array $args, array $assoc_args ): void {
-		if ( 'install' !== ( $args[0] ?? '' ) ) {
-			\WP_CLI::error( 'Usage: wp satori-manifest site install [--reset]' );
-		}
-
-		$ids = Site_Installer::install( isset( $assoc_args['reset'] ) );
-
-		foreach ( $ids as $key => $id ) {
-			\WP_CLI::log( sprintf( '%-9s #%d  %s', $key, $id, get_permalink( $id ) ) );
-		}
-
-		\WP_CLI::success( 'Site pages ready. Home is the front page.' );
 	}
 
 	/**

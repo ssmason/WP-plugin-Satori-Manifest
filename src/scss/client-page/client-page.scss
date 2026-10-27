@@ -6,7 +6,7 @@
 // tokens and add their own character; brand settings override tokens again
 // via inline CSS variables.
 //
-// Root selector is .sm-client-page (the body); .sm-site-page shares the base. Inside the block editor the
+// Root selector is .sm-client-page (the body). Inside the block editor the
 // same rules are rescoped to .editor-styles-wrapper by Editor::scoped_css().
 //
 // @package SatoriManifest
@@ -17,9 +17,7 @@ $breakpoint-nav: 760px;
 
 // ─── Tokens ──────────────────────────────────────────────────────────────────
 
-// Shared with the public site pages (.sm-site-page), which reuse this base.
-.sm-client-page,
-.sm-site-page {
+.sm-client-page {
 	--sm-background: #fff;
 	--sm-surface: #f5f5f4;
 	--sm-text: #1c1c1e;
@@ -548,8 +546,7 @@ a.sm-button,
 // Respect reduced motion.
 @media (prefers-reduced-motion: reduce) {
 
-	.sm-client-page *,
-	.sm-site-page * {
+	.sm-client-page * {
 		transition: none !important; // stylelint-disable-line declaration-no-important
 	}
 }

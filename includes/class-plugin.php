@@ -10,7 +10,6 @@
  *   manifest/  price-list CPT, meta box, block and block patterns
  *   clients/   client role, provisioning, data access and isolation rules
  *   designs/   design registry
- *   site/      public site pages (home, register) — template, permissions, installer
  *   registration/ public registration form, applications and their admin screen
  *   mail/      templated email with wp_mail / Brevo transports
  *   fields/    ACF field groups loaded from YAML
@@ -86,6 +85,7 @@ class Plugin {
 
 		// Manifest.
 		add_action( 'init', array( Post_Types::class, 'register' ) );
+		add_action( 'init', array( Migrations::class, 'maybe_run' ), 20 );
 		add_action( 'init', array( Block::class, 'register' ) );
 		add_action( 'init', array( Patterns::class, 'register' ) );
 		add_action( 'add_meta_boxes', array( Meta_Box::class, 'register' ) );
@@ -107,7 +107,6 @@ class Plugin {
 
 		// Front end and editor.
 		Client_Page::register();
-		Site_Page::register();
 		Editor::register();
 
 		// Admin.

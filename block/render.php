@@ -11,6 +11,9 @@
  *
  * Manifest resolution:
  *   - manifestIds set   → those manifests.
+ *   - excludedSectionIds set → those sections (by permanent id) are hidden, so
+ *                              several blocks can show different slices with
+ *                              different layouts; new sections show by default.
  *   - manifestIds empty → on a client page, that client's own manifest.
  *   - On a client page only manifests owned by that client are rendered,
  *     so a block can never display another client's prices.
@@ -164,6 +167,24 @@ foreach ( $manifest_ids as $manifest_post_id ) {
 	}
 
 	$manifests[] = Manifest_Repository::get_sections( $manifest_post_id );
+}
+
+// Optional "sections to hide": drop the excluded sections from this block.
+$excluded_ids = isset( $attributes['excludedSectionIds'] ) && is_array( $attributes['excludedSectionIds'] )
+	? array_values( array_filter( array_map( static fn( $id ): string => \SatoriManifest\Sanitizer::section_id( (string) $id ), $attributes['excludedSectionIds'] ) ) )
+	: array();
+
+if ( $excluded_ids ) {
+	$manifests = array_values(
+		array_filter(
+			array_map(
+				static fn( array $sections ): array => array_values(
+					array_filter( $sections, static fn( $section ): bool => ! in_array( (string) ( $section['id'] ?? '' ), $excluded_ids, true ) )
+				),
+				$manifests
+			)
+		)
+	);
 }
 
 // No manifest to show: a styled demo in editor/REST previews, nothing on the front end.

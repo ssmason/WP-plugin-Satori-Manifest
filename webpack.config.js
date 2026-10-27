@@ -21,7 +21,13 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-const STYLE_ENTRIES = ['admin', 'editor', 'frontend', 'client-page', 'site'];
+const STYLE_ENTRIES = [
+	'admin',
+	'editor',
+	'frontend',
+	'client-page',
+	'registration',
+];
 
 /**
  * Builds the entry map, discovering designs from the designs/ folder.

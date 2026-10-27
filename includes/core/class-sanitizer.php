@@ -34,9 +34,13 @@ class Sanitizer {
 	/**
 	 * Sanitizes a decoded sections array.
 	 *
-	 * Rebuilds the array with only expected keys (title, description, items),
-	 * re-numbers sort_order from the array position (honouring client-side
-	 * reordering), and delegates item sanitization to sanitize_items().
+	 * Rebuilds the array with only expected keys (id, title, description,
+	 * items), re-numbers sort_order from the array position (honouring
+	 * client-side reordering), and delegates item sanitization to
+	 * sanitize_items().
+	 *
+	 * Every section keeps a permanent id so blocks can reference it after
+	 * reordering or renaming; new sections (and duplicates) get a fresh one.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  1.0.0
@@ -44,18 +48,26 @@ class Sanitizer {
 	 * @return array<int,array<string,mixed>>             Sanitized sections array.
 	 */
 	public static function sanitize_sections( array $sections ): array {
-		$out = array();
+		$out  = array();
+		$seen = array();
 
 		foreach ( $sections as $section ) {
 			if ( ! is_array( $section ) ) {
 				continue;
 			}
 
+			$id = self::section_id( (string) ( $section['id'] ?? '' ) );
+			if ( '' === $id || isset( $seen[ $id ] ) ) {
+				$id = self::new_section_id();
+			}
+			$seen[ $id ] = true;
+
 			$raw_items = isset( $section['items'] ) && is_array( $section['items'] )
 				? $section['items']
 				: array();
 
 			$out[] = array(
+				'id'          => $id,
 				'title'       => isset( $section['title'] ) ? sanitize_text_field( (string) $section['title'] ) : '',
 				'description' => isset( $section['description'] ) ? sanitize_textarea_field( (string) $section['description'] ) : '',
 				'sort_order'  => count( $out ),
@@ -64,6 +76,29 @@ class Sanitizer {
 		}
 
 		return $out;
+	}
+
+	/**
+	 * Validates a section id ("s_" followed by 8 lowercase hex characters).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  2.2.0
+	 * @param  string $id  Candidate id.
+	 * @return string  The id, or '' when invalid.
+	 */
+	public static function section_id( string $id ): string {
+		return preg_match( '/^s_[a-f0-9]{8}$/', $id ) ? $id : '';
+	}
+
+	/**
+	 * Generates a new section id.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  2.2.0
+	 * @return string
+	 */
+	public static function new_section_id(): string {
+		return 's_' . substr( md5( wp_generate_uuid4() ), 0, 8 );
 	}
 
 	/**

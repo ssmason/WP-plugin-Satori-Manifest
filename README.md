@@ -42,7 +42,6 @@ wp satori-manifest demo remove
 Other commands:
 
 ```bash
-wp satori-manifest site install [--reset]   # Home + Register pages, Home as front page
 wp satori-manifest email test application-approved you@example.com
 wp satori-manifest client create "Blue Door Barbers" hello@bluedoor.test --design=studio
 wp satori-manifest client list
@@ -98,16 +97,26 @@ current client page's own manifest, and on a client page it only ever renders ma
 owned by that client. Layouts: `single-column`, `two-column`, `card-style`, `minimal`,
 `leaders`. Colour scheme `brand` follows the page design.
 
-**Public site & registration** — the Home and Register pages use the "Satori site page"
-template (plugin-rendered, theme-independent, `build/css/site.css`) and are editable by
-administrators only. Their starter content lives in `templates/site-content/`. The
-Register page holds the `satori-manifest/registration-form` block; submissions become
-private `sm_application` posts (nonce, honeypot, minimum fill time and a per-IP rate
-limit guard the form). Under **Manifest → Applications** an administrator approves —
-creating the username, a strong random password, the page/manifest/menu, branding
-pre-filled from the form — or declines. The client is emailed their username and a
-secure set-password link (passwords are never emailed). Pages are labelled in the admin
-Pages list ("Client page — login · design", "Site page").
+**Section picker** — every section has a permanent `id` (`s_xxxxxxxx`, assigned on save and
+by the 2.2.0 migration). The block's "Sections to hide" setting (`excludedSectionIds`) hides
+chosen sections in that block, so a page can mix layouts — e.g. one block hides the drinks
+(food, single column) and a second block hides the food (drinks, two columns). Empty means
+every section is shown, and sections added later appear automatically.
+
+**Registration** — the `satori-manifest/registration-form` block renders the public
+sign-up form (plans, business details). Submissions become private `sm_application`
+posts (nonce, honeypot, minimum fill time and a per-IP rate limit guard the form). Under
+**Manifest → Applications** an administrator approves — creating the username, a strong
+random password, the page/manifest/menu, branding pre-filled from the form — or declines.
+The client is emailed their username and a secure set-password link (passwords are never
+emailed). Pages are labelled in the admin Pages list.
+
+The block ships complete styles (`build/css/registration.css`) driven by `--sm-form-*`
+custom properties, so it works in any theme; a theme restyles it by setting those
+variables (`--sm-form-accent`, `--sm-form-font`, `--sm-form-radius`, …).
+
+The public marketing pages themselves (Home, Register page layout, site header and
+footer) belong to the **theme**, not this plugin.
 
 **Email** — `Mailer::send( $template, $to, $vars )` renders `config/emails/{template}.yaml`
 into `templates/email/layout.php`. Transport: Brevo API when `BREVO_API_KEY` is set
@@ -176,7 +185,6 @@ includes/
   manifest/                Post_Types, Manifest_Repository, Meta_Box, Block, Patterns
   clients/                 Client_Role, Client_Repository, Provisioner, Access_Control
   designs/                 Design_Registry
-  site/                    Site_Page, Site_Installer (public home/register pages)
   registration/            Registration_Form, Applications, Applications_Screen
   mail/                    Mailer, Brevo_Transport
   fields/                  Field_Loader (YAML → ACF local field groups)
@@ -185,9 +193,7 @@ includes/
                            Design_Screen, Branding_Screen, Clients_Screen
   cli/                     Cli (wp satori-manifest …)
 admin/views/               screen templates
-templates/                 client-page.php, site-page.php, parts/, email/, site-content/,
-                           registration-form.php
-assets/site/               static images for the site pages
+templates/                 client-page.php, parts/, email/, registration-form.php
 block/                     block.json, render.php, src/ (editor JS)
 designs/                   one folder per design
 config/                    YAML config (acf/, fonts.yaml, demo/)
@@ -203,6 +209,7 @@ src/js/, src/scss/         sources → build/ (never edit build/)
 ```json
 [
   {
+    "id": "s_d4d1d846",
     "title": "Colour",
     "description": "Skin test required 48 hours before any colour service.",
     "sort_order": 0,

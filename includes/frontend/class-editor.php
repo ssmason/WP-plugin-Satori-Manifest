@@ -44,6 +44,57 @@ class Editor {
 	public static function register(): void {
 		add_action( 'enqueue_block_assets', array( self::class, 'enqueue_canvas_styles' ) );
 		add_action( 'enqueue_block_editor_assets', array( self::class, 'localize_block_data' ) );
+		add_filter( 'block_editor_settings_all', array( self::class, 'strip_theme_styles' ), 99, 2 );
+	}
+
+	/**
+	 * Removes the active theme's editor styles when editing a client page.
+	 *
+	 * Mirrors Assets::dequeue_theme_assets() on the front end: client pages
+	 * are styled only by the plugin, so the editor canvas shows the client's
+	 * design rather than theme typography and colours. Theme styles are
+	 * recognised by type ('theme') or by referencing the theme's URL.
+	 * Hooked late to 'block_editor_settings_all'.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  2.2.0
+	 * @param  array<string,mixed>      $settings  Editor settings.
+	 * @param  \WP_Block_Editor_Context $context   Editor context.
+	 * @return array<string,mixed>
+	 */
+	public static function strip_theme_styles( array $settings, \WP_Block_Editor_Context $context ): array {
+		if ( ! $context->post instanceof \WP_Post || ! Client_Repository::is_client_page( $context->post->ID ) || empty( $settings['styles'] ) ) {
+			return $settings;
+		}
+
+		$theme_urls = array_unique( array( get_template_directory_uri(), get_stylesheet_directory_uri() ) );
+
+		$settings['styles'] = array_values(
+			array_filter(
+				(array) $settings['styles'],
+				static function ( $style ) use ( $theme_urls ): bool {
+					if ( ! is_array( $style ) ) {
+						return true;
+					}
+
+					if ( 'theme' === ( $style['__unstableType'] ?? '' ) ) {
+						return false;
+					}
+
+					$haystack = (string) ( $style['css'] ?? '' ) . ' ' . (string) ( $style['baseURL'] ?? '' );
+
+					foreach ( $theme_urls as $theme_url ) {
+						if ( str_contains( $haystack, $theme_url ) ) {
+							return false;
+						}
+					}
+
+					return true;
+				}
+			)
+		);
+
+		return $settings;
 	}
 
 	/**

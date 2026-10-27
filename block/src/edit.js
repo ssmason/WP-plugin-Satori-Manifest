@@ -226,7 +226,7 @@ function Manifest({ sections, attributes }) {
  * @return {JSX.Element} The editor UI for this block.
  */
 export default function Edit({ attributes, setAttributes }) {
-	const { manifestIds } = attributes;
+	const { manifestIds, excludedSectionIds = [] } = attributes;
 	const { defaultManifestId } = editorData();
 
 	const ids =
@@ -274,11 +274,26 @@ export default function Edit({ attributes, setAttributes }) {
 		[manifestIds, defaultManifestId]
 	);
 
+	// Every section of the resolved price lists, for the section picker.
+	const allSections = manifests.flatMap((manifest) =>
+		parseSections(manifest.meta?._satori_manifest_sections)
+	);
+
+	/**
+	 * Removes this block's hidden sections from one manifest's sections.
+	 *
+	 * @param {Array} sections Sections of one manifest.
+	 * @return {Array} Sections to display.
+	 */
+	const pick = (sections) =>
+		sections.filter((section) => !excludedSectionIds.includes(section.id));
+
 	const inspector = (
 		<Inspector
 			attributes={attributes}
 			setAttributes={setAttributes}
 			isAuto={isAuto}
+			sections={allSections}
 		/>
 	);
 
@@ -324,8 +339,10 @@ export default function Edit({ attributes, setAttributes }) {
 				{manifests.map((manifest) => (
 					<Manifest
 						key={manifest.id}
-						sections={parseSections(
-							manifest.meta?._satori_manifest_sections
+						sections={pick(
+							parseSections(
+								manifest.meta?._satori_manifest_sections
+							)
 						)}
 						attributes={attributes}
 					/>

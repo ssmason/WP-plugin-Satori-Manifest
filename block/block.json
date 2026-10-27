@@ -2,7 +2,7 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
 	"name": "satori-manifest/price-list",
-	"version": "2",
+	"version": "3",
 	"title": "Manifest",
 	"category": "widgets",
 	"icon": "list-view",
@@ -29,6 +29,14 @@
 			"description": "IDs of the manifest posts to display. Empty = the current client page’s own manifest.",
 			"items": {
 				"type": "number"
+			},
+			"default": []
+		},
+		"excludedSectionIds": {
+			"type": "array",
+			"description": "Ids of sections to hide in this block. Empty = show every section (new sections appear automatically).",
+			"items": {
+				"type": "string"
 			},
 			"default": []
 		},
