@@ -14,7 +14,10 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Fields;
+
+use SatoriManifest\Branding\Fonts;
+use SatoriManifest\Core\Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

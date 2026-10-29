@@ -1,0 +1,13 @@
+# Sent to staff about billing events: new subscriptions, failed payments, cancellations.
+# Placeholders: event, business_name, email, details, review_url.
+
+subject: "{{event}}: {{business_name}}"
+preheader: "{{event}} — {{business_name}} ({{email}})."
+heading: "{{event}}"
+details: |
+  Client: {{business_name}}
+  Email: {{email}}
+  Details: {{details}}
+button_label: Open Payments
+button_url: "{{review_url}}"
+footer: Sent by {{site_name}}.

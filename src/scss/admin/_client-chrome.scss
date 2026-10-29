@@ -29,6 +29,136 @@
 	}
 }
 
-#adminmenu .toplevel_page_satori-manifest-home .wp-menu-image::before {
-	color: #a5b4fc;
+// ─── Portal branding ─────────────────────────────────────────────────────────
+//
+// Clients get a light, branded sidebar with the portal logo on top, a dark
+// admin bar and ink/amber buttons. Colours come from --sm-portal-* (printed
+// by Assets from Manifest → Settings), with the Satori palette as fallback.
+
+body.is-satori-client {
+
+	#wpadminbar {
+		background: var(--sm-portal-dark, $sm-ink);
+	}
+
+	#adminmenuback,
+	#adminmenuwrap,
+	#adminmenu {
+		background: #fff;
+	}
+
+	#adminmenuback {
+		border-right: 1px solid $sm-color-border;
+	}
+
+	// Logo above the menu (hidden when the menu is folded).
+	#adminmenuwrap::before {
+		content: "";
+		display: block;
+		height: 64px;
+		margin: 0 0 8px;
+		padding: 16px;
+		border-bottom: 1px solid $sm-color-border;
+		background: var(--sm-portal-logo) center / auto 64px no-repeat content-box;
+	}
+
+	&.folded #adminmenuwrap::before {
+		display: none;
+	}
+
+	#adminmenu {
+		margin-top: 0;
+
+		a {
+			color: $sm-ink;
+		}
+
+		div.wp-menu-image::before {
+			color: #5b6b76;
+		}
+
+		li.menu-top:hover,
+		li.opensub > a.menu-top,
+		li > a.menu-top:focus {
+			background: $sm-color-bg;
+			color: $sm-ink;
+
+			div.wp-menu-image::before {
+				color: $sm-color-primary;
+			}
+		}
+
+		li.current a.menu-top,
+		li.wp-has-current-submenu a.wp-has-current-submenu,
+		li.wp-has-current-submenu .wp-submenu .wp-submenu-head {
+			background: var(--sm-portal-accent, $sm-amber);
+			color: var(--sm-portal-accent-text, $sm-ink);
+			font-weight: 600;
+
+			div.wp-menu-image::before {
+				color: var(--sm-portal-accent-text, $sm-ink);
+			}
+		}
+
+		li.current a.menu-top::after,
+		li.wp-has-current-submenu a.wp-has-current-submenu::after {
+			display: none;
+		}
+
+		.wp-submenu,
+		.wp-has-current-submenu .wp-submenu {
+			background: $sm-color-bg;
+
+			a {
+				color: $sm-ink;
+			}
+		}
+	}
+
+	#collapse-button {
+		color: #5b6b76;
+	}
+
+	// Primary buttons in the brand's dark colour.
+	.wrap .button-primary {
+		border-color: var(--sm-portal-dark, $sm-ink);
+		background: var(--sm-portal-dark, $sm-ink);
+		color: #fff;
+
+		&:hover,
+		&:focus {
+			border-color: $sm-ink-soft;
+			background: $sm-ink-soft;
+			color: #fff;
+		}
+	}
+}
+
+// Secondary buttons on plugin screens: ink outline instead of WordPress blue.
+.sm-admin .button:not(.button-primary):not(.sm-qr-card__pdf),
+.sm-admin .button-link {
+	border-color: $sm-ink;
+	color: $sm-ink;
+
+	&:hover,
+	&:focus {
+		border-color: $sm-color-primary;
+		color: $sm-color-primary;
+	}
+}
+
+.sm-admin .button-link {
+	border: 0;
+}
+
+// Plugin screens for staff use the same buttons.
+.sm-admin .button-primary {
+	border-color: $sm-ink;
+	background: $sm-ink;
+
+	&:hover,
+	&:focus {
+		border-color: $sm-ink-soft;
+		background: $sm-ink-soft;
+	}
 }

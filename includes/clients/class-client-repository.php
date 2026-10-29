@@ -14,7 +14,10 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Clients;
+
+use SatoriManifest\Designs\Design_Registry;
+use SatoriManifest\Manifest\Post_Types;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

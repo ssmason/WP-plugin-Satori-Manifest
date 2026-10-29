@@ -6,7 +6,7 @@
  *
  *   1. The message is built from a YAML template in config/emails/{name}.yaml
  *      (subject, heading, body, optional button) with {{placeholders}}, and
- *      wrapped in templates/email/layout.php.
+ *      wrapped in templates/email/layout.php (see Email_Builder).
  *   2. It is delivered by the active transport:
  *        - "brevo"   when a Brevo API key is configured (see Brevo_Transport),
  *        - "wp_mail" otherwise (or whatever SMTP plugin the site uses).
@@ -21,7 +21,11 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Mail;
+
+use SatoriManifest\Branding\Portal_Brand;
+use SatoriManifest\Core\Env;
+use SatoriManifest\Core\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -49,7 +53,7 @@ class Mailer {
 	 * @return array{template:string,to:string,subject:string,transport:string,sent:bool,error:string,time:int}
 	 */
 	public static function send( string $template, string $to, array $vars = array() ): array {
-		$message   = self::build( $template, $vars );
+		$message   = Email_Builder::build( $template, $vars );
 		$transport = self::transport();
 		$result    = array(
 			'template'  => $template,
@@ -97,6 +101,7 @@ class Mailer {
 					array(
 						'Content-Type: text/html; charset=UTF-8',
 						sprintf( 'From: %s <%s>', self::from_name(), self::from_email() ),
+						sprintf( 'Reply-To: %s', Portal_Brand::support_email() ),
 					)
 				),
 				'error' => '',
@@ -111,76 +116,6 @@ class Mailer {
 		$result['error'] = (string) $delivery['error'];
 
 		return self::log( $result );
-	}
-
-	/**
-	 * Builds subject, HTML and plain-text bodies from a template.
-	 *
-	 * Template keys: subject, preheader, heading, body (paragraphs separated
-	 * by blank lines), button_label, button_url, footer. Values may contain
-	 * {{placeholders}} which are replaced (and HTML-escaped in the HTML part).
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.1.0
-	 * @param  string               $template  Template name.
-	 * @param  array<string,string> $vars      Placeholder values.
-	 * @return array{subject:string,html:string,text:string}
-	 */
-	public static function build( string $template, array $vars = array() ): array {
-		$config = Config::get( 'emails/' . sanitize_file_name( $template ) . '.yaml' );
-
-		$vars = array_merge(
-			array(
-				'site_name' => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
-				'site_url'  => home_url( '/' ),
-				'login_url' => wp_login_url(),
-				'year'      => gmdate( 'Y' ),
-			),
-			array_map( 'strval', $vars )
-		);
-
-		$fill = static function ( string $text ) use ( $vars ): string {
-			return (string) preg_replace_callback(
-				'/\{\{\s*([a-z0-9_]+)\s*\}\}/i',
-				static fn( array $m ): string => $vars[ $m[1] ] ?? '',
-				$text
-			);
-		};
-
-		$subject = trim( $fill( (string) ( $config['subject'] ?? '' ) ) );
-
-		$satori_manifest_email = array(
-			'preheader'    => $fill( (string) ( $config['preheader'] ?? '' ) ),
-			'heading'      => $fill( (string) ( $config['heading'] ?? '' ) ),
-			'paragraphs'   => array_values( array_filter( array_map( 'trim', preg_split( '/\n\s*\n/', $fill( (string) ( $config['body'] ?? '' ) ) ) ) ) ),
-			'button_label' => $fill( (string) ( $config['button_label'] ?? '' ) ),
-			'button_url'   => $fill( (string) ( $config['button_url'] ?? '' ) ),
-			'footer'       => $fill( (string) ( $config['footer'] ?? '' ) ),
-			'site_name'    => $vars['site_name'],
-			'site_url'     => $vars['site_url'],
-		);
-
-		ob_start();
-		require SATORI_MANIFEST_PATH . 'templates/email/layout.php';
-		$html = (string) ob_get_clean();
-
-		$text = implode(
-			"\n\n",
-			array_filter(
-				array_merge(
-					array( $satori_manifest_email['heading'] ),
-					$satori_manifest_email['paragraphs'],
-					array( '' !== $satori_manifest_email['button_url'] ? $satori_manifest_email['button_label'] . ': ' . $satori_manifest_email['button_url'] : '' ),
-					array( $satori_manifest_email['footer'] )
-				)
-			)
-		);
-
-		return array(
-			'subject' => $subject,
-			'html'    => $html,
-			'text'    => $text,
-		);
 	}
 
 	/**
@@ -213,7 +148,7 @@ class Mailer {
 	 * @return string
 	 */
 	public static function from_email(): string {
-		$from = self::setting( 'SATORI_MANIFEST_MAIL_FROM' );
+		$from = Env::get( 'SATORI_MANIFEST_MAIL_FROM' );
 		return is_email( $from ) ? $from : (string) get_option( 'admin_email' );
 	}
 
@@ -225,12 +160,14 @@ class Mailer {
 	 * @return string
 	 */
 	public static function from_name(): string {
-		$name = self::setting( 'SATORI_MANIFEST_MAIL_FROM_NAME' );
+		$name = Env::get( 'SATORI_MANIFEST_MAIL_FROM_NAME' );
 		return '' !== $name ? $name : wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
 	}
 
 	/**
 	 * Returns the addresses that receive staff notifications.
+	 *
+	 * Manifest → Settings "Notify staff at", else the site admin email.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  2.1.0
@@ -243,24 +180,10 @@ class Mailer {
 		 * @since 2.1.0
 		 * @param array<int,string> $emails  Email addresses.
 		 */
-		return array_filter( (array) apply_filters( 'satori_manifest_staff_recipients', array( (string) get_option( 'admin_email' ) ) ), 'is_email' );
-	}
+		$configured = array_filter( array_map( 'trim', explode( ',', (string) Settings::get( 'staff_emails' ) ) ), 'is_email' );
+		$emails     = $configured ? $configured : array( (string) get_option( 'admin_email' ) );
 
-	/**
-	 * Reads a setting from a PHP constant or an environment variable.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.1.0
-	 * @param  string $name  Constant / variable name.
-	 * @return string
-	 */
-	public static function setting( string $name ): string {
-		if ( defined( $name ) ) {
-			return trim( (string) constant( $name ) );
-		}
-
-		$value = getenv( $name );
-		return false === $value ? '' : trim( (string) $value );
+		return array_values( array_filter( (array) apply_filters( 'satori_manifest_staff_recipients', $emails ), 'is_email' ) );
 	}
 
 	/**

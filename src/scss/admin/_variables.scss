@@ -4,19 +4,22 @@
 // @author  Stephen Mason <steve@satori-digital.com>
 // @since   1.0.0
 
-// Colours
-$sm-ink:              #1f2340;
-$sm-color-primary:    #4f46e5;
-$sm-color-primary-dk: #3730a3;
-$sm-color-primary-lt: #eef0ff;
+// Colours — Satori palette: ink navy with amber highlights. The client portal
+// also reads --sm-portal-* custom properties (Manifest → Settings) at runtime.
+$sm-ink:              #0b1620;
+$sm-ink-soft:         #132632;
+$sm-amber:            #f2a65a;
+$sm-color-primary:    #8a4f0f;
+$sm-color-primary-dk: #5f360a;
+$sm-color-primary-lt: #fdf0e1;
 $sm-color-danger:     #d63638;
 $sm-color-danger-lt:  #fdecec;
 $sm-color-success:    #12865a;
 $sm-color-success-lt: #e5f6ee;
 $sm-color-warning:    #b45309;
 $sm-color-warning-lt: #fdf3e2;
-$sm-color-border:     #e3e5ee;
-$sm-color-bg:         #f6f7fb;
+$sm-color-border:     #e4e0d8;
+$sm-color-bg:         #f7f5f1;
 $sm-color-card:       #fff;
 $sm-color-text:       #1d2327;
 $sm-color-text-light: #646970;
@@ -45,4 +48,4 @@ $sm-font-lg:   15px;
 // Shape
 $sm-radius:    6px;
 $sm-radius-lg: 12px;
-$sm-shadow:    0 1px 2px rgba(31, 35, 64, 0.05), 0 8px 24px -12px rgba(31, 35, 64, 0.18);
+$sm-shadow:    0 1px 2px rgba(11, 22, 32, 0.05), 0 8px 24px -12px rgba(11, 22, 32, 0.18);

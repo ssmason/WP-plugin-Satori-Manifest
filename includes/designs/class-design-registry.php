@@ -18,7 +18,10 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Designs;
+
+use SatoriManifest\Core\Config;
+use SatoriManifest\Core\Yaml;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

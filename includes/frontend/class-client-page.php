@@ -3,7 +3,7 @@
  * Client page rendering.
  *
  * Client pages are rendered by the plugin's own full-page template
- * (templates/client-page.php) rather than the active theme, so a client's
+ * (templates/client-page/page.php) rather than the active theme, so a client's
  * page looks the same whatever theme the site runs. Theme stylesheets and
  * scripts are removed on these pages and replaced by the base page styles,
  * the selected design's stylesheet, web fonts and the brand variables.
@@ -18,7 +18,13 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Frontend;
+
+use SatoriManifest\Admin\Assets;
+use SatoriManifest\Branding\Brand;
+use SatoriManifest\Branding\Fonts;
+use SatoriManifest\Clients\Client_Repository;
+use SatoriManifest\Designs\Design_Registry;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -131,7 +137,7 @@ class Client_Page {
 	 * @return string
 	 */
 	public static function template_include( string $template ): string {
-		return self::current_page_id() ? SATORI_MANIFEST_PATH . 'templates/client-page.php' : $template;
+		return self::current_page_id() ? SATORI_MANIFEST_PATH . 'templates/client-page/page.php' : $template;
 	}
 
 	/**

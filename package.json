@@ -1,20 +1,22 @@
 {
 	"name": "satori-manifest",
-	"version": "2.0.0",
+	"version": "3.0.0",
 	"description": "Hosted, branded price-list pages for QR-code clients.",
 	"author": "Stephen Mason <steve@satori-digital.com>",
 	"license": "GPL-2.0-or-later",
 	"scripts": {
 		"build": "webpack --mode production",
 		"dev": "webpack --mode development --watch",
-		"lint:js": "eslint \"block/src/**/*.js\" \"src/js/**/*.js\" webpack.config.js",
+		"lint:js": "eslint \"src/blocks/**/*.js\" \"src/js/**/*.js\" webpack.config.js",
 		"lint:scss": "stylelint \"src/scss/**/*.scss\" \"designs/**/*.scss\"",
 		"lint:php": "./vendor/bin/phpcs --standard=.phpcs.xml .",
 		"pot": "wp i18n make-pot . languages/satori-manifest.pot",
-		"test:php": "wp-env run tests-cli bash -c 'cd /var/www/html/wp-content/plugins/wp-satori-manifest && composer install --no-interaction --quiet && phpunit'",
+		"test:php": "docker exec -w /var/www/html/web/app/plugins/satori-manifest qr-code-manager-php-1 vendor/bin/phpunit",
 		"cypress:open": "cypress open",
 		"cypress:run": "cypress run",
-		"lint": "npm run lint:php && npm run lint:js && npm run lint:scss"
+		"lint": "npm run lint:php && npm run lint:js && npm run lint:scss",
+		"test": "npm run test:php",
+		"check:classes": "docker exec qr-code-manager-php-1 vendor/bin/wp eval-file web/app/plugins/satori-manifest/tests/tools/check-class-references.php --allow-root"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.24.0",

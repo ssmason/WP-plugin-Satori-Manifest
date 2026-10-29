@@ -1,33 +1,54 @@
-# Pricing plans offered on the registration form.
+# Pricing plans offered on the registration form and charged through Stripe.
 #
-# The key (e.g. self-managed) is what is stored on the application.
-# price / period are display text only — no payment is taken yet.
-# Override by copying to {theme}/satori-manifest/plans.yaml.
+# currency   ISO 4217 code used for display and for Stripe (eur, gbp, usd…).
+# plans      Keyed by slug — the slug is stored on applications and subscriptions.
+#   prices         Amount per billing interval, in whole currency units (12 = €12.00).
+#                  Offer both "month" and "year" to show the Monthly / Yearly toggle.
+#   stripe_prices  Optional Stripe Price IDs (price_…) per interval. Leave empty to
+#                  let the plugin create the price on the fly at checkout — no setup
+#                  in the Stripe dashboard needed.
+#
+# Estimates (review before going live): hosting for every client page runs on one
+# WordPress site (≈ €20–40 a month in total), Stripe takes ≈ 1.5% + €0.25 per EU card
+# payment, and printed codes cost a few euros per client. Yearly = two months free.
+#
+# Override by copying this file to {theme}/satori-manifest/plans.yaml.
 
-self-managed:
-  title: Self-managed
-  tagline: You build and update your own page.
-  price: £TBC
-  period: per month
-  features:
-    - Your own QR code, printed and posted to you
-    - Choice of five professional designs
-    - Your logo, colours, fonts and contact details
-    - Update prices and services any time, from any device
-    - Optional navigation back to your website
-    - Secure private login just for your page
-    - Email support
+currency: eur
 
-managed:
-  title: Fully managed
-  tagline: We create and look after it for you.
-  price: £TBC
-  period: per month
-  badge: Hands-free
-  features:
-    - Everything in Self-managed
-    - We design and build your page from your price list
-    - Branding set up to match your business
-    - Updates made for you whenever you need them
-    - Seasonal and special-offer changes included
-    - Priority support
+plans:
+  self-managed:
+    title: Self-managed
+    tagline: You build and update your own page.
+    prices:
+      month: 9
+      year: 90
+    stripe_prices:
+      month: ""
+      year: ""
+    features:
+      - Your own QR code, printed and posted to you
+      - Choice of five professional designs
+      - Your logo, colours, fonts and contact details
+      - Update prices and services any time, from any device
+      - Optional navigation back to your website
+      - Secure private login just for your page
+      - Email support
+
+  managed:
+    title: Fully managed
+    tagline: We create and look after it for you.
+    badge: Hands-free
+    prices:
+      month: 24
+      year: 240
+    stripe_prices:
+      month: ""
+      year: ""
+    features:
+      - Everything in Self-managed
+      - We design and build your page from your price list
+      - Branding set up to match your business
+      - Updates made for you whenever you need them
+      - Seasonal and special-offer changes included
+      - Priority support

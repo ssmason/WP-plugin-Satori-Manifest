@@ -14,7 +14,12 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Manifest;
+
+use SatoriManifest\Branding\Brand;
+use SatoriManifest\Clients\Client_Repository;
+use SatoriManifest\Core\Sanitizer;
+use SatoriManifest\Core\Security;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -123,7 +128,7 @@ class Meta_Box {
 		$satori_manifest_post_field = self::POST_FIELD;
 		$satori_manifest_currency   = self::currency_for( $post->ID );
 		Security::output_form_nonce( self::NONCE_ACTION );
-		require SATORI_MANIFEST_PATH . 'admin/views/meta-box-sections.php';
+		require SATORI_MANIFEST_PATH . 'templates/admin/meta-box-sections.php';
 	}
 
 	/**
@@ -198,6 +203,7 @@ class Meta_Box {
 
 		$sections = is_array( $decoded ) ? Sanitizer::sanitize_sections( $decoded ) : array();
 
-		update_post_meta( $post_id, Post_Types::META_SECTIONS, wp_json_encode( $sections ) );
+		// update_post_meta() unslashes its value; slash the JSON so escaped quotes survive.
+		update_post_meta( $post_id, Post_Types::META_SECTIONS, wp_slash( (string) wp_json_encode( $sections ) ) );
 	}
 }

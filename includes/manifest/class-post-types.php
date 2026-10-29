@@ -13,7 +13,9 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Manifest;
+
+use SatoriManifest\Core\Sanitizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

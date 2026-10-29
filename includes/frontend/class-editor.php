@@ -17,7 +17,14 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Frontend;
+
+use SatoriManifest\Branding\Brand;
+use SatoriManifest\Branding\Fonts;
+use SatoriManifest\Clients\Client_Repository;
+use SatoriManifest\Clients\Client_Role;
+use SatoriManifest\Designs\Design_Registry;
+use SatoriManifest\Manifest\Block;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

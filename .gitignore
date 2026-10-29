@@ -1,10 +1,10 @@
-/.claude
-/CLAUDE.md
 /node_modules
 /vendor
+.DS_Store
+.phpunit.result.cache
 
-# wp-env
-/.wp-env
+# Claude Code: the shared .claude/ folder is committed; personal settings are not.
+/.claude/settings.local.json
 
 # Cypress generated output
 /cypress/screenshots

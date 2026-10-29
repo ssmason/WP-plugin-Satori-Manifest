@@ -1,13 +1,18 @@
 <?xml version="1.0"?>
+<!--
+	Satori Manifest — PHPUnit configuration.
+	Integration tests on the WordPress test suite; see tests/README.md.
+-->
 <phpunit
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
 	bootstrap="tests/bootstrap.php"
 	backupGlobals="false"
 	colors="true"
+	convertDeprecationsToExceptions="true"
 >
 	<testsuites>
-		<testsuite name="unit">
+		<testsuite name="satori-manifest">
 			<directory suffix="Test.php">tests/phpunit</directory>
 		</testsuite>
 	</testsuites>

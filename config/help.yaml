@@ -1,0 +1,81 @@
+# Client help — shown on the Help screen and as the "Help" tab on each client
+# screen. Keep it short: one idea per sentence.
+#
+# steps     The getting-started checklist. "screen" links the step to a screen:
+#           home, page, prices, design, branding, menus, billing, profile.
+# tabs      Contextual help, keyed by screen (same keys as above).
+# faq       Short questions and answers.
+# resources External reading — opens in a new window.
+#
+# Override by copying to {theme}/satori-manifest/help.yaml.
+
+title: Getting started
+intro: Five steps to a finished price list. Most people are done in about twenty minutes.
+
+steps:
+  - title: Add your branding
+    screen: branding
+    text: Upload your logo, then pick your colours and fonts. Add your phone number, address, opening hours and social links under Footer.
+
+  - title: Choose a design
+    screen: design
+    text: Pick the look that suits your business. You can switch at any time — your prices and branding stay.
+
+  - title: Enter your prices
+    screen: prices
+    text: Add a section for each group of services (for example "Cuts" or "Colour"), then the items and prices. Leave a price empty to use a line as a sub-heading.
+
+  - title: Check your page
+    screen: page
+    text: Edit the heading, intro text and pictures. Your price list updates on its own — there is no need to touch it here.
+
+  - title: Add links (optional)
+    screen: menus
+    text: Add links to your website or booking page. With no links your page works as a standalone menu.
+
+tabs:
+  home:
+    title: Your dashboard
+    text: Each card opens one part of your page. "View page" shows exactly what customers see when they scan your QR code.
+  page:
+    title: Editing your page
+    text: Click any text to change it. Use the + button to add a heading, paragraph or picture. Press Save when you are done. Your price list is the "Manifest" block — move it, but there is no need to edit it here.
+  prices:
+    title: Your price list
+    text: Each section is a group of services. Drag the handle (or use the arrows) to reorder. A "from" prefix shows as "from £25". Leave the price empty to turn an item into a sub-heading. Press Update to save.
+  design:
+    title: Designs
+    text: Apply a design to keep your current page content, or start fresh to load the design's own layout. Your branding and prices are never lost.
+  branding:
+    title: Branding
+    text: Leave a colour or font empty to use the design's default. The header button can link to bookings, a phone number or email. Press Save on each tab.
+  menus:
+    title: Navigation links
+    text: Add "Custom links" with the full web address, then press Save Menu. The links appear in your page header. Remove them all for a standalone page.
+  billing:
+    title: Billing
+    text: Manage billing opens our secure payment provider, Stripe, where you can update your card, download invoices, switch between monthly and yearly, or cancel.
+
+faq:
+  - q: Where does my QR code point?
+    a: To your page address, shown on your dashboard. It never changes — even if you rename your business — so printed codes keep working.
+  - q: How quickly do changes show?
+    a: Straight away. Save, then refresh your page to see it.
+  - q: Can I change my design later?
+    a: Yes, as often as you like. Your prices and branding stay the same.
+  - q: Can I show my price list on my own website?
+    a: Yes. On your Home screen, copy the code under "Add your price list to your website" and paste it into an HTML or embed block on your site. It always shows your latest prices.
+  - q: Can I get my price list as a PDF?
+    a: Yes. Press "Download PDF" on your Home screen for a print-ready copy of your prices, always up to date.
+  - q: I forgot my password.
+    a: Use "Lost your password?" on the login screen and we will email you a link.
+
+resources:
+  - label: What is a QR code?
+    url: https://en.wikipedia.org/wiki/QR_code
+  - label: Scanning a QR code on iPhone
+    url: https://support.apple.com/guide/iphone/scan-a-qr-code-iphe8bda8762/ios
+  - label: Scanning a QR code on Android
+    url: https://support.google.com/camerafromgoogle/answer/12033278?hl=en
+  - label: 3D-printed QR stands and signs — Satori 3D Printing
+    url: https://3dprinting.satori-digital.com/

@@ -1,18 +1,19 @@
-# Sent to the applicant when their application is approved.
-# Placeholders: contact_name, business_name, username, set_password_url, page_url, login_url.
+# Sent when the client account is created (after payment, or on approval when no payment is taken).
+# Placeholders: contact_name, business_name, username, plan, set_password_url, page_url, login_url.
 # For security the password itself is never emailed — the link lets them set their own.
 
-subject: You're approved — welcome to {{site_name}}
-preheader: Your QR price list page for {{business_name}} is ready.
+subject: Welcome to {{site_name}} — your page is ready
+preheader: Choose your password and start building your price list for {{business_name}}.
 heading: Welcome aboard, {{contact_name}}
 body: |
-  Great news — {{business_name}} has been approved and your price list page is ready.
+  Your account for {{business_name}} is ready. Choose your password with the button below, then follow the short "Getting started" guide inside — most people are finished in about twenty minutes.
 
-  Your username: {{username}}
-
-  Use the button below to choose your password and log in. The link is valid for 24 hours; after that you can use "Lost your password?" on the login page.
-
-  Your page lives at {{page_url}} — this is the address your QR code will open.
-button_label: Set your password
+  The link is valid for 24 hours. After that, use "Lost your password?" on the login page.
+details: |
+  Username: {{username}}
+  Plan: {{plan}}
+  Your page: {{page_url}}
+  Log in at: {{login_url}}
+button_label: Choose my password
 button_url: "{{set_password_url}}"
-footer: Log in any time at {{login_url}}
+footer: Your QR code opens the page address above. It never changes, so printed codes always work.

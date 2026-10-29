@@ -13,7 +13,10 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Core;
+
+use SatoriManifest\Clients\Client_Role;
+use SatoriManifest\Manifest\Post_Types;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

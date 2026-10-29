@@ -1,0 +1,2 @@
+!function(){"use strict";var e=window.satoriManifestEmbed||{};function n(){window.parent.postMessage({type:e.type,height:document.documentElement.scrollHeight},"*")}e.type&&window.parent!==window&&(window.addEventListener("load",n),"ResizeObserver"in window?new window.ResizeObserver(n).observe(document.body):window.addEventListener("resize",n),n())}();
+//# sourceMappingURL=embed.js.map

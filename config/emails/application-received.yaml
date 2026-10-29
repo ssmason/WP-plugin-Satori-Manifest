@@ -1,5 +1,5 @@
 # Sent to the applicant straight after they register.
-# Placeholders: contact_name, business_name, plan, site_name, site_url, login_url, year.
+# Placeholders: contact_name, business_name, plan, billing, price, site_name, support_email.
 
 subject: We've received your application, {{contact_name}}
 preheader: Thanks for registering {{business_name}} — we'll be in touch shortly.
@@ -7,7 +7,12 @@ heading: Thanks for registering
 body: |
   Hi {{contact_name}},
 
-  Thanks for registering {{business_name}} with {{site_name}} on our {{plan}} plan. We review every application personally and will get back to you shortly.
+  Thanks for registering {{business_name}} with {{site_name}}. We review every application personally and will get back to you shortly — usually within one working day.
 
-  Once you're approved we'll email your login details, and your QR price list page will be ready to make your own.
+  Once you're approved we'll email you a secure link to start your plan, then your login details. Nothing is charged until then.
+details: |
+  Business: {{business_name}}
+  Plan: {{plan}}
+  Billing: {{billing}}
+  Price: {{price}}
 footer: You're receiving this because you registered on {{site_name}}.

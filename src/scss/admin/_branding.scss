@@ -55,6 +55,20 @@
 		border-color: $sm-color-primary;
 		background: $sm-color-primary;
 	}
+
+	// Phones: half-width field pairs (e.g. currency symbol + position) stack,
+	// and button groups wrap instead of running off the card.
+	@media (max-width: 782px) {
+
+		.acf-fields > .acf-field[data-width] {
+			width: 100% !important; // stylelint-disable-line declaration-no-important -- ACF sets the width inline.
+			border-left: 0 !important; // stylelint-disable-line declaration-no-important
+		}
+
+		.acf-button-group {
+			flex-wrap: wrap;
+		}
+	}
 }
 
 .sm-preview-panel {

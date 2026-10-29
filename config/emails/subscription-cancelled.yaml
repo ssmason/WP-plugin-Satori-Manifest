@@ -1,0 +1,11 @@
+# Sent to the client when their subscription ends (Stripe customer.subscription.deleted).
+# Placeholders: contact_name, business_name.
+
+subject: Your {{site_name}} plan has ended
+preheader: Your plan for {{business_name}} has been cancelled.
+heading: Sorry to see you go, {{contact_name}}
+body: |
+  Your plan for {{business_name}} has ended and you won't be charged again.
+
+  Changed your mind, or was this a mistake? Reply to this email and we'll get you back up and running — your prices and branding are kept safe.
+footer: Thank you for using {{site_name}}.

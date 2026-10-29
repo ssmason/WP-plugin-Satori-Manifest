@@ -43,6 +43,11 @@
 		background: $sm-color-danger-lt;
 		color: $sm-color-danger;
 	}
+
+	&--awaiting_payment {
+		background: $sm-color-primary-lt;
+		color: $sm-color-primary;
+	}
 }
 
 .sm-link-danger {
@@ -64,6 +69,10 @@
 
 	&--approved {
 		border-left-color: $sm-color-success;
+	}
+
+	&--awaiting_payment {
+		border-left-color: $sm-amber;
 	}
 
 	&--declined {
@@ -200,5 +209,18 @@
 			gap: 6px;
 			align-items: center;
 		}
+	}
+}
+
+.sm-app__actions--payment {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: $sm-space-md;
+
+	.sm-app__payment-note {
+		flex-basis: 100%;
+		margin: 0;
+		color: $sm-color-text-light;
 	}
 }

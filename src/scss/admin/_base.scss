@@ -131,7 +131,7 @@
 	margin: 0 0 $sm-space-lg;
 	padding: $sm-space-xs;
 	border-radius: $sm-radius-lg;
-	background: #eceef6;
+	background: #ece8e1;
 	width: fit-content;
 
 	&__tab {
@@ -197,4 +197,59 @@
 	&.is-draft {
 		color: $sm-color-warning;
 	}
+}
+
+// Form fields shared by every plugin screen.
+.sm-field {
+	margin: 0 0 $sm-space-md;
+
+	label,
+	&__label {
+		display: block;
+		margin-bottom: 4px;
+		font-weight: 600;
+	}
+
+	input[type="text"],
+	input[type="email"],
+	input[type="url"],
+	select,
+	textarea {
+		width: 100%;
+		max-width: none;
+	}
+
+	input[type="color"] {
+		width: 64px;
+		height: 36px;
+		padding: 2px;
+		border: 1px solid $sm-color-border;
+		border-radius: $sm-radius;
+		background: $sm-color-card;
+		cursor: pointer;
+	}
+
+	&__hint {
+		display: block;
+		margin-top: 4px;
+		color: $sm-color-text-light;
+		font-size: 12px;
+	}
+
+	&--inline {
+		display: flex;
+		align-items: center;
+		gap: $sm-space-sm;
+
+		label {
+			margin: 0;
+			font-weight: 400;
+		}
+	}
+}
+
+.sm-field-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: $sm-space-lg;
 }

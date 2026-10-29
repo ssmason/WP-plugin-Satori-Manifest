@@ -2,10 +2,13 @@
 /**
  * Admin menu registration.
  *
- * Staff see a "Manifest" menu with Clients, Manifests, Designs and Branding.
+ * Staff see a "Manifest" menu: Clients, Applications, Manifests, Designs,
+ * Branding, Payments, Settings and Help (Applications, Payments and Settings
+ * for administrators only).
+ *
  * Clients see a short, task-focused menu instead: Home, My page, Price list,
- * Design and Branding (plus Media, Appearance → Menus and Profile, which
- * Admin_Lockdown leaves in place).
+ * Design, Branding, Billing and Help (plus Media, Appearance → Menus and
+ * Profile, which the Admin\Portal classes leave in place).
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -14,7 +17,21 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Admin;
+
+use SatoriManifest\Admin\Screens\Applications_Screen;
+use SatoriManifest\Admin\Screens\Billing_Screen;
+use SatoriManifest\Admin\Screens\Branding_Screen;
+use SatoriManifest\Admin\Screens\Client_Home;
+use SatoriManifest\Admin\Screens\Clients_Screen;
+use SatoriManifest\Admin\Screens\Design_Screen;
+use SatoriManifest\Admin\Screens\Help_Screen;
+use SatoriManifest\Admin\Screens\Payments_Screen;
+use SatoriManifest\Admin\Screens\Settings_Screen;
+use SatoriManifest\Clients\Client_Repository;
+use SatoriManifest\Clients\Client_Role;
+use SatoriManifest\Manifest\Post_Types;
+use SatoriManifest\Registration\Applications;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -64,6 +81,46 @@ class Admin_Menu {
 	public const BRANDING_SLUG = 'satori-manifest-branding';
 
 	/**
+	 * Client billing screen slug.
+	 *
+	 * @since 3.0.0
+	 * @var   string
+	 */
+	public const BILLING_SLUG = 'satori-manifest-billing';
+
+	/**
+	 * Help screen slug.
+	 *
+	 * @since 3.0.0
+	 * @var   string
+	 */
+	public const HELP_SLUG = 'satori-manifest-help';
+
+	/**
+	 * Staff applications screen slug.
+	 *
+	 * @since 3.0.0
+	 * @var   string
+	 */
+	public const APPLICATIONS_SLUG = 'satori-manifest-applications';
+
+	/**
+	 * Staff payments screen slug.
+	 *
+	 * @since 3.0.0
+	 * @var   string
+	 */
+	public const PAYMENTS_SLUG = 'satori-manifest-payments';
+
+	/**
+	 * Staff settings screen slug.
+	 *
+	 * @since 3.0.0
+	 * @var   string
+	 */
+	public const SETTINGS_SLUG = 'satori-manifest-settings';
+
+	/**
 	 * Page hook suffixes keyed by screen slug, filled during registration.
 	 *
 	 * @since 2.0.0
@@ -99,6 +156,24 @@ class Admin_Menu {
 	 */
 	public static function hook( string $slug ): string {
 		return self::$hooks[ $slug ] ?? '';
+	}
+
+	/**
+	 * Returns the hook suffixes of every plugin screen a client may open.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.0.0
+	 * @return array<int,string>
+	 */
+	public static function client_hooks(): array {
+		return array_values(
+			array_filter(
+				array_map(
+					array( self::class, 'hook' ),
+					array( self::HOME_SLUG, self::DESIGN_SLUG, self::BRANDING_SLUG, self::BILLING_SLUG, self::HELP_SLUG )
+				)
+			)
+		);
 	}
 
 	/**
@@ -206,6 +281,28 @@ class Admin_Menu {
 			'dashicons-admin-customizer',
 			6
 		);
+
+		if ( Billing_Screen::is_available( $user_id ) ) {
+			self::$hooks[ self::BILLING_SLUG ] = (string) add_menu_page(
+				__( 'Billing', 'satori-manifest' ),
+				__( 'Billing', 'satori-manifest' ),
+				'read',
+				self::BILLING_SLUG,
+				array( Billing_Screen::class, 'render' ),
+				'dashicons-money-alt',
+				7
+			);
+		}
+
+		self::$hooks[ self::HELP_SLUG ] = (string) add_menu_page(
+			__( 'Help', 'satori-manifest' ),
+			__( 'Help', 'satori-manifest' ),
+			'read',
+			self::HELP_SLUG,
+			array( Help_Screen::class, 'render' ),
+			'dashicons-sos',
+			80
+		);
 	}
 
 	/**
@@ -256,6 +353,66 @@ class Admin_Menu {
 			$cap,
 			self::BRANDING_SLUG,
 			array( Branding_Screen::class, 'render' )
+		);
+
+		self::register_admin_only_screens();
+
+		self::$hooks[ self::HELP_SLUG ] = (string) add_submenu_page(
+			self::MENU_SLUG,
+			__( 'Help', 'satori-manifest' ),
+			__( 'Help', 'satori-manifest' ),
+			$cap,
+			self::HELP_SLUG,
+			array( Help_Screen::class, 'render' )
+		);
+	}
+
+	/**
+	 * Registers the screens only administrators see: applications (with a
+	 * pending-count badge), payments and settings.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.0.0
+	 * @return void
+	 */
+	private static function register_admin_only_screens(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$pending = Applications::pending_count();
+		$label   = __( 'Applications', 'satori-manifest' );
+
+		if ( $pending ) {
+			$label .= sprintf( ' <span class="awaiting-mod">%d</span>', $pending );
+		}
+
+		self::$hooks[ self::APPLICATIONS_SLUG ] = (string) add_submenu_page(
+			self::MENU_SLUG,
+			__( 'Applications', 'satori-manifest' ),
+			$label,
+			'manage_options',
+			self::APPLICATIONS_SLUG,
+			array( Applications_Screen::class, 'render' ),
+			1
+		);
+
+		self::$hooks[ self::PAYMENTS_SLUG ] = (string) add_submenu_page(
+			self::MENU_SLUG,
+			__( 'Payments', 'satori-manifest' ),
+			__( 'Payments', 'satori-manifest' ),
+			'manage_options',
+			self::PAYMENTS_SLUG,
+			array( Payments_Screen::class, 'render' )
+		);
+
+		self::$hooks[ self::SETTINGS_SLUG ] = (string) add_submenu_page(
+			self::MENU_SLUG,
+			__( 'Settings', 'satori-manifest' ),
+			__( 'Settings', 'satori-manifest' ),
+			'manage_options',
+			self::SETTINGS_SLUG,
+			array( Settings_Screen::class, 'render' )
 		);
 	}
 }

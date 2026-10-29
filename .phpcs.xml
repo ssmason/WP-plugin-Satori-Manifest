@@ -46,6 +46,11 @@
 		</properties>
 	</rule>
 
+	<!-- PHPUnit test classes follow PHPUnit's naming (FooTest.php), not class-foo.php. -->
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>*/tests/phpunit/*</exclude-pattern>
+	</rule>
+
 	<!-- Prefix check -->
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>

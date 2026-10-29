@@ -19,12 +19,13 @@
 		"phpcsstandards/phpcsutils": "^1.0",
 		"phpcsstandards/phpcsextra": "^1.0",
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-		"yoast/phpunit-polyfills": "^2.0"
+		"yoast/phpunit-polyfills": "^2.0",
+		"wp-phpunit/wp-phpunit": "6.9.*",
+		"phpunit/phpunit": "^9.6"
 	},
 	"autoload": {
 		"classmap": [
-			"includes/",
-			"admin/"
+			"includes/"
 		]
 	},
 	"autoload-dev": {
@@ -38,6 +39,7 @@
 		}
 	},
 	"scripts": {
-		"lint:php": "phpcs --standard=.phpcs.xml ."
+		"lint:php": "phpcs --standard=.phpcs.xml .",
+		"test": "phpunit"
 	}
 }

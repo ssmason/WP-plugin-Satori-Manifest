@@ -141,6 +141,15 @@ a.sm-button,
 		}
 
 		backdrop-filter: saturate(1.4) blur(8px);
+
+		// Phones: a slimmer sticky bar so the price list keeps most of the screen.
+		@media (max-width: 600px) {
+			padding-block: 0.6rem;
+
+			.sm-brand__tagline {
+				display: none;
+			}
+		}
 	}
 
 	&__inner {
@@ -549,4 +558,21 @@ a.sm-button,
 	.sm-client-page * {
 		transition: none !important; // stylelint-disable-line declaration-no-important
 	}
+}
+
+// Embedded on another website (?sm_embed=1): no outer spacing, so the frame
+// fits the price list snugly. Header and footer are not rendered at all.
+body.sm-embed {
+	min-height: 0;
+
+	.sm-site {
+		min-height: 0;
+	}
+}
+
+// "Price list by …" credit: quiet, but clearly a link.
+.sm-footer__credit a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
 }

@@ -14,7 +14,7 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Registration;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -50,10 +50,16 @@ class Applications {
 	/**
 	 * Application statuses.
 	 *
+	 * Statuses:
+	 * pending           Waiting for a decision.
+	 * awaiting_payment  Approved; the applicant has been sent a payment link.
+	 * approved          The client account exists (paid, or approved without payment).
+	 * declined          Turned down.
+	 *
 	 * @since 2.1.0
 	 * @var   array<int,string>
 	 */
-	public const STATUSES = array( 'pending', 'approved', 'declined' );
+	public const STATUSES = array( 'pending', 'awaiting_payment', 'approved', 'declined' );
 
 	/**
 	 * Fields captured by the registration form (meta suffix => label).
@@ -71,50 +77,10 @@ class Applications {
 			'website'       => __( 'Website', 'satori-manifest' ),
 			'business_type' => __( 'Type of business', 'satori-manifest' ),
 			'plan'          => __( 'Plan', 'satori-manifest' ),
+			'interval'      => __( 'Billing', 'satori-manifest' ),
 			'design'        => __( 'Preferred design', 'satori-manifest' ),
 			'message'       => __( 'Anything else?', 'satori-manifest' ),
 		);
-	}
-
-	/**
-	 * Returns the pricing plans from config/plans.yaml, keyed by slug.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.1.0
-	 * @return array<string,array{title:string,tagline:string,price:string,period:string,badge:string,features:array<int,string>}>
-	 */
-	public static function plans(): array {
-		$plans = array();
-
-		foreach ( Config::get( 'plans.yaml' ) as $slug => $plan ) {
-			if ( ! is_array( $plan ) || empty( $plan['title'] ) ) {
-				continue;
-			}
-
-			$plans[ sanitize_key( (string) $slug ) ] = array(
-				'title'    => (string) $plan['title'],
-				'tagline'  => (string) ( $plan['tagline'] ?? '' ),
-				'price'    => (string) ( $plan['price'] ?? '' ),
-				'period'   => (string) ( $plan['period'] ?? '' ),
-				'badge'    => (string) ( $plan['badge'] ?? '' ),
-				'features' => array_map( 'strval', (array) ( $plan['features'] ?? array() ) ),
-			);
-		}
-
-		return $plans;
-	}
-
-	/**
-	 * Returns a plan's display title, or the raw slug when unknown.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.1.0
-	 * @param  string $slug  Plan slug.
-	 * @return string
-	 */
-	public static function plan_title( string $slug ): string {
-		$plans = self::plans();
-		return isset( $plans[ $slug ] ) ? $plans[ $slug ]['title'] : $slug;
 	}
 
 	/**
@@ -306,6 +272,16 @@ class Applications {
 		if ( $user_id ) {
 			update_post_meta( $id, self::META . 'user_id', $user_id );
 		}
+
+		/**
+		 * Fires after an application changes status.
+		 *
+		 * @since 3.0.0
+		 * @param int    $id       Application ID.
+		 * @param string $status   New status.
+		 * @param int    $user_id  Client user ID (0 until the account exists).
+		 */
+		do_action( 'satori_manifest_application_status', $id, $status, $user_id );
 	}
 
 	/**
@@ -322,6 +298,33 @@ class Applications {
 		$history[] = array_intersect_key( $result, array_flip( array( 'template', 'to', 'subject', 'transport', 'sent', 'error', 'time' ) ) );
 
 		update_post_meta( $id, self::META . 'emails', array_values( array_filter( $history ) ) );
+	}
+
+	/**
+	 * Stores a workflow value on an application (e.g. the approved username).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.0.0
+	 * @param  int    $id     Application ID.
+	 * @param  string $key    Key (without prefix).
+	 * @param  string $value  Value.
+	 * @return void
+	 */
+	public static function set_meta( int $id, string $key, string $value ): void {
+		update_post_meta( $id, self::META . $key, $value );
+	}
+
+	/**
+	 * Reads a workflow value stored with set_meta().
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.0.0
+	 * @param  int    $id   Application ID.
+	 * @param  string $key  Key (without prefix).
+	 * @return string
+	 */
+	public static function get_meta( int $id, string $key ): string {
+		return self::meta( $id, $key );
 	}
 
 	/**

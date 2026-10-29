@@ -18,7 +18,9 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Mail;
+
+use SatoriManifest\Core\Env;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -51,7 +53,7 @@ class Brevo_Transport {
 	 * @return bool
 	 */
 	public static function is_configured(): bool {
-		return '' !== Mailer::setting( 'BREVO_API_KEY' );
+		return '' !== Env::get( 'BREVO_API_KEY' );
 	}
 
 	/**
@@ -75,7 +77,7 @@ class Brevo_Transport {
 			'subject' => $message['subject'],
 		);
 
-		$template_id = (int) Mailer::setting( 'BREVO_TEMPLATE_' . strtoupper( str_replace( '-', '_', $template ) ) );
+		$template_id = (int) Env::get( 'BREVO_TEMPLATE_' . strtoupper( str_replace( '-', '_', $template ) ) );
 
 		if ( $template_id > 0 ) {
 			$payload['templateId'] = $template_id;
@@ -92,7 +94,7 @@ class Brevo_Transport {
 				'headers' => array(
 					'accept'       => 'application/json',
 					'content-type' => 'application/json',
-					'api-key'      => Mailer::setting( 'BREVO_API_KEY' ),
+					'api-key'      => Env::get( 'BREVO_API_KEY' ),
 				),
 				'body'    => (string) wp_json_encode( $payload ),
 			)

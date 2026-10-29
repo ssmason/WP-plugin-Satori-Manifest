@@ -17,7 +17,11 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Admin;
+
+use SatoriManifest\Branding\Portal_Brand;
+use SatoriManifest\Clients\Client_Role;
+use SatoriManifest\Manifest\Post_Types;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -106,6 +110,17 @@ class Assets {
 
 		if ( $is_manifest_edit || $is_plugin_screen || Client_Role::is_client() ) {
 			self::enqueue_style( 'satori-manifest-admin', 'build/css/admin.css', array( 'dashicons' ) );
+			wp_add_inline_style( 'satori-manifest-admin', Portal_Brand::css_variables() );
+		}
+
+		if ( Admin_Menu::hook( Admin_Menu::HOME_SLUG ) === $hook_suffix ) {
+			self::enqueue_script( 'satori-manifest-client-home', 'build/js/client-home.js', array( 'wp-i18n' ) );
+			wp_set_script_translations( 'satori-manifest-client-home', 'satori-manifest', SATORI_MANIFEST_PATH . 'languages' );
+		}
+
+		if ( Admin_Menu::hook( Admin_Menu::SETTINGS_SLUG ) === $hook_suffix ) {
+			self::enqueue_script( 'satori-manifest-settings', 'build/js/admin-settings.js', array( 'wp-i18n', 'media-editor' ) );
+			wp_set_script_translations( 'satori-manifest-settings', 'satori-manifest', SATORI_MANIFEST_PATH . 'languages' );
 		}
 
 		if ( $is_manifest_edit ) {

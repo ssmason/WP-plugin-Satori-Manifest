@@ -3,7 +3,7 @@
  * Client isolation and restrictions.
  *
  * Server-side enforcement for client users — independent of what the admin
- * UI shows or hides (see Admin_Lockdown for the UI side):
+ * UI shows or hides (see Admin\Portal for the UI side):
  *
  *   - Clients cannot create pages, posts, manifests, patterns or menus.
  *   - Admin, REST and media queries only return the client's own content.
@@ -19,7 +19,11 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Clients;
+
+use SatoriManifest\Admin\Portal\Screen_Guard;
+use SatoriManifest\Frontend\Client_Page;
+use SatoriManifest\Manifest\Post_Types;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -321,7 +325,7 @@ class Access_Control {
 		$own     = Client_Repository::menu_id( $user_id );
 
 		if ( ! $own ) {
-			wp_safe_redirect( Admin_Lockdown::home_url() );
+			wp_safe_redirect( Screen_Guard::home_url() );
 			exit;
 		}
 

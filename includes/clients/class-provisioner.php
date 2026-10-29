@@ -14,7 +14,13 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Clients;
+
+use SatoriManifest\Branding\Brand;
+use SatoriManifest\Core\Sanitizer;
+use SatoriManifest\Designs\Design_Registry;
+use SatoriManifest\Frontend\Client_Page;
+use SatoriManifest\Manifest\Post_Types;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -91,7 +97,8 @@ class Provisioner {
 			);
 		}
 
-		$name    = (string) ( $args['name'] ?? $user->display_name );
+		// WordPress stores display names HTML-encoded ("A &amp; B"); titles need plain text.
+		$name    = html_entity_decode( (string) ( $args['name'] ?? $user->display_name ), ENT_QUOTES, 'UTF-8' );
 		$name    = '' !== trim( $name ) ? $name : $user->user_login;
 		$tagline = (string) ( $args['tagline'] ?? '' );
 		$design  = (string) ( $args['design'] ?? '' );

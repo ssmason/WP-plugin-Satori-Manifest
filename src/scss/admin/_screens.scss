@@ -1,0 +1,350 @@
+// Settings, Payments, Billing and Help screens, plus the small components
+// they share (two-column layout, pills, stats, steps).
+//
+// @package SatoriManifest
+// @since   3.0.0
+
+@use "variables" as *;
+
+// ─── Layout ──────────────────────────────────────────────────────────────────
+
+.sm-two-col {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+	gap: $sm-space-lg;
+	align-items: start;
+
+	&--wide-left {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 360px);
+	}
+
+	@media (max-width: 1100px) {
+		grid-template-columns: 1fr;
+
+		&--wide-left {
+			grid-template-columns: 1fr;
+		}
+	}
+}
+
+.sm-section-gap {
+	margin-top: $sm-space-lg;
+}
+
+.sm-panel__title--spaced {
+	margin-top: $sm-space-xl;
+	padding-top: $sm-space-lg;
+	border-top: 1px solid $sm-color-border;
+}
+
+.sm-panel__title--inset {
+	margin: 0;
+	padding: $sm-space-md $sm-space-lg;
+	border-bottom: 1px solid $sm-color-border;
+}
+
+.sm-empty--inset {
+	margin: $sm-space-lg;
+}
+
+.sm-table--compact td,
+.sm-table--compact th {
+	padding: 10px $sm-space-md;
+}
+
+.sm-notice--info {
+	background: #eef3f6;
+	color: $sm-ink-soft;
+}
+
+// ─── Pills and status ────────────────────────────────────────────────────────
+
+.sm-pill {
+	white-space: nowrap;
+
+	&--on {
+		background: $sm-color-success-lt;
+		color: $sm-color-success;
+	}
+
+	&--off {
+		background: $sm-color-danger-lt;
+		color: $sm-color-danger;
+	}
+
+	&--test {
+		background: $sm-color-warning-lt;
+		color: $sm-color-warning;
+	}
+}
+
+.sm-status-list {
+	display: grid;
+	gap: $sm-space-md;
+	margin: 0;
+
+	> div {
+		padding-bottom: $sm-space-md;
+		border-bottom: 1px solid $sm-color-border;
+
+		&:last-child {
+			padding-bottom: 0;
+			border-bottom: 0;
+		}
+	}
+
+	dt {
+		margin-bottom: 6px;
+		font-weight: 600;
+	}
+
+	dd {
+		margin: 0;
+	}
+}
+
+.sm-copy {
+	display: block;
+	margin-top: 6px;
+	padding: 6px 8px;
+	border-radius: $sm-radius;
+	background: $sm-color-bg;
+	font-size: 12px;
+	overflow-wrap: anywhere;
+	user-select: all;
+}
+
+// ─── Settings ────────────────────────────────────────────────────────────────
+
+.sm-logo-picker {
+
+	&__preview {
+		display: flex;
+		align-items: center;
+		min-height: 72px;
+		margin-bottom: $sm-space-sm;
+		padding: $sm-space-md;
+		border: 1px dashed $sm-color-border;
+		border-radius: $sm-radius-lg;
+		background: $sm-color-bg;
+
+		img {
+			display: block;
+			max-width: 220px;
+			max-height: 80px;
+		}
+	}
+
+	&__actions {
+		display: flex;
+		align-items: center;
+		gap: $sm-space-md;
+	}
+}
+
+// ─── Payments ────────────────────────────────────────────────────────────────
+
+.sm-stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: $sm-space-md;
+}
+
+.sm-stat {
+	padding: $sm-space-lg;
+	border: 1px solid $sm-color-border;
+	border-top: 3px solid $sm-amber;
+	border-radius: $sm-radius-lg;
+	background: $sm-color-card;
+	box-shadow: $sm-shadow;
+
+	&__label {
+		display: block;
+		color: $sm-color-text-light;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+	}
+
+	&__value {
+		display: block;
+		margin-top: 6px;
+		color: $sm-ink;
+		font-size: 26px;
+		font-weight: 700;
+		line-height: 1.2;
+	}
+
+	&--alert {
+		border-top-color: $sm-color-danger;
+
+		.sm-stat__value {
+			color: $sm-color-danger;
+		}
+	}
+}
+
+.sm-setup {
+	margin-bottom: $sm-space-lg;
+	border-left: 4px solid $sm-amber;
+}
+
+.sm-steps {
+	margin: 0;
+	padding-left: 1.4em;
+
+	li {
+		margin-bottom: $sm-space-md;
+		line-height: 1.6;
+
+		&.is-done {
+			color: $sm-color-text-light;
+			text-decoration: line-through;
+
+			.sm-copy {
+				text-decoration: none;
+			}
+		}
+	}
+}
+
+.sm-payments-screen .sm-table__actions form {
+	display: inline-flex;
+	align-items: center;
+	gap: $sm-space-sm;
+}
+
+// ─── Billing (client) ────────────────────────────────────────────────────────
+
+.sm-plan-card {
+	border-top: 4px solid $sm-amber;
+
+	&__label {
+		margin: 0;
+		color: $sm-color-text-light;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	&__title {
+		margin: 4px 0;
+		color: $sm-ink;
+		font-size: 24px;
+	}
+
+	&__price {
+		margin: 0 0 $sm-space-md;
+		color: $sm-color-text-light;
+
+		strong {
+			margin-right: 4px;
+			color: $sm-ink;
+			font-size: 22px;
+		}
+	}
+
+	&__meta {
+		color: $sm-color-text-light;
+	}
+
+	form {
+		margin-top: $sm-space-lg;
+	}
+}
+
+// ─── Help ────────────────────────────────────────────────────────────────────
+
+.sm-guide {
+	display: grid;
+	gap: $sm-space-md;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	&__step {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: $sm-space-lg;
+		margin: 0;
+		padding: $sm-space-lg;
+		border: 1px solid $sm-color-border;
+		border-radius: $sm-radius-lg;
+		background: $sm-color-card;
+		box-shadow: $sm-shadow;
+	}
+
+	&__number {
+		color: $sm-color-primary;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 28px;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	&__title {
+		margin: 0 0 6px;
+		color: $sm-ink;
+		font-size: 17px;
+	}
+
+	&__text {
+		margin: 0;
+		color: $sm-color-text-light;
+		font-size: 14px;
+		line-height: 1.6;
+	}
+
+	&__link {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		margin-top: $sm-space-sm;
+		color: $sm-color-primary;
+		font-weight: 600;
+		text-decoration: none;
+	}
+}
+
+.sm-help-aside {
+	display: grid;
+	gap: $sm-space-lg;
+}
+
+.sm-faq {
+	padding: $sm-space-sm 0;
+	border-bottom: 1px solid $sm-color-border;
+
+	&:last-child {
+		border-bottom: 0;
+	}
+
+	summary {
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	p {
+		margin: $sm-space-sm 0 0;
+		color: $sm-color-text-light;
+	}
+}
+
+.sm-links {
+	margin: 0;
+
+	li {
+		margin-bottom: $sm-space-sm;
+	}
+
+	a {
+		color: $sm-color-primary;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}

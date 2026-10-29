@@ -17,7 +17,12 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Registration;
+
+use SatoriManifest\Admin\Screens\Applications_Screen;
+use SatoriManifest\Designs\Design_Registry;
+use SatoriManifest\Mail\Mailer;
+use SatoriManifest\Manifest\Block;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -76,6 +81,7 @@ class Registration_Form {
 	public static function register(): void {
 		add_action( 'admin_post_nopriv_' . self::ACTION, array( self::class, 'handle' ) );
 		add_action( 'admin_post_' . self::ACTION, array( self::class, 'handle' ) );
+		add_action( 'save_post_page', array( self::class, 'flush_page_url' ) );
 	}
 
 	/**
@@ -93,16 +99,69 @@ class Registration_Form {
 		$satori_manifest_fields  = Applications::fields();
 		$satori_manifest_types   = Applications::business_types();
 		$satori_manifest_designs = Design_Registry::all();
-		$satori_manifest_plans   = Applications::plans();
+		$satori_manifest_plans   = Plans::all();
+		$satori_manifest_toggle  = Plans::has_interval_choice();
 		$satori_manifest_wrapper = $wrapper_attributes;
 
-		// Optional pre-selection via ?plan=slug (e.g. from a pricing link).
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$satori_manifest_plan = isset( $_GET['plan'] ) ? sanitize_key( wp_unslash( $_GET['plan'] ) ) : '';
+		// Optional pre-selection via ?plan=slug&billing=year (e.g. from a pricing link).
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$satori_manifest_plan     = isset( $_GET['plan'] ) ? sanitize_key( wp_unslash( $_GET['plan'] ) ) : '';
+		$satori_manifest_interval = Plans::normalize_interval( isset( $_GET['billing'] ) ? sanitize_key( wp_unslash( $_GET['billing'] ) ) : '' );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		ob_start();
-		require SATORI_MANIFEST_PATH . 'templates/registration-form.php';
+		require SATORI_MANIFEST_PATH . 'templates/registration/form.php';
 		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Returns the URL of the first published page holding the form, or ''.
+	 *
+	 * Cached for a day; the cache clears whenever a page is saved.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.0.0
+	 * @return string
+	 */
+	public static function page_url(): string {
+		$cached = get_transient( 'sm_registration_page' );
+
+		if ( false !== $cached ) {
+			return (string) $cached;
+		}
+
+		$url = '';
+
+		foreach ( get_posts(
+			array(
+				'post_type'      => 'page',
+				'post_status'    => 'publish',
+				's'              => '<!-- wp:' . Block::REGISTRATION_BLOCK_NAME,
+				'search_columns' => array( 'post_content' ),
+				'posts_per_page' => 5,
+				'no_found_rows'  => true,
+			)
+		) as $page ) {
+			if ( has_block( Block::REGISTRATION_BLOCK_NAME, $page ) ) {
+				$url = (string) get_permalink( $page );
+				break;
+			}
+		}
+
+		set_transient( 'sm_registration_page', $url, DAY_IN_SECONDS );
+
+		return $url;
+	}
+
+	/**
+	 * Clears the cached registration page URL. Hooked to 'save_post_page'.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.0.0
+	 * @return void
+	 */
+	public static function flush_page_url(): void {
+		delete_transient( 'sm_registration_page' );
 	}
 
 	/**
@@ -114,23 +173,31 @@ class Registration_Form {
 	 */
 	public static function messages(): array {
 		return array(
-			'received'  => array(
+			'received'          => array(
 				'type' => 'success',
 				'text' => __( 'Thank you! Your application is in. We review every application personally and will email you as soon as your page is ready.', 'satori-manifest' ),
 			),
-			'invalid'   => array(
+			'invalid'           => array(
 				'type' => 'error',
 				'text' => __( 'Please choose a plan, fill in your business name, your name and a valid email address, and accept the terms.', 'satori-manifest' ),
 			),
-			'duplicate' => array(
+			'duplicate'         => array(
 				'type' => 'info',
 				'text' => __( 'We already have an application or an account for that email address. We will be in touch — or log in if you already have an account.', 'satori-manifest' ),
 			),
-			'slow-down' => array(
+			'paid'              => array(
+				'type' => 'success',
+				'text' => __( 'Payment received — thank you! Your account is being set up now. Check your email for a link to choose your password.', 'satori-manifest' ),
+			),
+			'payment-cancelled' => array(
+				'type' => 'info',
+				'text' => __( 'Payment was cancelled and nothing was charged. You can use the link in your approval email whenever you are ready.', 'satori-manifest' ),
+			),
+			'slow-down'         => array(
 				'type' => 'error',
 				'text' => __( 'Too many attempts. Please try again in a little while.', 'satori-manifest' ),
 			),
-			'expired'   => array(
+			'expired'           => array(
 				'type' => 'error',
 				'text' => __( 'Your session expired. Please submit the form again.', 'satori-manifest' ),
 			),
@@ -167,11 +234,12 @@ class Registration_Form {
 		}
 
 		$types   = Applications::business_types();
-		$plans   = Applications::plans();
+		$plans   = Plans::all();
 		$plan    = isset( $_POST['plan'] ) ? sanitize_key( wp_unslash( $_POST['plan'] ) ) : '';
 		$type    = isset( $_POST['business_type'] ) ? sanitize_key( wp_unslash( $_POST['business_type'] ) ) : '';
 		$design  = isset( $_POST['design'] ) ? sanitize_key( wp_unslash( $_POST['design'] ) ) : '';
 		$website = isset( $_POST['website'] ) ? esc_url_raw( wp_unslash( $_POST['website'] ) ) : '';
+		$billing = isset( $_POST['billing'] ) ? sanitize_key( wp_unslash( $_POST['billing'] ) ) : '';
 
 		$data    = array(
 			'business_name' => isset( $_POST['business_name'] ) ? sanitize_text_field( wp_unslash( $_POST['business_name'] ) ) : '',
@@ -181,6 +249,7 @@ class Registration_Form {
 			'website'       => $website,
 			'business_type' => isset( $types[ $type ] ) ? $type : 'other',
 			'plan'          => isset( $plans[ $plan ] ) ? $plan : '',
+			'interval'      => in_array( $billing, Plans::intervals_for( $plan ), true ) ? $billing : Plans::DEFAULT_INTERVAL,
 			'design'        => Design_Registry::exists( $design ) ? $design : '',
 			'message'       => isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '',
 		);
@@ -198,6 +267,7 @@ class Registration_Form {
 		$id = Applications::create( $data );
 
 		if ( $id ) {
+			Applications::set_meta( $id, 'return_url', $return );
 			self::notify( $id, $data );
 		}
 
@@ -219,8 +289,12 @@ class Registration_Form {
 		$vars   = array_merge(
 			$data,
 			array(
+				'contact_name'  => explode( ' ', trim( $data['contact_name'] ), 2 )[0],
+				'full_name'     => $data['contact_name'],
 				'business_type' => $types[ $data['business_type'] ] ?? $data['business_type'],
-				'plan'          => Applications::plan_title( $data['plan'] ),
+				'plan'          => Plans::title( $data['plan'] ),
+				'billing'       => Plans::intervals()[ $data['interval'] ] ?? '',
+				'price'         => Plans::format( Plans::price( $data['plan'], $data['interval'] ) ) . ' ' . Plans::period_label( $data['interval'] ),
 				'design'        => $design ? (string) $design['title'] : __( 'No preference', 'satori-manifest' ),
 				'review_url'    => Applications_Screen::url(),
 			)

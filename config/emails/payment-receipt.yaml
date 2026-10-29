@@ -1,0 +1,15 @@
+# Sent to the client when a renewal payment succeeds (Stripe invoice.paid).
+# Placeholders: contact_name, business_name, amount, plan, number, invoice_url, billing_url.
+
+subject: Payment received — thank you
+preheader: We've received {{amount}} for your {{site_name}} plan.
+heading: Thanks, {{contact_name}}
+body: |
+  Your {{plan}} plan for {{business_name}} has renewed and your page stays online. Your invoice is a click away.
+details: |
+  Amount: {{amount}}
+  Plan: {{plan}}
+  Invoice: {{number}}
+button_label: View invoice
+button_url: "{{invoice_url}}"
+footer: Manage your card and invoices any time under Billing when you log in.

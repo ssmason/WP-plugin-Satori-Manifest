@@ -14,7 +14,7 @@
 	margin: $sm-space-lg 0;
 	padding: $sm-space-xl;
 	border-radius: 16px;
-	background: radial-gradient(120% 140% at 0% 0%, #312e81 0%, $sm-ink 55%, #111327 100%);
+	background: radial-gradient(120% 140% at 0% 0%, #1d3a4b 0%, $sm-ink-soft 50%, $sm-ink 100%);
 	color: #fff;
 
 	@media (max-width: 960px) {
@@ -22,7 +22,7 @@
 	}
 
 	.sm-eyebrow {
-		color: #a5b4fc;
+		color: $sm-amber;
 	}
 
 	&__title {
@@ -35,7 +35,7 @@
 
 	&__lead {
 		margin: $sm-space-sm 0 0;
-		color: #c7cbe6;
+		color: #afc2cc;
 		font-size: 15px;
 	}
 }
@@ -63,7 +63,7 @@
 
 	&__label {
 		margin: 4px 0 2px;
-		color: #c7cbe6;
+		color: #afc2cc;
 		font-size: 12px;
 	}
 
@@ -78,12 +78,34 @@
 		white-space: nowrap;
 	}
 
-	&__view {
+	// "View page" and "Download PDF", side by side under the address.
+	&__actions {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
 		grid-column: 1 / -1;
+		gap: $sm-space-sm;
+	}
+
+	&__view,
+	&__pdf {
 		justify-content: center;
 		display: inline-flex !important; // stylelint-disable-line declaration-no-important
 		align-items: center;
 		gap: 6px;
+	}
+
+	// Light button on the dark hero card.
+	.button.sm-qr-card__pdf {
+		border-color: rgba(255, 255, 255, 0.4);
+		background: transparent;
+		color: #fff;
+
+		&:hover,
+		&:focus {
+			border-color: $sm-amber;
+			background: rgba(255, 255, 255, 0.08);
+			color: #fff;
+		}
 	}
 
 	.sm-status.is-live {
@@ -113,7 +135,7 @@
 	&:hover,
 	&:focus {
 		border-color: $sm-color-primary;
-		box-shadow: 0 1px 2px rgba(31, 35, 64, 0.05), 0 18px 36px -18px rgba(79, 70, 229, 0.45);
+		box-shadow: 0 1px 2px rgba(11, 22, 32, 0.05), 0 18px 36px -18px rgba(138, 79, 15, 0.4);
 		color: $sm-color-text;
 		transform: translateY(-2px);
 	}
@@ -164,3 +186,83 @@
 	}
 }
 
+
+// "New here?" link to the Help guide, above the task cards.
+.sm-guide-banner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: $sm-space-sm $sm-space-md;
+	margin: 0 0 $sm-space-lg;
+	padding: $sm-space-md $sm-space-lg;
+	border: 1px solid $sm-color-border;
+	border-left: 4px solid $sm-amber;
+	border-radius: $sm-radius-lg;
+	background: $sm-color-card;
+	color: $sm-color-text;
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		border-color: $sm-amber;
+		color: $sm-color-text;
+	}
+
+	&__label {
+		color: $sm-color-primary;
+		font-weight: 700;
+	}
+
+	&__text {
+		flex: 1 1 280px;
+	}
+
+	&__cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		color: $sm-ink;
+		font-weight: 600;
+	}
+}
+
+// "Add your price list to your website" — embed code with a copy button.
+.sm-embed-panel {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+	gap: $sm-space-lg;
+	align-items: start;
+	margin: 0 0 $sm-space-lg;
+
+	@media (max-width: 960px) {
+		grid-template-columns: 1fr;
+	}
+
+	.sm-panel__intro {
+		margin-bottom: 0;
+	}
+
+	&__textarea {
+		width: 100%;
+		padding: $sm-space-sm $sm-space-md;
+		border: 1px solid $sm-color-border;
+		border-radius: $sm-radius;
+		background: $sm-color-bg;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 12px;
+		line-height: 1.5;
+		resize: vertical;
+	}
+
+	&__actions {
+		display: flex;
+		align-items: center;
+		gap: $sm-space-md;
+		margin-top: $sm-space-sm;
+	}
+
+	&__status {
+		color: $sm-color-success;
+		font-weight: 600;
+	}
+}

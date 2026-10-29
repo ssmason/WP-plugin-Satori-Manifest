@@ -1,0 +1,19 @@
+# Sent when staff add a client by hand (Manifest → Clients → Add a client).
+# Placeholders: contact_name, business_name, username, set_password_url, page_url, login_url.
+
+subject: Your {{site_name}} account is ready
+preheader: Choose your password to start on the price list page for {{business_name}}.
+heading: Your page is ready
+body: |
+  Hi {{contact_name}},
+
+  We've set up {{site_name}} for {{business_name}}. Choose your password with the button below, then follow the short "Getting started" guide inside.
+
+  The link is valid for 24 hours. After that, use "Lost your password?" on the login page.
+details: |
+  Username: {{username}}
+  Your page: {{page_url}}
+  Log in at: {{login_url}}
+button_label: Choose my password
+button_url: "{{set_password_url}}"
+footer: Your QR code opens the page address above. It never changes, so printed codes always work.

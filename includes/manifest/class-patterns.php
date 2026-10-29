@@ -15,7 +15,9 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Manifest;
+
+use SatoriManifest\Designs\Design_Registry;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

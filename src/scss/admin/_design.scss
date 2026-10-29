@@ -141,7 +141,7 @@ $sm-preview-scale: 0.25;
 	border: 1px solid $sm-color-border;
 	border-radius: 16px;
 	background: rgba(255, 255, 255, 0.92);
-	box-shadow: 0 20px 50px -20px rgba(31, 35, 64, 0.45);
+	box-shadow: 0 20px 50px -20px rgba(11, 22, 32, 0.45);
 	backdrop-filter: blur(8px);
 
 	.folded & {
@@ -159,6 +159,40 @@ $sm-preview-scale: 0.25;
 		margin: 0;
 		padding: 0;
 		border: 0;
+	}
+
+	// Phones: a compact bar — two short options side by side and a full-width
+	// button — so the design previews stay visible behind it.
+	@media (max-width: 600px) {
+		right: 10px;
+		bottom: 10px;
+		left: 10px;
+		gap: $sm-space-sm;
+		padding: $sm-space-sm;
+
+		&__modes {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: $sm-space-xs;
+			width: 100%;
+		}
+
+		.sm-choice {
+			padding: 8px;
+			font-size: 12px;
+
+			small {
+				display: none;
+			}
+		}
+
+		.button-hero {
+			width: 100%;
+			min-height: 40px;
+			padding: 0 12px;
+			font-size: 14px;
+			line-height: 40px;
+		}
 	}
 }
 

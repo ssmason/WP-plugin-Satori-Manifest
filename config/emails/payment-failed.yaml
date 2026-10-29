@@ -1,0 +1,15 @@
+# Sent to the client when a payment fails (Stripe invoice.payment_failed).
+# Placeholders: contact_name, business_name, amount, billing_url.
+
+subject: Your payment didn't go through
+preheader: Please update your card so your {{site_name}} page stays online.
+heading: We couldn't take your payment
+body: |
+  Hi {{contact_name}},
+
+  We tried to take {{amount}} for {{business_name}} but the payment didn't go through — this usually means an expired card or a bank check.
+
+  Please log in and update your card under Billing. Stripe will retry automatically over the next few days, and your page stays online in the meantime.
+button_label: Update my card
+button_url: "{{billing_url}}"
+footer: Already sorted? You can ignore this email.

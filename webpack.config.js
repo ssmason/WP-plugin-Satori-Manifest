@@ -3,8 +3,8 @@
  *
  * Compiles every source into build/:
  *
- *   build/block/index.js        ← block/src/index.js          (block editor)
- *   build/js/*.js               ← src/js/*.js                 (admin + front end)
+ *   build/blocks/{name}.js      ← src/blocks/{name}/index.js  (one editor script per block)
+ *   build/js/*.js               ← src/js/*.js                 (admin, login, front end)
  *   build/css/*.css             ← src/scss/{name}/{name}.scss (admin, editor, block, client page)
  *   build/designs/{slug}.css    ← designs/{slug}/style.scss   (one stylesheet per design)
  *
@@ -27,7 +27,16 @@ const STYLE_ENTRIES = [
 	'frontend',
 	'client-page',
 	'registration',
+	'login',
 ];
+
+/**
+ * Blocks with an editor script: src/blocks/{name}/index.js → build/blocks/{name}.js.
+ * Each block's block.json lives in blocks/{name}/.
+ *
+ * @type {string[]}
+ */
+const BLOCKS = ['price-list', 'registration-form'];
 
 /**
  * Builds the entry map, discovering designs from the designs/ folder.
@@ -36,10 +45,16 @@ const STYLE_ENTRIES = [
  */
 function entries() {
 	const map = {
-		'build/block/index': './block/src/index.js',
 		'build/js/manifest-admin': './src/js/manifest-admin.js',
 		'build/js/client-page': './src/js/client-page.js',
+		'build/js/admin-settings': './src/js/admin-settings.js',
+		'build/js/client-home': './src/js/client-home.js',
+		'build/js/embed': './src/js/embed.js',
 	};
+
+	BLOCKS.forEach((name) => {
+		map[`build/blocks/${name}`] = `./src/blocks/${name}/index.js`;
+	});
 
 	STYLE_ENTRIES.forEach((name) => {
 		map[`build/css/${name}`] = `./src/scss/${name}/${name}.scss`;
@@ -63,10 +78,10 @@ function entries() {
 }
 
 /**
- * Script dependencies of the block editor bundle (WordPress script handles).
+ * Script dependencies of the block editor bundles (WordPress script handles).
  *
- * Written to build/block/index.asset.php so WordPress loads them before
- * the block's editorScript.
+ * Written to build/blocks/{name}.asset.php so WordPress loads them before
+ * each block's editorScript.
  *
  * @type {string[]}
  */
@@ -82,7 +97,7 @@ const BLOCK_DEPENDENCIES = [
 /**
  * Build housekeeping:
  * - removes the empty .js files webpack emits for style-only entries;
- * - writes the block script's index.asset.php dependency file.
+ * - writes each block script's .asset.php dependency file.
  */
 class BuildHousekeeping {
 	/**
@@ -112,12 +127,14 @@ class BuildHousekeeping {
 						const deps = BLOCK_DEPENDENCIES.map(
 							(dep) => `'${dep}'`
 						).join(', ');
-						compilation.emitAsset(
-							'build/block/index.asset.php',
-							new RawSource(
-								`<?php return array( 'dependencies' => array( ${deps} ), 'version' => '${compilation.hash}' );\n`
-							)
-						);
+						BLOCKS.forEach((name) => {
+							compilation.emitAsset(
+								`build/blocks/${name}.asset.php`,
+								new RawSource(
+									`<?php return array( 'dependencies' => array( ${deps} ), 'version' => '${compilation.hash}' );\n`
+								)
+							);
+						});
 					}
 				);
 			}

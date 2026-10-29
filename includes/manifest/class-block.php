@@ -14,7 +14,7 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Manifest;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -40,10 +40,18 @@ class Block {
 	public const BLOCK_NAME = 'satori-manifest/price-list';
 
 	/**
+	 * Registration form block name.
+	 *
+	 * @since 3.0.0
+	 * @var   string
+	 */
+	public const REGISTRATION_BLOCK_NAME = 'satori-manifest/registration-form';
+
+	/**
 	 * Registers the block type with WordPress.
 	 *
 	 * All block configuration — attributes, supports, editor script, styles,
-	 * and the render template path — is declared in block/block.json.
+	 * and the render template path — is declared in each blocks/{name}/block.json.
 	 * Hooked to 'init'.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
@@ -51,9 +59,7 @@ class Block {
 	 * @return void
 	 */
 	public static function register(): void {
-		register_block_type( SATORI_MANIFEST_PATH . 'block/block.json' );
-
-		// Its editor script is bundled into the price-list block's index.js.
-		register_block_type( SATORI_MANIFEST_PATH . 'block/registration/block.json' );
+		register_block_type( SATORI_MANIFEST_PATH . 'blocks/price-list/block.json' );
+		register_block_type( SATORI_MANIFEST_PATH . 'blocks/registration-form/block.json' );
 	}
 }

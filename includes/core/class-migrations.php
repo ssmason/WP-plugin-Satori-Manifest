@@ -13,7 +13,12 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Core;
+
+use SatoriManifest\Clients\Client_Repository;
+
+use SatoriManifest\Manifest\Manifest_Repository;
+use SatoriManifest\Manifest\Post_Types;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -58,6 +63,10 @@ class Migrations {
 			self::add_section_ids();
 		}
 
+		if ( version_compare( $current, '3.2.0', '<' ) ) {
+			self::decode_titles();
+		}
+
 		update_option( self::OPTION, SATORI_MANIFEST_VERSION, false );
 	}
 
@@ -94,6 +103,41 @@ class Migrations {
 				Post_Types::META_SECTIONS,
 				wp_slash( (string) wp_json_encode( Sanitizer::sanitize_sections( $sections ) ) )
 			);
+		}
+	}
+
+	/**
+	 * 3.2.0 — turns "Willow &amp; Rose" back into "Willow & Rose" in the
+	 * titles of client pages and price lists.
+	 *
+	 * Earlier versions created them from the HTML-encoded display name, and
+	 * WordPress's content filter keeps entities when there is no logged-in
+	 * user (WP-CLI, webhooks), so the titles are written directly.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.2.0
+	 * @return void
+	 */
+	private static function decode_titles(): void {
+		global $wpdb;
+
+		foreach ( Client_Repository::all_clients() as $client ) {
+			$posts = array_filter(
+				array(
+					Client_Repository::page_id( $client->ID ),
+					Client_Repository::manifest_id( $client->ID ),
+				)
+			);
+
+			foreach ( $posts as $post_id ) {
+				$title   = (string) get_post_field( 'post_title', $post_id );
+				$decoded = html_entity_decode( $title, ENT_QUOTES, 'UTF-8' );
+
+				if ( $decoded !== $title ) {
+					$wpdb->update( $wpdb->posts, array( 'post_title' => $decoded ), array( 'ID' => $post_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- one-off migration; the cache is cleared below.
+					clean_post_cache( $post_id );
+				}
+			}
 		}
 	}
 }

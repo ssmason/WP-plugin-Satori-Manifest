@@ -14,7 +14,7 @@
 
 declare( strict_types=1 );
 
-namespace SatoriManifest;
+namespace SatoriManifest\Manifest;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

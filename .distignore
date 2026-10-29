@@ -1,16 +1,15 @@
+# Files left out of a distributable plugin zip (wp dist-archive).
 /.git
 /.gitignore
-/.wp-env.json
-/phpunit.xml
-/tests
-/cypress
-/cypress.config.js
 /.distignore
 /.claude
 /.phpcs.xml
 /.eslintrc.json
 /.stylelintrc.json
-/CLAUDE.md
+/phpunit.xml
+/tests
+/cypress
+/cypress.config.js
 /README.md
 /node_modules
 /vendor
@@ -19,9 +18,6 @@
 /composer.json
 /composer.lock
 /webpack.config.js
-block/src
+/src
 **/*.scss
 **/*.map
-src/scss/admin/admin.js
-src/scss/editor/editor.js
-src/scss/frontend/frontend.js

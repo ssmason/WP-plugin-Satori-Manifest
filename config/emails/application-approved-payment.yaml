@@ -1,0 +1,17 @@
+# Sent when an application is approved and payment is required first.
+# Placeholders: contact_name, business_name, plan, billing, price, payment_url.
+
+subject: You're approved — start your {{site_name}} plan
+preheader: One step left for {{business_name}}: start your plan and we'll create your account.
+heading: Good news, {{contact_name}} — you're approved
+body: |
+  {{business_name}} has been approved. Start your plan with the secure button below and we'll create your account straight away.
+
+  Payment is handled by Stripe — we never see or store your card details. You can switch between monthly and yearly, or cancel, at any time.
+details: |
+  Plan: {{plan}}
+  Billing: {{billing}}
+  Price: {{price}}
+button_label: Start my plan
+button_url: "{{payment_url}}"
+footer: This link is personal to you — please don't forward it.
