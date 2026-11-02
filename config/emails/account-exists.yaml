@@ -1,0 +1,17 @@
+# Sent when someone registers with an email that already has an account or a
+# pending application. The website shows the usual "thank you" either way, so
+# it never reveals which email addresses are registered.
+# Placeholders: contact_name, login_url, lost_password_url, has_account.
+
+subject: About your registration with {{site_name}}
+preheader: Someone used this email to register again.
+heading: You're already with us
+body: |
+  Hi {{contact_name}},
+
+  Someone just used this email address to register with {{site_name}}. {{has_account}}
+
+  If this wasn't you, you can safely ignore this email — nothing has changed.
+button_label: Log in
+button_url: "{{login_url}}"
+footer: "Forgotten your password? Reset it here: {{lost_password_url}}"

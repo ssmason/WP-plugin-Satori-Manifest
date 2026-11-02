@@ -46,6 +46,7 @@ class Client_Chrome {
 		add_action( 'admin_menu', array( self::class, 'trim_menu' ), 999 );
 		add_filter( 'parent_file', array( self::class, 'highlight_menu' ) );
 		add_action( 'admin_bar_menu', array( self::class, 'trim_admin_bar' ), 999 );
+		add_action( 'wp_before_admin_bar_render', array( self::class, 'remove_late_admin_bar_nodes' ) );
 		add_action( 'in_admin_header', array( self::class, 'silence_notices' ), 999 );
 		add_filter( 'admin_footer_text', array( self::class, 'footer_text' ) );
 		add_filter( 'update_footer', array( self::class, 'footer_version' ), 20 );
@@ -79,7 +80,8 @@ class Client_Chrome {
 			return;
 		}
 
-		foreach ( array( 'index.php', 'edit.php', 'edit.php?post_type=page', 'edit-comments.php', 'tools.php', 'edit.php?post_type=' . Post_Types::CPT_MANIFEST ) as $menu ) {
+		// Core screens plus menus third-party plugins add for any logged-in user (e.g. Yoast Academy).
+		foreach ( array( 'index.php', 'edit.php', 'edit.php?post_type=page', 'edit-comments.php', 'tools.php', 'edit.php?post_type=' . Post_Types::CPT_MANIFEST, 'wpseo_page_academy', 'wpseo_workouts', 'wpseo_dashboard' ) as $menu ) {
 			remove_menu_page( $menu );
 		}
 
@@ -131,7 +133,7 @@ class Client_Chrome {
 			return;
 		}
 
-		foreach ( array( 'wp-logo', 'site-name', 'comments', 'new-content', 'updates', 'customize', 'site-editor', 'search', 'edit', 'view', 'preview', 'wpseo-menu' ) as $node ) {
+		foreach ( array( 'wp-logo', 'site-name', 'comments', 'new-content', 'updates', 'customize', 'site-editor', 'search', 'edit', 'view', 'preview', 'wpseo-menu', 'command-palette' ) as $node ) {
 			$bar->remove_node( $node );
 		}
 
@@ -154,6 +156,24 @@ class Client_Chrome {
 					'meta'  => array( 'target' => '_blank' ),
 				)
 			);
+		}
+	}
+
+	/**
+	 * Removes admin bar items added after trim_admin_bar() ran.
+	 *
+	 * WordPress 7's command palette (⌘K) is added late on editor screens.
+	 * Hooked to 'wp_before_admin_bar_render'.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.3.0
+	 * @return void
+	 */
+	public static function remove_late_admin_bar_nodes(): void {
+		global $wp_admin_bar;
+
+		if ( Client_Role::is_client() && $wp_admin_bar instanceof \WP_Admin_Bar ) {
+			$wp_admin_bar->remove_node( 'command-palette' );
 		}
 	}
 

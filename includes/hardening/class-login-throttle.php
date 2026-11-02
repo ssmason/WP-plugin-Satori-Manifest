@@ -7,8 +7,8 @@
  * while. A successful login clears the count. Counters are transients, so
  * nothing is written to the users table.
  *
- * Behind a proxy or CDN, filter 'satori_manifest_client_ip' to return the
- * visitor's real address.
+ * Behind a proxy or CDN, set Manifest → Settings → "Site is behind" so the
+ * visitor's real address is used (see Client_Ip).
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -131,16 +131,6 @@ class Login_Throttle {
 	 * @return string
 	 */
 	private static function key(): string {
-		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
-
-		/**
-		 * Filters the visitor IP used for login throttling (e.g. behind a proxy).
-		 *
-		 * @since 3.2.0
-		 * @param string $ip  REMOTE_ADDR.
-		 */
-		$ip = (string) apply_filters( 'satori_manifest_client_ip', $ip );
-
-		return 'sm_login_' . md5( $ip . wp_salt( 'auth' ) );
+		return 'sm_login_' . Client_Ip::hash( 'login' );
 	}
 }

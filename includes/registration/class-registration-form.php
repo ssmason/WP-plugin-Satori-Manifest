@@ -21,6 +21,7 @@ namespace SatoriManifest\Registration;
 
 use SatoriManifest\Admin\Screens\Applications_Screen;
 use SatoriManifest\Designs\Design_Registry;
+use SatoriManifest\Hardening\Client_Ip;
 use SatoriManifest\Mail\Mailer;
 use SatoriManifest\Manifest\Block;
 
@@ -181,10 +182,6 @@ class Registration_Form {
 				'type' => 'error',
 				'text' => __( 'Please choose a plan, fill in your business name, your name and a valid email address, and accept the terms.', 'satori-manifest' ),
 			),
-			'duplicate'         => array(
-				'type' => 'info',
-				'text' => __( 'We already have an application or an account for that email address. We will be in touch — or log in if you already have an account.', 'satori-manifest' ),
-			),
 			'paid'              => array(
 				'type' => 'success',
 				'text' => __( 'Payment received — thank you! Your account is being set up now. Check your email for a link to choose your password.', 'satori-manifest' ),
@@ -260,8 +257,11 @@ class Registration_Form {
 			self::finish( $return, 'invalid' );
 		}
 
+		// Same answer as a new application, so the form never reveals which
+		// emails are registered; the address owner gets an email instead.
 		if ( email_exists( $data['email'] ) || Applications::has_pending_for( $data['email'] ) ) {
-			self::finish( $return, 'duplicate' );
+			self::notify_existing( $data );
+			self::finish( $return, 'received' );
 		}
 
 		$id = Applications::create( $data );
@@ -308,6 +308,30 @@ class Registration_Form {
 	}
 
 	/**
+	 * Tells the owner of an already-registered email that someone registered again.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.3.0
+	 * @param  array<string,string> $data  Submitted fields.
+	 * @return void
+	 */
+	private static function notify_existing( array $data ): void {
+		$has_account = (bool) email_exists( $data['email'] );
+
+		Mailer::send(
+			'account-exists',
+			$data['email'],
+			array(
+				'contact_name'      => explode( ' ', trim( $data['contact_name'] ), 2 )[0],
+				'has_account'       => $has_account
+					? __( 'You already have an account, so there is nothing more to do — just log in.', 'satori-manifest' )
+					: __( 'We already have your application and will be in touch soon.', 'satori-manifest' ),
+				'lost_password_url' => wp_lostpassword_url(),
+			)
+		);
+	}
+
+	/**
 	 * Allows RATE_LIMIT submissions per hashed IP per hour.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
@@ -315,8 +339,7 @@ class Registration_Form {
 	 * @return bool
 	 */
 	private static function within_rate_limit(): bool {
-		$ip  = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
-		$key = 'sm_reg_' . md5( $ip . wp_salt( 'nonce' ) );
+		$key = 'sm_reg_' . Client_Ip::hash( 'registration' );
 
 		$count = (int) get_transient( $key );
 

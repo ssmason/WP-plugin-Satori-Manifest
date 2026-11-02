@@ -3,7 +3,7 @@
  * Price list PDF.
  *
  * Lays out a client's price list as a print-ready A4 PDF: logo, business
- * name and tagline, every section and item with right-aligned prices,
+ * name and tagline, the page's QR code, every section and item with right-aligned prices,
  * contact details, and a footer on each page with the live page address.
  * Uses the client's brand colours, adjusted when needed so text stays
  * readable on white paper.
@@ -20,6 +20,8 @@ namespace SatoriManifest\Pdf;
 use SatoriManifest\Branding\Brand;
 use SatoriManifest\Clients\Client_Repository;
 use SatoriManifest\Manifest\Manifest_Repository;
+use SatoriManifest\Qr\Page_Qr;
+use SatoriManifest\Qr\Qr_Renderer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -77,6 +79,14 @@ class Price_List_Pdf {
 	private array $brand;
 
 	/**
+	 * Client page being printed.
+	 *
+	 * @since 3.3.0
+	 * @var   int
+	 */
+	private int $page_id;
+
+	/**
 	 * Print colours: text, muted, accent, rule (0–1 RGB).
 	 *
 	 * @since 3.2.0
@@ -123,6 +133,7 @@ class Price_List_Pdf {
 	 */
 	private function __construct( int $page_id ) {
 		$this->pdf     = new Pdf_Document();
+		$this->page_id = $page_id;
 		$this->brand   = Brand::for_page( $page_id );
 		$palette       = (array) $this->brand['colours'];
 		$this->colours = array(
@@ -161,14 +172,17 @@ class Price_List_Pdf {
 	}
 
 	/**
-	 * Logo, business name, tagline and a rule in the accent colour.
+	 * Logo, business name, tagline, the page's QR code and a rule in the accent colour.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.2.0
 	 * @return void
 	 */
 	private function header(): void {
-		$logo = Pdf_Image::from_attachment( (int) $this->brand['logo_id'] );
+		$top        = $this->y;
+		$qr_width   = $this->qr_code( $top );
+		$text_width = $this->content_width() - ( $qr_width > 0 ? $qr_width + 20 : 0 );
+		$logo       = Pdf_Image::from_attachment( (int) $this->brand['logo_id'] );
 
 		if ( $logo ) {
 			$scale = min( 170 / $logo['width'], 60 / $logo['height'], 1.0 );
@@ -179,7 +193,7 @@ class Price_List_Pdf {
 			$this->y += $h + 18;
 		}
 
-		foreach ( Font_Metrics::wrap( $this->clean( (string) $this->brand['name'] ), 24, $this->content_width(), true ) as $line ) {
+		foreach ( Font_Metrics::wrap( $this->clean( (string) $this->brand['name'] ), 24, $text_width, true ) as $line ) {
 			$this->y += 24;
 			$this->pdf->text( self::MARGIN, $this->y, $line, 24, true, $this->colours['text'] );
 		}
@@ -191,9 +205,37 @@ class Price_List_Pdf {
 			$this->pdf->text( self::MARGIN, $this->y, $tagline, 11, false, $this->colours['muted'] );
 		}
 
-		$this->y += 16;
+		// Keep the rule below the QR code and its caption.
+		$this->y = max( $this->y + 16, $top + ( $qr_width > 0 ? $qr_width + 22 : 0 ) );
 		$this->pdf->line( self::MARGIN, $this->y, self::MARGIN + $this->content_width(), $this->y, 1.5, $this->colours['accent'] );
 		$this->y += 26;
+	}
+
+	/**
+	 * Draws the page's QR code in the top-right corner with a short caption.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.3.0
+	 * @param  float $top  Top of the header.
+	 * @return float  Width used (0 when there is no code).
+	 */
+	private function qr_code( float $top ): float {
+		$matrix = Page_Qr::matrix( $this->page_id );
+
+		if ( ! $matrix ) {
+			return 0.0;
+		}
+
+		$size = 78.0;
+		$x    = self::MARGIN + $this->content_width() - $size;
+
+		Qr_Renderer::pdf( $this->pdf, $matrix, $x, $top - 6, $size, array( 0, 0, 0 ) );
+
+		$caption = Font_Metrics::encode( __( 'Scan for the latest prices', 'satori-manifest' ) );
+		$this->pdf->text( $x + ( $size - Font_Metrics::width( $caption, 6.5 ) ) / 2, $top + $size + 6, $caption, 6.5, false, $this->colours['muted'] );
+		$this->pdf->link( $x, $top - 6, $size, $size, Page_Qr::url( $this->page_id ) );
+
+		return $size;
 	}
 
 	/**

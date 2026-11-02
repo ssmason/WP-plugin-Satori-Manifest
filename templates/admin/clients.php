@@ -21,6 +21,7 @@ use SatoriManifest\Admin\Screens\Clients_Screen;
 use SatoriManifest\Branding\Icons;
 use SatoriManifest\Core\Security;
 use SatoriManifest\Pdf\Pdf_Download;
+use SatoriManifest\Qr\Qr_Download;
 ?>
 <div class="wrap sm-admin sm-clients-screen">
 	<header class="sm-page-header">
@@ -85,6 +86,7 @@ use SatoriManifest\Pdf\Pdf_Download;
 									<?php if ( $satori_manifest_row['page_id'] ) : ?>
 										<a class="button button-small" href="<?php echo esc_url( admin_url( 'post.php?post=' . $satori_manifest_row['page_id'] . '&action=edit' ) ); ?>"><?php esc_html_e( 'Page', 'satori-manifest' ); ?></a>
 										<a class="button button-small" href="<?php echo esc_url( Pdf_Download::url( (int) $satori_manifest_row['page_id'] ) ); ?>"><?php esc_html_e( 'PDF', 'satori-manifest' ); ?></a>
+										<a class="button button-small" href="<?php echo esc_url( Qr_Download::url( (int) $satori_manifest_row['page_id'] ) ); ?>"><?php esc_html_e( 'QR', 'satori-manifest' ); ?></a>
 									<?php endif; ?>
 									<?php if ( $satori_manifest_row['manifest_id'] ) : ?>
 										<a class="button button-small" href="<?php echo esc_url( admin_url( 'post.php?post=' . $satori_manifest_row['manifest_id'] . '&action=edit' ) ); ?>"><?php esc_html_e( 'Prices', 'satori-manifest' ); ?></a>

@@ -3,7 +3,7 @@
  * Plugin Name: Satori Manifest
  * Plugin URI:  https://github.com/ssmason/WP-Plugin-manifest
  * Description: Hosted price-list pages for QR-code clients. Each client gets one branded page, a manifest of sections and items, five starter designs and a slimmed-down wp-admin. No external PHP dependencies.
- * Version:     3.2.0
+ * Version:     3.3.0
  * Author:      Stephen Mason (Satori Digital)
  * Author URI:  https://satori-digital.com
  * License:     GPL-2.0-or-later
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants.
-define( 'SATORI_MANIFEST_VERSION', '3.2.0' );
+define( 'SATORI_MANIFEST_VERSION', '3.3.0' );
 define( 'SATORI_MANIFEST_FILE', __FILE__ );
 define( 'SATORI_MANIFEST_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SATORI_MANIFEST_URL', plugin_dir_url( __FILE__ ) );

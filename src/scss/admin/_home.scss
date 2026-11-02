@@ -50,15 +50,40 @@
 	border-radius: $sm-radius-lg;
 	background: rgba(255, 255, 255, 0.06);
 
-	&__icon {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 52px;
-		height: 52px;
-		border-radius: $sm-radius-lg;
+	// The real QR code, on white so it scans straight off the screen.
+	&__code {
+		width: 96px;
+		height: 96px;
+		padding: 4px;
+		border-radius: $sm-radius;
 		background: #fff;
-		color: $sm-ink;
+
+		svg {
+			display: block;
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	&__stats {
+		margin: 6px 0 0;
+		color: #afc2cc;
+		font-size: 12px;
+
+		strong {
+			color: #fff;
+		}
+	}
+
+	&__downloads {
+		grid-column: 1 / -1;
+		margin: 0;
+		color: #afc2cc;
+		font-size: 12px;
+
+		a {
+			color: #fff;
+		}
 	}
 
 	&__label {
@@ -263,6 +288,23 @@
 
 	&__status {
 		color: $sm-color-success;
+		font-weight: 600;
+	}
+}
+
+// "Email me a monthly summary" preference.
+.sm-summary-pref {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: $sm-space-md;
+	margin-top: $sm-space-lg;
+
+	&__label {
+		display: flex;
+		align-items: center;
+		gap: $sm-space-sm;
 		font-weight: 600;
 	}
 }

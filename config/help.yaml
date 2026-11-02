@@ -63,6 +63,10 @@ faq:
     a: Straight away. Save, then refresh your page to see it.
   - q: Can I change my design later?
     a: Yes, as often as you like. Your prices and branding stay the same.
+  - q: Can I print my own QR code?
+    a: Yes. On your Home screen, download it as a PNG for printing or an SVG for designers. It always opens your page, so you never need a new one.
+  - q: How many people look at my prices?
+    a: Your Home screen shows visits and QR scans for the last 30 days, and we email you a summary each month (you can turn that off on Home).
   - q: Can I show my price list on my own website?
     a: Yes. On your Home screen, copy the code under "Add your price list to your website" and paste it into an HTML or embed block on your site. It always shows your latest prices.
   - q: Can I get my price list as a PDF?

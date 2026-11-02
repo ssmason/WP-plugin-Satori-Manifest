@@ -72,6 +72,14 @@ $satori_manifest_social      = array(
 		<?php endif; ?>
 	</div>
 
+	<?php if ( \SatoriManifest\Pdf\Public_Pdf::is_available( \SatoriManifest\Frontend\Client_Page::current_page_id() ) ) : ?>
+		<p class="sm-footer__pdf">
+			<a class="sm-footer__pdf-link" href="<?php echo esc_url( \SatoriManifest\Pdf\Public_Pdf::url( \SatoriManifest\Frontend\Client_Page::current_page_id() ) ); ?>" rel="nofollow">
+				<?php esc_html_e( 'Download price list (PDF)', 'satori-manifest' ); ?>
+			</a>
+		</p>
+	<?php endif; ?>
+
 	<?php if ( '' !== $satori_manifest_footer['note'] || $satori_manifest_footer['show_credit'] ) : ?>
 		<div class="sm-footer__bottom">
 			<?php if ( '' !== $satori_manifest_footer['note'] ) : ?>

@@ -93,6 +93,23 @@ $satori_manifest_s = $satori_manifest_settings;
 				<label for="sm-require-payment"><?php esc_html_e( 'Take payment before creating the account (pre-ticked when approving)', 'satori-manifest' ); ?></label>
 			</p>
 
+			<p class="sm-field sm-field--inline">
+				<input id="sm-monthly-summary" type="checkbox" name="settings[monthly_summary]" value="1" <?php checked( (bool) $satori_manifest_s['monthly_summary'] ); ?> />
+				<label for="sm-monthly-summary"><?php esc_html_e( 'Email clients a monthly summary of visits and QR scans (they can opt out)', 'satori-manifest' ); ?></label>
+			</p>
+
+			<h2 class="sm-panel__title sm-panel__title--spaced"><?php esc_html_e( 'Security', 'satori-manifest' ); ?></h2>
+
+			<p class="sm-field">
+				<label for="sm-proxy"><?php esc_html_e( 'Site is behind', 'satori-manifest' ); ?></label>
+				<select id="sm-proxy" name="settings[proxy]">
+					<option value="none" <?php selected( $satori_manifest_s['proxy'], 'none' ); ?>><?php esc_html_e( 'Nothing — visitors connect directly', 'satori-manifest' ); ?></option>
+					<option value="cloudflare" <?php selected( $satori_manifest_s['proxy'], 'cloudflare' ); ?>><?php esc_html_e( 'Cloudflare', 'satori-manifest' ); ?></option>
+					<option value="forwarded" <?php selected( $satori_manifest_s['proxy'], 'forwarded' ); ?>><?php esc_html_e( 'Another proxy or load balancer (X-Forwarded-For)', 'satori-manifest' ); ?></option>
+				</select>
+				<span class="sm-field__hint"><?php esc_html_e( 'So login lockouts, the sign-up limit and visit counts see the real visitor. Only choose a proxy that really sits in front of this site.', 'satori-manifest' ); ?></span>
+			</p>
+
 			<button type="submit" class="button button-primary button-large"><?php esc_html_e( 'Save settings', 'satori-manifest' ); ?></button>
 		</form>
 

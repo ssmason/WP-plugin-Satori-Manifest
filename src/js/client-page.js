@@ -53,3 +53,43 @@
 		}
 	});
 })();
+
+/*
+ * Visit counting. Reports one visit per page load to the plugin (see
+ * Stats\View_Counter), marking QR code scans (?src=qr), then tidies the
+ * address so a shared link does not count as a scan. Nothing is sent for
+ * the page's owner or staff (no config is printed for them).
+ */
+(function () {
+	'use strict';
+
+	const stats = window.satoriManifestStats;
+
+	if (!stats || !stats.url) {
+		return;
+	}
+
+	const params = new URLSearchParams(window.location.search);
+	const body = new URLSearchParams({
+		page: String(stats.page),
+		source: params.get(stats.sourceVar) || '',
+	});
+
+	if (navigator.sendBeacon) {
+		navigator.sendBeacon(stats.url, body);
+	} else {
+		window.fetch(stats.url, { method: 'POST', body, keepalive: true });
+	}
+
+	if (params.has(stats.sourceVar) && window.history.replaceState) {
+		params.delete(stats.sourceVar);
+		const query = params.toString();
+		window.history.replaceState(
+			null,
+			'',
+			window.location.pathname +
+				(query ? '?' + query : '') +
+				window.location.hash
+		);
+	}
+})();

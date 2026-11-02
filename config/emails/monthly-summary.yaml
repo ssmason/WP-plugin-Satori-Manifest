@@ -1,0 +1,17 @@
+# Sent to each client at the start of a month (Stats\Monthly_Summary).
+# Placeholders: contact_name, business_name, month, views, scans, change, page_url, dashboard_url.
+
+subject: "Your {{month}} in numbers, {{contact_name}}"
+preheader: "{{views}} visits to {{business_name}}'s price list in {{month}}."
+heading: Your {{month}} summary
+body: |
+  Hi {{contact_name}},
+
+  Here's how your price list did in {{month}} — {{change}}.
+details: |
+  Page visits: {{views}}
+  QR code scans: {{scans}}
+  Your page: {{page_url}}
+button_label: Open your dashboard
+button_url: "{{dashboard_url}}"
+footer: "Tip: keep your prices fresh — pages that change regularly get more repeat visits. You can turn these emails off on your Home screen."

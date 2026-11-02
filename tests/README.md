@@ -51,6 +51,9 @@ tests can assert what was sent.
 | `EmbedTest` | website embed snippet: embed URL, title, origin-checked resize script |
 | `PdfTest` | text metrics and wrapping, print colours, PDF structure, multi-page price list, signed download links |
 | `HardeningTest` | login lockout, generic login errors, private REST user list, XML-RPC off, price-list save keeps quotes and needs a nonce |
+| `QrTest` | QR code matches a scanner-verified reference, version choice, finder patterns, SVG/PNG output, page QR links |
+| `StatsTest` | visit and scan counting, retention, bot/repeat rules over REST, proxy IP handling, monthly summary once per month and opt-out |
+| `PublicFeaturesTest` | public PDF switch, neutral reply to repeat registrations |
 | `BillingTest` | Checkout parameters, webhook signatures, unsigned requests rejected, first payment, renewals (logged once), failed payments, cancellation |
 
 ## Writing a test

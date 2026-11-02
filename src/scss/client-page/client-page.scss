@@ -576,3 +576,33 @@ body.sm-embed {
 	text-decoration: underline;
 	text-underline-offset: 0.2em;
 }
+
+// "Download price list (PDF)" — a quiet outlined pill in the design's accent.
+.sm-footer__pdf {
+	margin: 0 0 1.5rem;
+	text-align: center;
+}
+
+.sm-footer__pdf-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	padding: 0.6em 1.2em;
+	border: 1px solid currentcolor;
+	border-radius: 999px;
+	color: var(--sm-accent);
+	font-size: 0.9rem;
+	font-weight: 600;
+	text-decoration: none;
+
+	&::before {
+		content: "↓";
+	}
+
+	&:hover,
+	&:focus-visible {
+		background: var(--sm-accent);
+		border-color: var(--sm-accent);
+		color: var(--sm-accent-text);
+	}
+}

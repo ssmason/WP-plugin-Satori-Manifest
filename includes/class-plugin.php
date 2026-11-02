@@ -17,7 +17,9 @@
  *   fields/          Fields\       ACF field groups loaded from YAML
  *   frontend/        Frontend\     client page template, embed mode and block editor canvas
  *   login/           Login\        branded wp-login.php
- *   pdf/             Pdf\          dependency-free PDF writer and the price-list PDF download
+ *   pdf/             Pdf\          dependency-free PDF writer, price-list PDF (client and public download)
+ *   qr/              Qr\           dependency-free QR encoder, renderer and downloads
+ *   stats/           Stats\        visit and QR-scan counts, monthly summary email
  *   help/            Help\         getting-started content and contextual help tabs
  *   hardening/       Hardening\    login throttling, XML-RPC off, no username leaks
  *   admin/           Admin\        menus and assets
@@ -56,8 +58,10 @@ use SatoriManifest\Cli\Client_Command;
 use SatoriManifest\Cli\Demo_Command;
 use SatoriManifest\Cli\Designs_Command;
 use SatoriManifest\Cli\Email_Command;
+use SatoriManifest\Cli\Stats_Command;
 use SatoriManifest\Clients\Access_Control;
 use SatoriManifest\Clients\Client_Role;
+use SatoriManifest\Clients\Menu_Support;
 use SatoriManifest\Clients\Plain_Titles;
 use SatoriManifest\Clients\Provisioner;
 use SatoriManifest\Core\Migrations;
@@ -72,6 +76,10 @@ use SatoriManifest\Help\Help_Tabs;
 use SatoriManifest\Login\Login_Screen;
 use SatoriManifest\Mail\Core_Emails;
 use SatoriManifest\Pdf\Pdf_Download;
+use SatoriManifest\Pdf\Public_Pdf;
+use SatoriManifest\Qr\Qr_Download;
+use SatoriManifest\Stats\Monthly_Summary;
+use SatoriManifest\Stats\View_Counter;
 use SatoriManifest\Manifest\Block;
 use SatoriManifest\Manifest\Meta_Box;
 use SatoriManifest\Manifest\Patterns;
@@ -180,6 +188,7 @@ class Plugin {
 		add_action( 'delete_user', array( Provisioner::class, 'on_delete_user' ) );
 		Access_Control::register();
 		Plain_Titles::register();
+		Menu_Support::register();
 		Page_Title_Sync::register();
 	}
 
@@ -223,6 +232,10 @@ class Plugin {
 		Client_Page::register();
 		Embed::register();
 		Pdf_Download::register();
+		Public_Pdf::register();
+		Qr_Download::register();
+		View_Counter::register();
+		Monthly_Summary::register();
 		Editor::register();
 		Login_Screen::register();
 	}
@@ -269,6 +282,7 @@ class Plugin {
 		\WP_CLI::add_command( 'satori-manifest designs', Designs_Command::class );
 		\WP_CLI::add_command( 'satori-manifest email', Email_Command::class );
 		\WP_CLI::add_command( 'satori-manifest billing', Billing_Command::class );
+		\WP_CLI::add_command( 'satori-manifest stats', Stats_Command::class );
 	}
 
 	/**
@@ -308,6 +322,7 @@ class Plugin {
 	 * @return void
 	 */
 	public static function deactivate(): void {
+		Monthly_Summary::unschedule();
 		flush_rewrite_rules();
 	}
 }

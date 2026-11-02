@@ -70,8 +70,15 @@ fields:
     type: text
     instructions: e.g. "Prices may vary depending on hair length."
 
+  - name: sm_footer_show_pdf
+    label: Show a "Download price list (PDF)" link
+    type: true_false
+    ui: true
+    default_value: 1
+    instructions: Lets customers save or print your prices.
+
   - name: sm_footer_show_credit
-    label: Show "Powered by Satori" credit
+    label: Show the "Price list by …" credit
     type: true_false
     ui: true
     default_value: 1

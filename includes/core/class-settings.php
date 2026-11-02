@@ -47,6 +47,8 @@ class Settings {
 	 * support_email    Shown to clients in Help and emails (blank = admin email).
 	 * staff_emails     Who is told about applications and payments (blank = admin email).
 	 * require_payment  Pre-ticks "Take payment before creating the account" on approval.
+	 * proxy            What sits in front of the site: none, cloudflare or forwarded (see Hardening\Client_Ip).
+	 * monthly_summary  Email clients a monthly summary of their views and scans.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.0.0
@@ -60,6 +62,8 @@ class Settings {
 			'support_email'   => '',
 			'staff_emails'    => '',
 			'require_payment' => true,
+			'proxy'           => 'none',
+			'monthly_summary' => true,
 		);
 	}
 
@@ -120,6 +124,8 @@ class Settings {
 			'support_email'   => is_email( (string) ( $input['support_email'] ?? '' ) ) ? sanitize_email( (string) $input['support_email'] ) : '',
 			'staff_emails'    => implode( ', ', $emails ),
 			'require_payment' => ! empty( $input['require_payment'] ),
+			'proxy'           => in_array( (string) ( $input['proxy'] ?? '' ), array( 'none', 'cloudflare', 'forwarded' ), true ) ? (string) $input['proxy'] : 'none',
+			'monthly_summary' => ! empty( $input['monthly_summary'] ),
 		);
 	}
 }

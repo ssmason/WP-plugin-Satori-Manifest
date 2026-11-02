@@ -51,6 +51,8 @@ wp satori-manifest email test application-approved you@example.com
 wp satori-manifest email preview payment-receipt --file=/tmp/receipt.html
 wp satori-manifest billing status
 wp satori-manifest billing simulate-payment <application_id>   # offline, no Stripe call
+wp satori-manifest stats list [--days=30]
+wp satori-manifest stats send-summary [--month=YYYY-MM] [--client=<id>] [--to=<email>]
 ```
 
 Environment settings (`.env` or `wp-config.php` constants — secrets never live in the database):
@@ -110,6 +112,20 @@ Visitor ──Register form──▶ Application (pending)
   right-aligned prices with dotted leaders, contact details, page numbers and the live page
   address. Brand colours too light for paper are swapped for readable ones; white logos are
   placed on a dark tile. Nonce-protected; clients can only download their own.
+* **QR code** — every client page has one, built by the plugin's own encoder
+  (`Qr\Qr_Encoder`, ISO 18004, no library; verified with a real scanner). It opens the page
+  with `?src=qr` and uses error correction Q (25%) so worn prints still scan. Clients see it
+  on Home and download it as PNG (print) or SVG (designers); staff from Clients ("QR"); it is
+  also printed on the PDF.
+* **Visits and scans** — `Stats\View_Counter` counts visits with a small background request
+  (works with page caching): bots, the client, staff and repeat visits within 30 minutes are
+  not counted; QR scans are visits that came from `?src=qr`. Only daily totals are stored, on
+  the page (`Stats\Page_Views`, 400 days). Home shows the last 30 days.
+* **Monthly summary** — on the 1st, each client gets last month's visits and scans compared
+  with the month before (`Stats\Monthly_Summary`, daily WP-Cron check). Staff can switch it off
+  in Settings; clients on their Home screen.
+* **Public PDF** — client pages show "Download price list (PDF)" (`?sm_pdf=1`, cached for 10
+  minutes) unless the client switches it off under Branding → Footer.
 * **Login** — `wp-login.php` is branded with the portal logo and colours and links to
   the Register page.
 
@@ -175,6 +191,8 @@ password-reset email uses the same branded layout (`Core_Emails`).
 | `subscription-cancelled` | client | subscription ended |
 | `staff-billing-notice` | staff | new subscription, failed payment, cancellation |
 | `password-reset` | user | "Lost your password?" |
+| `account-exists` | registrant | someone registered again with an existing email |
+| `monthly-summary` | client | 1st of the month: visits and QR scans |
 
 Passwords are never emailed. Each application keeps a log of its emails.
 
@@ -191,6 +209,13 @@ On top of that:
   window, de-duplicated events).
 * Clients are isolated server-side (see Client isolation) and have no `unfiltered_html`, so
   WordPress strips scripts from anything they write.
+* The registration form answers the same way for new and already-registered emails; the
+  owner of an existing email gets an email instead, so the form can't be used to find out
+  who is registered.
+* `Hardening\Client_Ip` — the real visitor IP behind Cloudflare or another proxy (Manifest →
+  Settings → "Site is behind"), used by the login throttle, the sign-up limit and visit counts.
+* Two-step login: the **Two Factor** plugin (WordPress.org) is installed; each user switches
+  it on under Users → Profile.
 * `Hardening\Login_Throttle` — 5 failed logins from one IP lock it out for 15 minutes.
 * `Hardening\Site_Hardening` — XML-RPC blocked, REST user list private (no username
   harvesting), login errors don't reveal whether a username exists, WordPress version hidden.
@@ -290,8 +315,10 @@ includes/
   frontend/      Frontend\     Client_Page, Embed, Editor
   login/         Login\        Login_Screen
   pdf/           Pdf\          Pdf_Document, Font_Metrics, Print_Colour, Pdf_Image,
-                               Price_List_Pdf, Pdf_Download
-  hardening/     Hardening\    Login_Throttle, Site_Hardening
+                               Price_List_Pdf, Pdf_Download, Public_Pdf
+  hardening/     Hardening\    Login_Throttle, Site_Hardening, Client_Ip
+  qr/            Qr\           Qr_Encoder, Qr_Renderer, Page_Qr, Qr_Download
+  stats/         Stats\        Page_Views, View_Counter, Monthly_Summary
   help/          Help\         Help_Content, Help_Tabs
   admin/         Admin\        Admin_Menu, Assets
     screens/     Admin\Screens\ one class per screen (Client_Home, Branding, Design, Clients,
@@ -375,7 +402,7 @@ An item with an empty price renders as a sub-heading. All input passes through
 | `satori_manifest_staff_recipients` | filter | who gets staff notices |
 | `satori_manifest_email_sent` | action | after every email attempt |
 | `satori_manifest_hardening` | filter | switch a hardening measure off (`xmlrpc`, `rest_users`, `login_errors`, `version`) |
-| `satori_manifest_client_ip` | filter | visitor IP for login throttling (behind a proxy/CDN) |
+| `satori_manifest_client_ip` | filter | visitor IP (after the Settings proxy choice) |
 
 ---
 

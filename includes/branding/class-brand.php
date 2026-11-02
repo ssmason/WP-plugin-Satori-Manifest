@@ -128,6 +128,7 @@ class Brand {
 				'email'       => self::meta( $page_id, 'sm_footer_email' ),
 				'note'        => self::meta( $page_id, 'sm_footer_note' ),
 				'show_credit' => '0' !== self::meta( $page_id, 'sm_footer_show_credit', '1' ),
+				'show_pdf'    => '0' !== self::meta( $page_id, 'sm_footer_show_pdf', '1' ),
 				'social'      => array_filter(
 					array(
 						'website'   => self::meta( $page_id, 'sm_social_website' ),
