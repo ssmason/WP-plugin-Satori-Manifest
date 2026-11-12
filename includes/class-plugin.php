@@ -80,6 +80,7 @@ use SatoriManifest\Core\Page_Cache;
 use SatoriManifest\Fields\Field_Loader;
 use SatoriManifest\Frontend\Client_Page;
 use SatoriManifest\Frontend\Design_Preview;
+use SatoriManifest\Frontend\Example_Bar;
 use SatoriManifest\Frontend\Editor;
 use SatoriManifest\Frontend\Embed;
 use SatoriManifest\Hardening\Login_Throttle;
@@ -253,6 +254,7 @@ class Plugin {
 	private function register_front_end(): void {
 		Client_Page::register();
 		Design_Preview::register();
+		Example_Bar::register();
 		Embed::register();
 		Pdf_Download::register();
 		Qr_Download::register();

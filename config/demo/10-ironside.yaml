@@ -1,0 +1,27 @@
+# Demo client - Edge design (full page: tall photo, condensed headlines, two-column prices, banner).
+
+user:
+  login: ironside
+  email: hello@ironside.test
+  name: Ironside Barbers
+design: edge
+brand:
+  sm_brand_name: Ironside
+  sm_brand_tagline: Barbers since 2009
+  sm_footer_address: 41 Steel Street, Leeds LS1 4AB
+  sm_footer_hours: |-
+    Mon–Fri 9am – 7pm
+    Sat 8am – 5pm
+  sm_social_instagram: https://instagram.com/ironsidebarbers
+sections:
+  - title: Cuts
+    items:
+      - { label: Classic cut, price: 24 }
+      - { label: Skin fade, price: 26, badge: Popular }
+      - { label: Scissor cut, price: 28 }
+      - { label: Kids cut, description: Under 12, price: 16 }
+  - title: Beard
+    items:
+      - { label: Beard trim, price: 14 }
+      - { label: Hot towel shave, price: 25 }
+      - { label: Cut & beard, price: 36 }

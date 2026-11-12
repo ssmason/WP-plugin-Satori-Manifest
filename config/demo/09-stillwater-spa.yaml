@@ -1,0 +1,29 @@
+# Demo client - Serene design (full page: photo hero, welcome, treatment room, prices, booking panel).
+
+user:
+  login: stillwaterspa
+  email: hello@stillwaterspa.test
+  name: Stillwater Spa
+design: serene
+brand:
+  sm_brand_name: Stillwater
+  sm_brand_tagline: Day spa & treatment rooms
+  sm_footer_address: 5 Abbey Lane, Bath BA1 1LT
+  sm_footer_hours: |-
+    Tue–Sat 9am – 7pm
+    Sun 10am – 4pm
+  sm_social_instagram: https://instagram.com/stillwaterspa
+sections:
+  - title: Massage
+    items:
+      - { label: Swedish massage, description: 60 minutes, price: 65 }
+      - { label: Hot stone massage, description: 75 minutes, price: 80, badge: Popular }
+      - { label: "Back, neck & shoulders", description: 30 minutes, price: 40 }
+  - title: Facials
+    items:
+      - { label: Signature facial, description: 60 minutes, price: 70 }
+      - { label: Express glow, description: 30 minutes, price: 38 }
+  - title: Hands & feet
+    items:
+      - { label: Spa manicure, price: 32 }
+      - { label: Spa pedicure, price: 38 }

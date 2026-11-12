@@ -1,0 +1,30 @@
+# Demo client - Harbour design (full page: photo hero, menu chapters, photo strip, banner).
+
+user:
+  login: theanchor
+  email: hello@theanchor.test
+  name: The Anchor
+design: harbour
+brand:
+  sm_brand_name: The Anchor
+  sm_brand_tagline: Seafood kitchen on the quay
+  sm_footer_address: 3 Quay Street, Falmouth TR11 3HH
+  sm_footer_hours: |-
+    Tue–Sat 12pm – 10pm
+    Sun 12pm – 6pm
+  sm_social_instagram: https://instagram.com/theanchor
+sections:
+  - title: To start
+    items:
+      - { label: Rock oysters, description: "Shallot vinegar, lemon", price: 3, price_prefix: each }
+      - { label: Crab on toast, description: "Brown crab butter, pickled cucumber", price: 11 }
+      - { label: Salt & pepper squid, description: "Lime aioli", price: 9.5, badge: Popular }
+  - title: From the boat
+    items:
+      - { label: Catch of the day, description: Ask your server, price: 24, price_prefix: from }
+      - { label: Fish & chips, description: "Beer-battered hake, mushy peas, tartare", price: 17 }
+      - { label: Mussels, description: "Cider, leek and cream, with fries", price: 16 }
+  - title: Puddings
+    items:
+      - { label: Treacle tart, description: Clotted cream, price: 7.5 }
+      - { label: Lemon posset, price: 7 }

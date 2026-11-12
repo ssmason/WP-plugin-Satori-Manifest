@@ -638,3 +638,102 @@ body.sm-embed {
 	text-underline-offset: 0.2em;
 }
 
+
+/* Examples bar (demo pages only): links to every other example. Neutral
+   colours and system type so it sits on any design. */
+.sm-client-page:has(.sm-examples) {
+	padding-bottom: 4.5rem;
+}
+
+.sm-examples {
+	position: fixed;
+	z-index: 9999;
+	right: 0;
+	bottom: 0.75rem;
+	left: 0;
+	display: flex;
+	justify-content: center;
+	padding: 0 0.75rem;
+	font-family: -apple-system, blinkmacsystemfont, "Segoe UI", roboto, sans-serif;
+	font-size: 0.8rem;
+	line-height: 1.2;
+	pointer-events: none;
+}
+
+.sm-examples__inner {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+	max-width: 100%;
+	padding: 0.4rem 0.45rem 0.4rem 0.9rem;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 999px;
+	background: rgba(17, 20, 28, 0.92);
+	box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.55);
+	color: #fff;
+	pointer-events: auto;
+	backdrop-filter: blur(8px);
+}
+
+.sm-examples__home {
+	flex: none;
+	color: rgba(255, 255, 255, 0.75);
+	font-weight: 600;
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		color: #fff;
+	}
+}
+
+.sm-examples__groups {
+	display: flex;
+	gap: 0.9rem;
+	overflow-x: auto;
+	scrollbar-width: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+.sm-examples__group {
+	display: flex;
+	flex: none;
+	gap: 0.2rem;
+	align-items: center;
+
+	& + & {
+		padding-left: 0.9rem;
+		border-left: 1px solid rgba(255, 255, 255, 0.18);
+	}
+}
+
+.sm-examples__label {
+	margin-right: 0.3rem;
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 0.68rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.sm-examples__link {
+	padding: 0.4rem 0.7rem;
+	border-radius: 999px;
+	color: #fff;
+	text-decoration: none;
+	white-space: nowrap;
+
+	&:hover,
+	&:focus-visible {
+		background: rgba(255, 255, 255, 0.12);
+	}
+
+	&.is-current {
+		background: #fff;
+		color: #11141c;
+		font-weight: 600;
+	}
+}

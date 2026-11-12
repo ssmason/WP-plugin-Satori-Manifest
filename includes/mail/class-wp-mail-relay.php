@@ -17,8 +17,6 @@ declare( strict_types=1 );
 
 namespace SatoriManifest\Mail;
 
-use WP_Error;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -80,7 +78,7 @@ class WP_Mail_Relay {
 		}
 
 		if ( $errors ) {
-			do_action( 'wp_mail_failed', new WP_Error( 'wp_mail_failed', implode( '; ', $errors ), $atts ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- core hook.
+			do_action( 'wp_mail_failed', new \WP_Error( 'wp_mail_failed', implode( '; ', $errors ), $atts ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- core hook.
 			return false;
 		}
 

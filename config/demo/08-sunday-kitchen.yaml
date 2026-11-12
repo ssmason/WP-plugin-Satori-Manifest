@@ -1,0 +1,30 @@
+# Demo client - Morning design (full page: text beside a photo, reasons to visit, menu cards, photo row).
+
+user:
+  login: sundaykitchen
+  email: hello@sundaykitchen.test
+  name: Sunday Kitchen
+design: morning
+brand:
+  sm_brand_name: Sunday Kitchen
+  sm_brand_tagline: Brunch, coffee and good bakes
+  sm_footer_address: 12 Market Row, Bristol BS1 1JQ
+  sm_footer_hours: |-
+    Mon–Fri 8am – 3pm
+    Sat–Sun 9am – 4pm
+  sm_social_instagram: https://instagram.com/sundaykitchen
+sections:
+  - title: Brunch
+    items:
+      - { label: Shakshuka, description: "Baked eggs, feta, sourdough", price: 11, badge: Popular }
+      - { label: Avocado toast, description: "Chilli, lime, seeds", price: 9.5, badge: Vegan }
+      - { label: Buttermilk pancakes, description: "Berries, maple, crème fraîche", price: 10 }
+  - title: Coffee
+    items:
+      - { label: Flat white, price: 3.4 }
+      - { label: Oat latte, price: 3.6 }
+      - { label: Filter, price: 3 }
+  - title: Bakes
+    items:
+      - { label: Cinnamon bun, price: 3.5 }
+      - { label: Lemon drizzle, price: 3.2 }
