@@ -5,7 +5,7 @@
  * Lets a client (or staff, for a chosen client) pick one of the registered
  * designs. Each design card shows a live preview of the client's own page
  * rendered in that design. Applying a design either keeps the page content
- * (styles change only) or replaces it with the design's starter layout —
+ * (styles change only) or replaces it with the design's starter layout -
  * WordPress keeps a revision, so a replacement can be undone.
  *
  * @package SatoriManifest
@@ -58,6 +58,8 @@ class Design_Screen {
 		$satori_manifest_client_id = Admin_Menu::current_client_id();
 		$satori_manifest_page_id   = $satori_manifest_client_id ? Client_Repository::page_id( $satori_manifest_client_id ) : 0;
 		$satori_manifest_current   = $satori_manifest_page_id ? Client_Repository::design_for_page( $satori_manifest_page_id ) : '';
+		$satori_manifest_mode      = $satori_manifest_page_id ? Client_Repository::mode_for_page( $satori_manifest_page_id, $satori_manifest_current ) : 'light';
+		$satori_manifest_untouched = $satori_manifest_page_id && Client_Repository::page_is_untouched( $satori_manifest_page_id );
 		$satori_manifest_designs   = Design_Registry::all();
 		$satori_manifest_clients   = Client_Role::is_client() ? array() : Client_Repository::all_clients();
 
@@ -86,6 +88,7 @@ class Design_Screen {
 		$page_id = isset( $_POST['page_id'] ) ? absint( $_POST['page_id'] ) : 0;
 		$design  = isset( $_POST['design'] ) ? sanitize_key( wp_unslash( $_POST['design'] ) ) : '';
 		$mode    = isset( $_POST['mode'] ) && 'replace' === sanitize_key( wp_unslash( $_POST['mode'] ) ) ? 'replace' : 'keep';
+		$colours = isset( $_POST['colour_mode'] ) ? sanitize_key( wp_unslash( $_POST['colour_mode'] ) ) : '';
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		$client_id = Client_Repository::client_for_page( $page_id );
@@ -94,12 +97,18 @@ class Design_Screen {
 			wp_die( esc_html__( 'Sorry, you cannot change this design.', 'satori-manifest' ), 403 );
 		}
 
-		Design_Applier::apply( $page_id, $design, 'replace' === $mode );
+		// A page the client has not edited yet always takes the template.
+		$untouched = Client_Repository::page_is_untouched( $page_id );
+		if ( $untouched ) {
+			$mode = 'replace';
+		}
+
+		Design_Applier::apply( $page_id, $design, 'replace' === $mode, $colours );
 
 		wp_safe_redirect(
 			add_query_arg(
 				'sm_notice',
-				'replace' === $mode ? 'replaced' : 'applied',
+				$untouched ? 'started' : ( 'replace' === $mode ? 'replaced' : 'applied' ),
 				Admin_Menu::url( Admin_Menu::DESIGN_SLUG, $client_id )
 			)
 		);

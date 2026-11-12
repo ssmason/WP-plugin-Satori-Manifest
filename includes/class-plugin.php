@@ -5,7 +5,7 @@
  * Registers all hooks and boots sub-components. Implements a singleton to
  * ensure only one instance is ever loaded.
  *
- * Folder map (includes/) — one folder, one namespace:
+ * Folder map (includes/) - one folder, one namespace:
  *   core/            Core\         YAML, config, env, settings, security, sanitizing, migrations
  *   manifest/        Manifest\     price-list post type, meta box, blocks and block patterns
  *   clients/         Clients\      client role, provisioning, factory, summary and isolation rules
@@ -14,6 +14,7 @@
  *   registration/    Registration\ plans, applications, approval workflow, sign-up form
  *   billing/         Billing\      Stripe checkout, webhooks, subscriptions, payments log
  *   mail/            Mail\         templated email, transports, branded core emails
+ *   contact/         Contact\      contact form block and dashboard panel → staff email
  *   fields/          Fields\       ACF field groups loaded from YAML
  *   frontend/        Frontend\     client page template, embed mode and block editor canvas
  *   login/           Login\        branded wp-login.php
@@ -36,6 +37,10 @@ declare( strict_types=1 );
 
 namespace SatoriManifest;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use SatoriManifest\Admin\Admin_Menu;
 use SatoriManifest\Admin\Assets;
 use SatoriManifest\Admin\Portal\Client_Chrome;
@@ -50,6 +55,8 @@ use SatoriManifest\Admin\Screens\Payments_Screen;
 use SatoriManifest\Admin\Screens\Settings_Screen;
 use SatoriManifest\Billing\Billing_Portal;
 use SatoriManifest\Billing\Checkout;
+use SatoriManifest\Billing\Checkout_Return;
+use SatoriManifest\Billing\Printed_Codes;
 use SatoriManifest\Billing\Payments;
 use SatoriManifest\Billing\Webhooks;
 use SatoriManifest\Branding\Page_Title_Sync;
@@ -60,14 +67,19 @@ use SatoriManifest\Cli\Designs_Command;
 use SatoriManifest\Cli\Email_Command;
 use SatoriManifest\Cli\Stats_Command;
 use SatoriManifest\Clients\Access_Control;
+use SatoriManifest\Clients\Menu_Access;
+use SatoriManifest\Clients\Page_Template_Lock;
 use SatoriManifest\Clients\Client_Role;
+use SatoriManifest\Clients\First_Password;
 use SatoriManifest\Clients\Menu_Support;
 use SatoriManifest\Clients\Plain_Titles;
 use SatoriManifest\Clients\Provisioner;
 use SatoriManifest\Core\Migrations;
 use SatoriManifest\Core\Multisite;
+use SatoriManifest\Core\Page_Cache;
 use SatoriManifest\Fields\Field_Loader;
 use SatoriManifest\Frontend\Client_Page;
+use SatoriManifest\Frontend\Design_Preview;
 use SatoriManifest\Frontend\Editor;
 use SatoriManifest\Frontend\Embed;
 use SatoriManifest\Hardening\Login_Throttle;
@@ -75,8 +87,10 @@ use SatoriManifest\Hardening\Site_Hardening;
 use SatoriManifest\Help\Help_Tabs;
 use SatoriManifest\Login\Login_Screen;
 use SatoriManifest\Mail\Core_Emails;
+use SatoriManifest\Mail\WP_Mail_Relay;
+use SatoriManifest\Contact\Contact_Form;
+use SatoriManifest\Contact\Contact_Handler;
 use SatoriManifest\Pdf\Pdf_Download;
-use SatoriManifest\Pdf\Public_Pdf;
 use SatoriManifest\Qr\Qr_Download;
 use SatoriManifest\Stats\Monthly_Summary;
 use SatoriManifest\Stats\View_Counter;
@@ -86,15 +100,13 @@ use SatoriManifest\Manifest\Patterns;
 use SatoriManifest\Manifest\Post_Types;
 use SatoriManifest\Registration\Applications;
 use SatoriManifest\Registration\Registration_Form;
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+use SatoriManifest\Registration\Abandoned_Checkouts;
+use SatoriManifest\Registration\Registration_Handler;
 
 /**
  * Class Plugin
  *
- * Main bootstrap — wires all sub-components together via WordPress hooks.
+ * Main bootstrap - wires all sub-components together via WordPress hooks.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -111,7 +123,7 @@ class Plugin {
 	private static ?Plugin $instance = null;
 
 	/**
-	 * Private constructor — use Plugin::instance().
+	 * Private constructor - use Plugin::instance().
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  1.0.0
@@ -187,6 +199,8 @@ class Plugin {
 		add_action( 'set_user_role', array( Provisioner::class, 'on_set_role' ), 20, 2 );
 		add_action( 'delete_user', array( Provisioner::class, 'on_delete_user' ) );
 		Access_Control::register();
+		Menu_Access::register();
+		Page_Template_Lock::register();
 		Plain_Titles::register();
 		Menu_Support::register();
 		Page_Title_Sync::register();
@@ -204,9 +218,17 @@ class Plugin {
 		add_action( 'init', array( Payments::class, 'register' ) );
 		add_action( 'rest_api_init', array( Webhooks::class, 'register_route' ) );
 		Registration_Form::register();
+		Registration_Handler::register();
+		Abandoned_Checkouts::register();
 		Checkout::register();
+		Checkout_Return::register();
+		Printed_Codes::register();
+		First_Password::register();
 		Billing_Portal::register();
 		Core_Emails::register();
+		WP_Mail_Relay::register();
+		Contact_Form::register();
+		Contact_Handler::register();
 	}
 
 	/**
@@ -230,12 +252,13 @@ class Plugin {
 	 */
 	private function register_front_end(): void {
 		Client_Page::register();
+		Design_Preview::register();
 		Embed::register();
 		Pdf_Download::register();
-		Public_Pdf::register();
 		Qr_Download::register();
 		View_Counter::register();
 		Monthly_Summary::register();
+		Page_Cache::register();
 		Editor::register();
 		Login_Screen::register();
 	}
@@ -293,6 +316,8 @@ class Plugin {
 	 * @return void
 	 */
 	public function load_textdomain(): void {
+		// Needed: the plugin is not hosted on WordPress.org, so its translations
+		// ship in /languages rather than being loaded just-in-time.
 		load_plugin_textdomain(
 			'satori-manifest',
 			false,

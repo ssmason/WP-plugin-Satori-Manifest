@@ -4,7 +4,7 @@
  *
  * Approved applicants receive a payment link (payment_url()). Opening it
  * creates a fresh Stripe Checkout session for their plan and billing
- * interval and redirects them to Stripe's hosted payment page — so card
+ * interval and redirects them to Stripe's hosted payment page - so card
  * details never touch this site. Stripe then calls the webhook, which
  * creates the client account.
  *
@@ -189,9 +189,18 @@ class Checkout {
 			'allow_promotion_codes'      => 'true',
 			'billing_address_collection' => 'auto',
 			'locale'                     => 'auto',
-			'success_url'                => self::return_url( $app, 'paid' ),
+			'success_url'                => Checkout_Return::success_url( (int) $app['id'] ),
 			'cancel_url'                 => self::return_url( $app, 'payment-cancelled' ),
 		);
+
+		// Postal address for the printed QR codes.
+		$params = array_merge( $params, Printed_Codes::shipping_params( (string) ( $app['ship_region'] ?? '' ) ) );
+
+		// Free trial: the card is still collected now; Stripe charges it when the trial ends.
+		if ( Plans::trial_days() > 0 ) {
+			$params['subscription_data']['trial_period_days'] = (string) Plans::trial_days();
+			$params['payment_method_collection']              = 'always';
+		}
 
 		/**
 		 * Filters the Stripe Checkout session parameters (e.g. to add tax settings).
@@ -233,7 +242,7 @@ class Checkout {
 				'recurring'    => array( 'interval' => $interval ),
 				'product_data' => array(
 					/* translators: 1: site name, 2: plan title. */
-					'name' => sprintf( __( '%1$s — %2$s', 'satori-manifest' ), wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ), Plans::title( $plan ) ),
+					'name' => sprintf( __( '%1$s: %2$s', 'satori-manifest' ), wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ), Plans::title( $plan ) ),
 				),
 			),
 		);

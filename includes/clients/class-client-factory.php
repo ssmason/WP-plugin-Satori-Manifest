@@ -2,7 +2,7 @@
 /**
  * Client factory.
  *
- * The one place a client account is created — used by the staff Clients
+ * The one place a client account is created - used by the staff Clients
  * screen, application approval, payments and WP-CLI alike.
  *
  * @package SatoriManifest

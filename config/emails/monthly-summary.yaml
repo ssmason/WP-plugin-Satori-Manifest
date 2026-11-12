@@ -7,11 +7,11 @@ heading: Your {{month}} summary
 body: |
   Hi {{contact_name}},
 
-  Here's how your price list did in {{month}} — {{change}}.
+  Here's how your price list did in {{month}}: {{change}}.
 details: |
   Page visits: {{views}}
   QR code scans: {{scans}}
   Your page: {{page_url}}
 button_label: Open your dashboard
 button_url: "{{dashboard_url}}"
-footer: "Tip: keep your prices fresh — pages that change regularly get more repeat visits. You can turn these emails off on your Home screen."
+footer: "Tip: keep your prices fresh. Pages that change regularly get more repeat visits. You can turn these emails off on your Home screen."

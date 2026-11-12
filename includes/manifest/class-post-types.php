@@ -3,7 +3,7 @@
  * Custom post type registration.
  *
  * Registers the sm_manifest CPT and its associated post meta fields.
- * This class is responsible only for WordPress registration — data access
+ * This class is responsible only for WordPress registration - data access
  * is handled by Manifest_Repository (class-manifest-repository.php).
  *
  * @package SatoriManifest
@@ -44,7 +44,7 @@ class Post_Types {
 	 * Meta key for storing sections (each containing items) as JSON.
 	 *
 	 * Each element shape:
-	 * { "id": string, "title": string, "description": string, "sort_order": int,
+	 * { "id": string, "title": string, "description": string, "icon": int, "sort_order": int,
 	 *   "items": [ { label, description, price, price_prefix, badge, sort_order } ] }
 	 *
 	 * @since 1.0.0
@@ -189,7 +189,7 @@ class Post_Types {
 				'auth_callback'     => static function ( bool $allowed, string $meta_key, int $object_id ): bool {
 					return current_user_can( 'edit_post', $object_id );
 				},
-				// sanitize_text_field must not be used here — it strips backslashes
+				// sanitize_text_field must not be used here - it strips backslashes
 				// and angle brackets, which corrupts JSON escape sequences and
 				// encoded characters. Decode, sanitize through Sanitizer (the same
 				// path as the meta-box save), then re-encode as clean JSON.

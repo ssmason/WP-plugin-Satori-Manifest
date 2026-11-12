@@ -4,7 +4,7 @@
  *
  * Lists registrations with their details and email history. Approving one:
  *   1. creates the client user (username from the form screen, strong
- *      random password) — which provisions their page, manifest and menu;
+ *      random password) - which provisions their page, manifest and menu;
  *   2. applies the chosen design and pre-fills branding from the application;
  *   3. emails the client their username and a secure "set your password"
  *      link (passwords are never sent by email).

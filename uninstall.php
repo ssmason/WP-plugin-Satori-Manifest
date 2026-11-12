@@ -6,7 +6,7 @@
  * posts, post meta, and plugin options. On multisite, cleans every site on
  * the network.
  *
- * This file is executed directly by WordPress — it must check WP_UNINSTALL_PLUGIN
+ * This file is executed directly by WordPress - it must check WP_UNINSTALL_PLUGIN
  * before doing anything.
  *
  * @package SatoriManifest

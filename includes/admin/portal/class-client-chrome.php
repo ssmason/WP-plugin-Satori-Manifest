@@ -208,7 +208,7 @@ class Client_Chrome {
 	public static function footer_text( $text ): string {
 		return Client_Role::is_client()
 			/* translators: %s: site name. */
-			? esc_html( sprintf( __( '%s — your price list, your brand.', 'satori-manifest' ), Portal_Brand::name() ) )
+			? esc_html( sprintf( __( '%s: your price list, your brand.', 'satori-manifest' ), Portal_Brand::name() ) )
 			: (string) $text;
 	}
 

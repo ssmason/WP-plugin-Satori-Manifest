@@ -7,6 +7,7 @@
  *
  *   - build/css/admin.css + build/js/manifest-admin.js on the manifest edit screen.
  *   - build/css/admin.css on the plugin's own screens (home, design, branding, clients).
+ *   - build/js/design-screen.js on the Design screen (Light / Dark previews).
  *
  * Block editor and front-end block styles are registered via block/block.json.
  *
@@ -118,13 +119,18 @@ class Assets {
 			wp_set_script_translations( 'satori-manifest-client-home', 'satori-manifest', SATORI_MANIFEST_PATH . 'languages' );
 		}
 
+		if ( Admin_Menu::hook( Admin_Menu::DESIGN_SLUG ) === $hook_suffix ) {
+			self::enqueue_script( 'satori-manifest-design-screen', 'build/js/design-screen.js' );
+		}
+
 		if ( Admin_Menu::hook( Admin_Menu::SETTINGS_SLUG ) === $hook_suffix ) {
 			self::enqueue_script( 'satori-manifest-settings', 'build/js/admin-settings.js', array( 'wp-i18n', 'media-editor' ) );
 			wp_set_script_translations( 'satori-manifest-settings', 'satori-manifest', SATORI_MANIFEST_PATH . 'languages' );
 		}
 
 		if ( $is_manifest_edit ) {
-			self::enqueue_script( 'satori-manifest-manifest-admin', 'build/js/manifest-admin.js', array( 'wp-i18n' ) );
+			wp_enqueue_media();
+			self::enqueue_script( 'satori-manifest-manifest-admin', 'build/js/manifest-admin.js', array( 'wp-i18n', 'media-editor' ) );
 			wp_set_script_translations( 'satori-manifest-manifest-admin', 'satori-manifest', SATORI_MANIFEST_PATH . 'languages' );
 		}
 	}

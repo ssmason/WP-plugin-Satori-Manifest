@@ -1,4 +1,4 @@
-# Atelier — elegant, editorial, made for salons and spas.
+# Atelier - elegant, editorial, made for salons and spas.
 
 title: Atelier
 description: Elegant serif typography on warm ivory, a centred header and a classic menu with dotted leaders.
@@ -13,6 +13,13 @@ palette:
   muted: '#8C7E72'
   accent: '#A0704C'
   accent_text: '#FFFFFF'
+palette_dark:
+  background: '#1C1814'
+  surface: '#28221C'
+  text: '#F3ECE3'
+  muted: '#A89A8C'
+  accent: '#C9925F'
+  accent_text: '#1C1814'
 fonts:
   heading: cormorant-garamond
   body: jost

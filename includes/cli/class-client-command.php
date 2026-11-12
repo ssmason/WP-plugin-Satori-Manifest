@@ -76,7 +76,7 @@ class Client_Command {
 			\WP_CLI::error( $user_id->get_error_message() );
 		}
 
-		\WP_CLI::success( sprintf( 'Created client #%d — %s', $user_id, get_permalink( Client_Repository::page_id( $user_id ) ) ) );
+		\WP_CLI::success( sprintf( 'Created client #%d: %s', $user_id, get_permalink( Client_Repository::page_id( $user_id ) ) ) );
 	}
 
 	/**

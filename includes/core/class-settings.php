@@ -3,7 +3,7 @@
  * Plugin settings.
  *
  * Non-secret settings edited under Manifest → Settings, stored in one option.
- * Secrets (Stripe, Brevo keys) never live here — see Core\Env.
+ * Secrets (Stripe, Brevo keys) never live here - see Core\Env.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>

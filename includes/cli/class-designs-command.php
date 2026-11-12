@@ -49,7 +49,7 @@ class Designs_Command {
 				'title'    => $design['title'],
 				'header'   => $design['header'],
 				'fonts'    => $design['fonts']['heading'] . ' / ' . $design['fonts']['body'],
-				'compiled' => is_readable( $design['style_path'] ) ? 'yes' : 'NO — run npm run build',
+				'compiled' => is_readable( $design['style_path'] ) ? 'yes' : 'NO, run npm run build',
 			);
 		}
 

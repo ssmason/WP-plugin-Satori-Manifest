@@ -1,95 +1,89 @@
 === Satori Manifest ===
 Contributors: ssmason
-Tags: price list, services, menu, block, gutenberg
+Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
-Tested up to: 6.8
+Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.1
+Stable tag: 3.8.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Create and manage structured price lists organised into sections. Output anywhere via a Gutenberg block.
+Hosted, branded price-list pages for businesses that put a QR code on their counter, tables or window.
 
 == Description ==
 
-Satori Manifest lets you build and maintain structured price lists for any type of business — hairdressers, restaurants, building merchants, and more.
+Satori Manifest turns one WordPress site into a hosted price-list service. Each client gets a login, one branded page, a price list (sections and items) and a navigation menu, all created automatically when the client role is assigned. Clients manage everything from a slimmed-down wp-admin; staff approve sign-ups, take payments and look after accounts.
 
-**Key features:**
+**For clients**
 
-* Create unlimited price list sections (e.g. Colouring, Nails, Hairdressing)
-* Add unlimited items to each section with label, optional description, price, and an optional prefix (e.g. "from")
-* Leave price blank to use an item as a visual subsection header
-* Move up / move down reordering of both sections and items
-* Gutenberg block with full inspector controls
-* Four built-in layouts: Single Column, Two Column, Card Style, Minimal
-* Six colour schemes including fully custom palette support
-* Typography controls for section titles and list items
-* Customise patterns and edit them in Appearance > Patterns
-* Multisite compatible — works network-activated
-* No external PHP dependencies — fully self-contained
-* Clean uninstall — removes all data on deletion
+* A price list editor: sections with an optional icon, items with description, badge, "from" prefix and price; leave a price empty for a sub-heading.
+* Five designs (Atelier, Studio, Noir, Bloom, Mono) and branding: logo, colours, fonts, background image, header and footer.
+* A QR code (opens the page with `?src=qr`), a print-ready PDF of the price list and a snippet to embed the list on their own website.
+* Visit and QR scan counts, with an optional monthly summary email.
 
-**Block controls:**
+**For staff**
 
-* Choose which manifests to display
-* Pick a layout preset (Single Column / Two Column / Card Style / Minimal)
-* Select a colour scheme or define a fully custom palette (background, accent, title, card)
-* Control section title and list item typography (family, size, weight)
-* Toggle background visibility and set a section title background colour
-* Toggle card padding, section title padding, and item border underlines
-* Toggle price and description visibility per block instance
-* Override the price prefix globally
+* A public registration block with plans (monthly or yearly), spam protection and an approval queue.
+* Stripe Checkout and the Stripe customer portal for subscriptions, with signed webhooks. No Stripe SDK.
+* Branded HTML emails with YAML templates, sent through Brevo or `wp_mail()`.
+* Client isolation enforced on the server: clients only see and change their own page, price list, menu and media.
+
+**Built to be self-contained**
+
+* No runtime Composer packages and no theme dependencies: client pages render through the plugin's own template.
+* Configuration is YAML (fields, fonts, designs, plans, emails, layouts, help); a theme can override any file under `{theme}/satori-manifest/`.
+* Its own QR encoder and PDF writer.
+* Security extras: login throttling, XML-RPC off, private REST user lists and generic login errors.
 
 == Installation ==
 
-1. Upload the `satori-manifest` folder to `/wp-content/plugins/`
-2. Activate the plugin through the Plugins menu in WordPress
-3. Go to **Manifest → All Manifests** to create your first price list
-4. Add the **Manifest** block to any page or post
+1. Upload the `satori-manifest` folder to `/wp-content/plugins/` and activate it.
+2. Optional: install Advanced Custom Fields (free or Pro) for the branding screens.
+3. Add the Registration block to a page, then approve applications under Manifest → Applications.
+4. Optional: add `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` to the environment to take payments, and `BREVO_API_KEY` to send email through Brevo.
 
 == Frequently Asked Questions ==
 
-= Does this work with any theme? =
+= Does it need a particular theme? =
 
-Yes. The block outputs semantic HTML with BEM-style class names. Styles are scoped and will not conflict with your theme.
+No. Client pages use the plugin's own template and styles; the theme only styles your marketing pages.
 
-= Can I use this on a multisite network? =
+= Can a client see another client's prices? =
 
-Yes. The plugin is fully multisite-compatible and can be network-activated.
+No. Ownership is checked on the server for admin screens, REST requests, media, menus and the price list block.
 
-= Does this require ACF or any other plugin? =
+= Where are payments handled? =
 
-No. Satori Manifest is completely self-contained with no PHP dependencies.
-
-= How do I create a subsection header? =
-
-Leave the price field blank when adding an item. It will render as a bold header row with no price, allowing you to group items visually within a section.
-
-== Screenshots ==
-
-1. The Manifest block displayed using the Single Column layout.
-2. The block inspector controls showing layout, colour scheme, and typography options.
-3. The manifest editor — sections and items with move-up / move-down reordering.
+On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
 
-= 1.0.1 =
-* Added four colour schemes: Warm, Terracotta, Dark, Minimal, plus fully custom palette (background, accent, title, card colours).
-* Added typography controls for section titles and list items (font family, size, weight).
-* Added card padding, section title padding, and item border underline toggles.
-* Added show/hide background toggle and section title background colour picker.
-* Added item reordering (move up / move down) alongside existing section reordering.
-* Added subsection header support — leave price blank to render an item as a bold header row.
-* Added Controls legend meta box in the manifest editor sidebar.
-* Fixed section title font overrides against theme styles.
+= 3.8.0 =
+* Sign-up goes straight to Stripe Checkout with a free trial (card up front, first charge when the trial ends); customers are logged in and asked to choose a password on return.
+* Printed QR codes: some included, extras added to the first payment, more can be ordered from the dashboard; Stripe collects the postal address.
+* Five complete page designs with photos (Noir, Harbour, Morning, Serene, Edge), light and dark mode for every design, and full-page previews on the Design screen.
+* Optional Cloudflare Turnstile spam check, unfinished sign-ups removed after 7 days, page-cache support (clears client pages on change, keeps forms uncached).
+* With a Brevo key, all WordPress email (login-screen password resets, two-factor codes, admin notices) is sent through Brevo too.
+* Contact form block (public Contact page) and a "Need a hand?" panel on the client dashboard; messages go to the staff address with Reply-To set to the sender.
+* Payments screen shows trials separately from monthly revenue.
 
-= 1.0.0 =
-* Initial release.
+= 3.7.0 =
+* Code structure: Stripe webhooks, registration, client access and the price list block each split into single-purpose classes.
+* Registration form uses the shared nonce helper; visit counter validates its input.
+
+= 3.6.0 =
+* Six layout patterns for richer pages, with titles that scale on phones.
+
+= 3.5.0 =
+* Section icons, a page background image; the public PDF link was removed (the PDF stays in the client dashboard).
+
+= 3.4.0 =
+* European price format (4,50 €), section anchors for menu links and the Harbour Kitchen demo.
 
 == Upgrade Notice ==
 
-= 1.0.1 =
-Adds colour schemes, custom palette, typography controls, padding toggles, item reordering, and subsection header support.
+= 3.8.0 =
+Free trials, printed QR code orders and new designs. Add printed_codes and trial_days to a theme override of plans.yaml if you use one.
 
-= 1.0.0 =
-Initial release.
+= 3.7.0 =
+Internal tidy-up; no changes to settings or content.

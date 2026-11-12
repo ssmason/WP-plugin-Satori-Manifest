@@ -28,7 +28,7 @@ class ApplicationApproverTest extends Test_Case {
 		$app = Applications::get( (int) $app['id'] );
 		$this->assertGreaterThan( 0, $app['user_id'] );
 		$this->assertSame( 'copperkettle', get_userdata( $app['user_id'] )->user_login );
-		$this->assertContains( 'Welcome to Satori Manifest Tests — your page is ready', $this->sent_subjects() );
+		$this->assertContains( 'Welcome to Satori Manifest Tests: your page is ready', $this->sent_subjects() );
 	}
 
 	/**
@@ -43,7 +43,7 @@ class ApplicationApproverTest extends Test_Case {
 		$this->assertSame( 'awaiting_payment', $status );
 		$this->assertFalse( username_exists( 'kettle' ) );
 		$this->assertStringContainsString( Checkout::QUERY_VAR . '=' . $app['id'], Checkout::payment_url( (int) $app['id'] ) );
-		$this->assertContains( 'You\'re approved — start your Satori Manifest Tests plan', $this->sent_subjects() );
+		$this->assertContains( 'You\'re approved: start your Satori Manifest Tests plan', $this->sent_subjects() );
 
 		// Paying (or staff activating) creates the account with the approved username and design.
 		$user_id = Application_Approver::activate( (int) $app['id'] );

@@ -57,6 +57,23 @@
 	color: $sm-ink-soft;
 }
 
+.sm-notice--warning {
+	background: $sm-color-warning-lt;
+	color: $sm-ink;
+}
+
+// "Choose a password" prompt on a new client's Home screen.
+.sm-password-prompt {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: $sm-space-sm;
+
+	.button {
+		margin-left: auto;
+	}
+}
+
 // ─── Pills and status ────────────────────────────────────────────────────────
 
 .sm-pill {
@@ -174,6 +191,13 @@
 		font-size: 26px;
 		font-weight: 700;
 		line-height: 1.2;
+	}
+
+	&__hint {
+		display: block;
+		margin-top: 4px;
+		color: $sm-color-text-light;
+		font-size: 12px;
 	}
 
 	&--alert {

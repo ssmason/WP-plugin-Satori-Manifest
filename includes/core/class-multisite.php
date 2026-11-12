@@ -116,7 +116,7 @@ class Multisite {
 
 		// Delete wp_block pattern posts seeded by plugin versions before 2.0.
 		// Identified by _satori_manifest_seeded_pattern meta so the lookup is
-		// locale-safe — translated titles are not relied upon here.
+		// locale-safe - translated titles are not relied upon here.
 		$pattern_posts = get_posts(
 			array(
 				'post_type'              => 'wp_block',
@@ -135,7 +135,7 @@ class Multisite {
 		}
 
 		// Remove the client role and staff manifest capabilities. Client users,
-		// pages and menus are deliberately kept — they are customer data.
+		// pages and menus are deliberately kept - they are customer data.
 		Client_Role::remove();
 
 		// Delete plugin options.

@@ -125,7 +125,7 @@ class Email_Command {
 			'amount'           => '€9',
 			'number'           => 'INV-0001',
 			'event'            => 'New subscription',
-			'details'          => 'Self-managed — €9 per month',
+			'details'          => 'Self-managed, €9 per month',
 			'reason'           => '',
 			'set_password_url' => wp_lostpassword_url(),
 			'reset_url'        => wp_lostpassword_url(),
@@ -134,6 +134,11 @@ class Email_Command {
 			'billing_url'      => Admin_Menu::url( Admin_Menu::BILLING_SLUG ),
 			'page_url'         => home_url( '/test-business/' ),
 			'review_url'       => Applications_Screen::url(),
+			'dashboard_url'    => admin_url(),
+			'month'            => wp_date( 'F', strtotime( 'first day of last month' ) ),
+			'views'            => '128',
+			'scans'            => '41',
+			'change'           => 'up 12% on the month before',
 		);
 	}
 }

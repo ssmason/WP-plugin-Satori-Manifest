@@ -1,4 +1,4 @@
-# Bloom — soft, friendly and rounded. Nail bars, beauty and wellbeing.
+# Bloom - soft, friendly and rounded. Nail bars, beauty and wellbeing.
 
 title: Bloom
 description: Soft blush tones, rounded panels, friendly serif headings and price pills.
@@ -13,6 +13,13 @@ palette:
   muted: '#9A8790'
   accent: '#D46A84'
   accent_text: '#FFFFFF'
+palette_dark:
+  background: '#241B20'
+  surface: '#31252B'
+  text: '#FBEFF1'
+  muted: '#B49CA6'
+  accent: '#E8879E'
+  accent_text: '#241B20'
 fonts:
   heading: dm-serif-display
   body: nunito

@@ -4,8 +4,8 @@
  *
  * When a user is given the client role, creates everything they need:
  * one page (using the client page template and a starter design), one
- * manifest, and one navigation menu. Provisioning is idempotent — anything
- * that already exists is kept — so it is safe to re-run.
+ * manifest, and one navigation menu. Provisioning is idempotent - anything
+ * that already exists is kept - so it is safe to re-run.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -256,6 +256,7 @@ class Provisioner {
 		}
 
 		update_user_meta( $user_id, Client_Repository::USER_PAGE, $page_id );
+		Client_Repository::remember_starter( (int) $page_id );
 
 		return (int) $page_id;
 	}

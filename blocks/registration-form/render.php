@@ -1,6 +1,6 @@
 <?php
 /**
- * Block render template — satori-manifest/registration-form.
+ * Block render template - satori-manifest/registration-form.
  *
  * Delegates to Registration_Form so the markup and the submit handler live
  * together.

@@ -1,5 +1,5 @@
 /**
- * Satori Manifest — price list editor (manifest edit screen).
+ * Satori Manifest - price list editor (manifest edit screen).
  *
  * Drives the Sections & Items meta box. No AJAX: the DOM is serialised to a
  * hidden JSON field which is saved with the standard WordPress post form.
@@ -112,6 +112,9 @@
 				id: section.dataset.smId || '',
 				title: valueOf(section, '.sm-section__title-input'),
 				description: valueOf(section, '.sm-section__description-input'),
+				icon:
+					parseInt(valueOf(section, '.sm-section__icon-input'), 10) ||
+					0,
 				sort_order: sectionIndex,
 				items,
 			};
@@ -242,6 +245,64 @@
 		setTimeout(() => button.classList.remove('is-confirming'), 3000);
 	}
 
+	// ── Section icon ────────────────────────────────────────────────────────
+
+	/**
+	 * Shows an icon (or the placeholder) on a section's icon button.
+	 *
+	 * @param {Element} section Section element.
+	 * @param {number}  id      Attachment id, 0 to clear.
+	 * @param {string}  url     Image URL.
+	 * @return {void}
+	 */
+	function setIcon(section, id, url) {
+		const wrap = section.querySelector('.sm-section__icon');
+		const button = wrap.querySelector('.sm-section__icon-button');
+		const visual = id
+			? Object.assign(document.createElement('img'), {
+					src: url,
+					alt: '',
+				})
+			: Object.assign(document.createElement('span'), {
+					className: 'dashicons dashicons-format-image',
+				});
+
+		wrap.querySelector('.sm-section__icon-input').value = id ? id : '';
+		wrap.classList.toggle('has-icon', Boolean(id));
+		button.replaceChildren(visual);
+		serialise();
+	}
+
+	/**
+	 * Opens the media library to choose a section icon.
+	 *
+	 * @param {Element} section Section element.
+	 * @return {void}
+	 */
+	function chooseIcon(section) {
+		if (!window.wp?.media) {
+			return;
+		}
+
+		const frame = wp.media({
+			title: wp.i18n.__('Section icon', 'satori-manifest'),
+			button: { text: wp.i18n.__('Use this image', 'satori-manifest') },
+			library: { type: 'image' },
+			multiple: false,
+		});
+
+		frame.on('select', () => {
+			const image = frame.state().get('selection').first().toJSON();
+			setIcon(
+				section,
+				image.id,
+				image.sizes?.thumbnail?.url || image.url
+			);
+		});
+
+		frame.open();
+	}
+
 	// ── Events ──────────────────────────────────────────────────────────────
 
 	const actions = {
@@ -252,6 +313,8 @@
 		'section-down': (button, section) => move(section, 1),
 		'section-remove': (button, section) =>
 			confirmRemoveSection(button, section),
+		'section-icon': (button, section) => chooseIcon(section),
+		'section-icon-remove': (button, section) => setIcon(section, 0, ''),
 		'item-add': (button, section) => addItem(section),
 		'item-up': (button, section, item) => move(item, -1),
 		'item-down': (button, section, item) => move(item, 1),

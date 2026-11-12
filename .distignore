@@ -7,6 +7,8 @@
 /.eslintrc.json
 /.stylelintrc.json
 /phpunit.xml
+/.phpunit.result.cache
+**/.DS_Store
 /tests
 /cypress
 /cypress.config.js

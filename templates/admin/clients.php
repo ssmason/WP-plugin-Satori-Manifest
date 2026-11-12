@@ -42,7 +42,7 @@ use SatoriManifest\Qr\Qr_Download;
 	<div class="sm-clients-layout">
 		<section class="sm-panel sm-panel--flush">
 			<?php if ( empty( $satori_manifest_rows ) ) : ?>
-				<div class="sm-empty"><p><?php esc_html_e( 'No clients yet — add your first one.', 'satori-manifest' ); ?></p></div>
+				<div class="sm-empty"><p><?php esc_html_e( 'No clients yet. Add your first one.', 'satori-manifest' ); ?></p></div>
 			<?php else : ?>
 				<table class="sm-table">
 					<thead>
@@ -67,7 +67,7 @@ use SatoriManifest\Qr\Qr_Download;
 										<a class="sm-table__url" href="<?php echo esc_url( $satori_manifest_row['page_url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( wp_parse_url( $satori_manifest_row['page_url'], PHP_URL_PATH ) ); ?></a>
 									<?php endif; ?>
 								</td>
-								<td><?php echo esc_html( $satori_manifest_row['design']['title'] ?? '—' ); ?></td>
+								<td><?php echo esc_html( $satori_manifest_row['design']['title'] ?? '-' ); ?></td>
 								<td>
 									<?php
 									/* translators: 1: sections, 2: items. */

@@ -1,0 +1,26 @@
+# Serene - calm, botanical page for salons, spas and nails.
+
+title: Serene
+description: A soft photo hero, a short welcome, the treatment room, prices with dotted leaders, a row of botanical photos and a booking panel. Warm stone and dusty rose.
+best_for: Salons, spas & nails
+order: 8
+kind: full
+tags: [spa, salon, nails, beauty, calm, photos]
+header: centered
+palette:
+  background: '#F7F4F0'
+  surface: '#EDE7E1'
+  text: '#3A3330'
+  muted: '#8E847D'
+  accent: '#A87666'
+  accent_text: '#FFFFFF'
+palette_dark:
+  background: '#1E1B1A'
+  surface: '#2A2624'
+  text: '#F2ECE7'
+  muted: '#A69C95'
+  accent: '#D7A898'
+  accent_text: '#1E1B1A'
+fonts:
+  heading: cormorant-garamond
+  body: nunito

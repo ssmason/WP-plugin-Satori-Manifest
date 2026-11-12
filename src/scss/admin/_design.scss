@@ -12,7 +12,74 @@ $sm-preview-scale: 0.25;
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 	gap: $sm-space-lg;
-	margin-bottom: 120px;
+}
+
+// Light / Dark switch above the designs.
+.sm-mode-switch {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin: 0 0 $sm-space-lg;
+	padding: 4px;
+	border: 1px solid $sm-color-border;
+	border-radius: 999px;
+	background: $sm-color-card;
+
+	legend {
+		float: left;
+		margin-right: $sm-space-sm;
+		padding-left: 10px;
+		font-weight: 600;
+	}
+
+	&__option {
+		cursor: pointer;
+
+		input {
+			position: absolute;
+			opacity: 0;
+		}
+
+		span {
+			display: block;
+			padding: 6px 16px;
+			border-radius: 999px;
+		}
+
+		input:checked + span {
+			background: $sm-color-primary;
+			color: $sm-color-card;
+		}
+
+		input:focus-visible + span {
+			outline: 2px solid $sm-color-primary;
+			outline-offset: 2px;
+		}
+	}
+}
+
+// Complete pages first, then a divider, then the simple layouts.
+.sm-design-group {
+
+	&__title {
+		margin: 0 0 4px;
+		font-size: 18px;
+	}
+
+	&__lead {
+		margin: 0 0 $sm-space-md;
+		color: $sm-color-text-light;
+	}
+
+	& + & {
+		margin-top: $sm-space-xl;
+		padding-top: $sm-space-xl;
+		border-top: 1px solid $sm-color-border;
+	}
+
+	&:last-of-type {
+		margin-bottom: 120px;
+	}
 }
 
 .sm-design-card {
@@ -161,8 +228,8 @@ $sm-preview-scale: 0.25;
 		border: 0;
 	}
 
-	// Phones: a compact bar — two short options side by side and a full-width
-	// button — so the design previews stay visible behind it.
+	// Phones: a compact bar - two short options side by side and a full-width
+	// button - so the design previews stay visible behind it.
 	@media (max-width: 600px) {
 		right: 10px;
 		bottom: 10px;
@@ -177,7 +244,12 @@ $sm-preview-scale: 0.25;
 			width: 100%;
 		}
 
-		.sm-choice {
+		.sm-apply-bar__note {
+	margin: 0;
+	color: $sm-color-text-light;
+}
+
+.sm-choice {
 			padding: 8px;
 			font-size: 12px;
 

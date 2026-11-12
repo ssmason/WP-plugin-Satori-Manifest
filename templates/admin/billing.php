@@ -92,7 +92,7 @@ $satori_manifest_mailto   = 'mailto:' . $satori_manifest_support;
 					<?php Security::output_form_nonce( Billing_Portal::ACTION ); ?>
 					<button type="submit" class="button button-primary button-large"><?php esc_html_e( 'Manage billing', 'satori-manifest' ); ?></button>
 				</form>
-				<p class="sm-field__hint"><?php esc_html_e( 'Update your card, switch between monthly and yearly, download invoices or cancel — on our secure payment provider, Stripe.', 'satori-manifest' ); ?></p>
+				<p class="sm-field__hint"><?php esc_html_e( 'Update your card, switch between monthly and yearly, download invoices or cancel on Stripe, our secure payment provider.', 'satori-manifest' ); ?></p>
 			</section>
 
 			<section class="sm-panel sm-panel--flush">

@@ -3,7 +3,7 @@
  * Plain titles.
  *
  * WordPress stores "&" in a post title as "&amp;" when the person saving
- * cannot post unfiltered HTML — which includes clients, WP-CLI and Stripe
+ * cannot post unfiltered HTML - which includes clients, WP-CLI and Stripe
  * webhooks. wp-admin then shows "Fish &amp; Chips" in title fields. For
  * client pages and price lists this turns "&amp;" back into "&" on save.
  * Only that one entity is changed, so no markup can ever be re-introduced;

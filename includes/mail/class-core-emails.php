@@ -4,7 +4,7 @@
  *
  * Sends WordPress's own "reset your password" email in the same branded
  * HTML as every other plugin email, so clients see one consistent look.
- * The reset link and its security are untouched — only the wrapping changes.
+ * The reset link and its security are untouched - only the wrapping changes.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>

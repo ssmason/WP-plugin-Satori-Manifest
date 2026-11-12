@@ -4,9 +4,9 @@
  *
  * A design is a self-contained folder:
  *
- *   designs/{slug}/design.yaml   — title, description, palette, fonts, header layout
- *   designs/{slug}/content.html  — starter block markup inserted into the page
- *   designs/{slug}/style.scss    — design styles (compiled to build/designs/{slug}.css)
+ *   designs/{slug}/design.yaml   - title, description, palette, fonts, header layout
+ *   designs/{slug}/content.html  - starter block markup inserted into the page
+ *   designs/{slug}/style.scss    - design styles (compiled to build/designs/{slug}.css)
  *
  * Themes can add or replace designs by providing the same structure under
  * {theme}/satori-manifest/designs/{slug}/ with a pre-compiled style.css.
@@ -55,6 +55,22 @@ class Design_Registry {
 	public const HEADER_LAYOUTS = array( 'split', 'centered', 'stacked', 'hidden' );
 
 	/**
+	 * Colour modes every design offers.
+	 *
+	 * @since 3.8.0
+	 * @var   array<int,string>
+	 */
+	public const COLOUR_MODES = array( 'light', 'dark' );
+
+	/**
+	 * Design kinds, in the order the Design screen groups them.
+	 *
+	 * @since 3.8.0
+	 * @var   array<int,string>
+	 */
+	public const KINDS = array( 'full', 'simple' );
+
+	/**
 	 * Request cache of discovered designs.
 	 *
 	 * @since 2.0.0
@@ -80,6 +96,7 @@ class Design_Registry {
 		$sources = array(
 			array(
 				'dir' => SATORI_MANIFEST_PATH . 'designs/',
+				'url' => SATORI_MANIFEST_URL . 'designs/',
 				'css' => static fn( string $slug ): array => array(
 					SATORI_MANIFEST_PATH . 'build/designs/' . $slug . '.css',
 					SATORI_MANIFEST_URL . 'build/designs/' . $slug . '.css',
@@ -92,6 +109,7 @@ class Design_Registry {
 			$base      = '/' . Config::THEME_FOLDER . '/designs/';
 			$sources[] = array(
 				'dir' => $theme_dir . $base,
+				'url' => $theme_url . $base,
 				'css' => static fn( string $slug ): array => array(
 					$theme_dir . $base . $slug . '/style.css',
 					$theme_url . $base . $slug . '/style.css',
@@ -104,7 +122,7 @@ class Design_Registry {
 
 			foreach ( $folders ? $folders : array() as $folder ) {
 				$slug   = sanitize_key( basename( $folder ) );
-				$design = self::load( $folder, $slug, $source['css']( $slug ) );
+				$design = self::load( $folder, $source['url'] . basename( $folder ), $slug, $source['css']( $slug ) );
 
 				if ( $design ) {
 					$designs[ $slug ] = $design;
@@ -168,16 +186,24 @@ class Design_Registry {
 	/**
 	 * Returns a design's starter block markup with placeholders replaced.
 	 *
-	 * Supported placeholders: {{brand_name}}, {{tagline}}, {{year}}.
-	 * Values are HTML-escaped before substitution.
+	 * Supported placeholders: {{brand_name}}, {{tagline}}, {{year}}, and for each
+	 * photo in the design's images/ folder {{image_id:name}} and {{image_url:name}}
+	 * (name = file name without extension). Values are escaped before substitution.
+	 * Photos not in $image_ids use the design folder's copy (ID 0), as in previews.
+	 *
+	 * {{sections:2}} / {{sections:3-}} let a design split the price list over
+	 * several blocks by position: it becomes the JSON list of the client's other
+	 * section ids (the block's excludedSectionIds). Without ids nothing is hidden.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  2.0.0
 	 * @param  string               $slug     Design slug.
-	 * @param  array<string,string> $context  Placeholder values.
+	 * @param  array<string,string> $context    Placeholder values.
+	 * @param  array<string,int>    $image_ids    Media library IDs by photo name.
+	 * @param  array<int,string>    $section_ids  The client's section ids, in order.
 	 * @return string  Serialized block markup, empty for an unknown design.
 	 */
-	public static function content( string $slug, array $context = array() ): string {
+	public static function content( string $slug, array $context = array(), array $image_ids = array(), array $section_ids = array() ): string {
 		$design = self::get( $slug );
 
 		if ( ! $design || ! is_readable( $design['content_path'] ) ) {
@@ -201,7 +227,66 @@ class Design_Registry {
 			$replacements[ '{{' . $key . '}}' ] = esc_html( (string) $value );
 		}
 
-		return strtr( $markup, $replacements );
+		foreach ( $design['images'] as $name => $image ) {
+			$id  = (int) ( $image_ids[ $name ] ?? 0 );
+			$src = $id ? (string) wp_get_attachment_image_url( $id, 'full' ) : '';
+
+			$replacements[ '{{image_id:' . $name . '}}' ]  = (string) $id;
+			$replacements[ '{{image_url:' . $name . '}}' ] = esc_url( '' !== $src ? $src : $image['url'] );
+		}
+
+		return (string) preg_replace_callback(
+			'/\{\{sections:(\d+)(-?)\}\}/',
+			static function ( array $found ) use ( $section_ids ): string {
+				$first = max( 1, (int) $found[1] );
+				$last  = '-' === $found[2] ? count( $section_ids ) : $first;
+				$shown = array_slice( $section_ids, $first - 1, $last - $first + 1 );
+
+				return (string) wp_json_encode( array_values( $section_ids ? array_diff( $section_ids, $shown ) : array() ) );
+			},
+			strtr( $markup, $replacements )
+		);
+	}
+
+	/**
+	 * Reads one palette from YAML (unknown keys dropped, invalid colours empty).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.8.0
+	 * @param  array<string,mixed> $raw  Palette from design.yaml.
+	 * @return array<string,string>
+	 */
+	private static function palette( array $raw ): array {
+		$palette = array();
+
+		foreach ( self::PALETTE_KEYS as $key ) {
+			$palette[ $key ] = (string) ( sanitize_hex_color( (string) ( $raw[ $key ] ?? '' ) ) ?? '' );
+		}
+
+		return $palette;
+	}
+
+	/**
+	 * Lists the photos in a design's images/ folder.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.8.0
+	 * @param  string $folder  Absolute design folder path.
+	 * @param  string $url     Design folder URL.
+	 * @return array<string,array{path:string,url:string}>  Keyed by file name without extension.
+	 */
+	private static function images( string $folder, string $url ): array {
+		$files  = glob( $folder . '/images/*.{jpg,jpeg,png,webp}', GLOB_BRACE );
+		$images = array();
+
+		foreach ( $files ? $files : array() as $file ) {
+			$images[ sanitize_key( pathinfo( $file, PATHINFO_FILENAME ) ) ] = array(
+				'path' => $file,
+				'url'  => $url . '/images/' . rawurlencode( basename( $file ) ),
+			);
+		}
+
+		return $images;
 	}
 
 	/**
@@ -210,11 +295,13 @@ class Design_Registry {
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  2.0.0
 	 * @param  string            $folder  Absolute folder path.
+	 * @param  string            $url     Folder URL.
+	 * @param  string            $url     Folder URL.
 	 * @param  string            $slug    Design slug.
 	 * @param  array<int,string> $css     [ absolute path, URL ] of the compiled stylesheet.
 	 * @return array<string,mixed>|null   Normalised design, or null when invalid.
 	 */
-	private static function load( string $folder, string $slug, array $css ): ?array {
+	private static function load( string $folder, string $url, string $slug, array $css ): ?array {
 		$config_path = $folder . '/design.yaml';
 
 		if ( '' === $slug || ! is_readable( $config_path ) ) {
@@ -229,10 +316,17 @@ class Design_Registry {
 			return null;
 		}
 
-		$palette = array();
-		foreach ( self::PALETTE_KEYS as $key ) {
-			$palette[ $key ] = (string) ( sanitize_hex_color( (string) ( $config['palette'][ $key ] ?? '' ) ) ?? '' );
+		$mode     = in_array( $config['mode'] ?? '', self::COLOUR_MODES, true ) ? (string) $config['mode'] : 'light';
+		$palette  = self::palette( (array) ( $config['palette'] ?? array() ) );
+		$palettes = array();
+
+		foreach ( self::COLOUR_MODES as $colour_mode ) {
+			$palettes[ $colour_mode ] = $colour_mode === $mode || empty( $config[ 'palette_' . $colour_mode ] )
+				? $palette
+				: self::palette( (array) $config[ 'palette_' . $colour_mode ] );
 		}
+
+		$kind = in_array( $config['kind'] ?? '', self::KINDS, true ) ? (string) $config['kind'] : 'simple';
 
 		$header = (string) ( $config['header'] ?? 'split' );
 
@@ -243,13 +337,17 @@ class Design_Registry {
 			'best_for'     => (string) ( $config['best_for'] ?? '' ),
 			'order'        => (int) ( $config['order'] ?? 100 ),
 			'tags'         => array_map( 'strval', (array) ( $config['tags'] ?? array() ) ),
+			'kind'         => $kind,
+			'mode'         => $mode,
 			'palette'      => $palette,
+			'palettes'     => $palettes,
 			'fonts'        => array(
 				'heading' => sanitize_key( (string) ( $config['fonts']['heading'] ?? 'system-serif' ) ),
 				'body'    => sanitize_key( (string) ( $config['fonts']['body'] ?? 'system-sans' ) ),
 			),
 			'header'       => in_array( $header, self::HEADER_LAYOUTS, true ) ? $header : 'split',
 			'content_path' => $folder . '/content.html',
+			'images'       => self::images( $folder, $url ),
 			'style_path'   => $css[0],
 			'style_url'    => $css[1],
 		);

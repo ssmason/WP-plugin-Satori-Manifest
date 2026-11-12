@@ -20,7 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 $satori_manifest_page_id = \SatoriManifest\Frontend\Client_Page::current_page_id();
 $satori_manifest_brand   = \SatoriManifest\Branding\Brand::for_page(
 	$satori_manifest_page_id,
-	\SatoriManifest\Frontend\Client_Page::design_for_request( $satori_manifest_page_id )
+	\SatoriManifest\Frontend\Client_Page::design_for_request( $satori_manifest_page_id ),
+	\SatoriManifest\Frontend\Client_Page::mode_for_request( $satori_manifest_page_id )
 );
 ?>
 <!doctype html>

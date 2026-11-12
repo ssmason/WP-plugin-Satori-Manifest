@@ -1,0 +1,16 @@
+# Sent to staff (Manifest → Settings → "Notify staff at") when someone uses a contact form.
+# Reply-To is the sender, so replying from the inbox answers them directly.
+# Placeholders: source (where it was sent from), name, email, message, business_name, page_url.
+
+subject: "{{source}}: message from {{name}}"
+preheader: "{{name}} ({{email}}) sent a message."
+heading: New message
+body: |
+  {{message}}
+details: |
+  From: {{name}}
+  Email: {{email}}
+  Business: {{business_name}}
+  Page: {{page_url}}
+  Sent from: {{source}}
+footer: Reply to this email to answer {{name}} directly. Sent by {{site_name}}.

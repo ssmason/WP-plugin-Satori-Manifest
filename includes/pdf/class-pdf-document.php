@@ -2,7 +2,7 @@
 /**
  * PDF document writer.
  *
- * A small, dependency-free PDF 1.4 writer — just what a price list needs:
+ * A small, dependency-free PDF 1.4 writer - just what a price list needs:
  * pages, text in the standard Helvetica fonts, lines, filled rectangles,
  * JPEG images and web links. Coordinates are in points measured from the
  * top-left corner of the page (PDF itself measures from the bottom-left;

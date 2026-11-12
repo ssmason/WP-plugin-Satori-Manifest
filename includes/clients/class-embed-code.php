@@ -58,7 +58,7 @@ class Embed_Code {
 
 		$brand = Brand::for_page( $page_id );
 		/* translators: %s: business name. */
-		$title = sprintf( __( '%s — prices', 'satori-manifest' ), (string) $brand['name'] );
+		$title = sprintf( __( '%s prices', 'satori-manifest' ), (string) $brand['name'] );
 
 		$iframe = sprintf(
 			'<iframe src="%1$s" title="%2$s" width="100%%" height="%3$d" style="width:100%%;border:0;" loading="lazy" data-sm-embed></iframe>',

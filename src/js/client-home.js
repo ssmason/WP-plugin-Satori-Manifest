@@ -1,5 +1,5 @@
 /**
- * Satori Manifest — client Home screen.
+ * Satori Manifest - client Home screen.
  *
  * "Copy code" button for the website embed snippet. Uses the Clipboard API,
  * falling back to selecting the text so the client can press Ctrl/Cmd+C.
@@ -18,7 +18,7 @@ document.querySelectorAll('[data-sm-copy]').forEach((button) => {
 
 	const status = button.parentElement.querySelector('[data-sm-copy-status]');
 	const fallback = wp.i18n.__(
-		'Selected — press Ctrl+C to copy.',
+		'Selected. Press Ctrl+C to copy.',
 		'satori-manifest'
 	);
 

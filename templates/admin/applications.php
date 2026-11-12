@@ -125,11 +125,11 @@ $satori_manifest_notices = array(
 									<strong><?php echo esc_html( Plans::title( (string) $satori_manifest_app['plan'] ) ); ?></strong>
 									<span class="sm-muted"><?php echo esc_html( Plans::format( Plans::price( (string) $satori_manifest_app['plan'], $satori_manifest_interval ) ) . ' ' . Plans::period_label( $satori_manifest_interval ) ); ?></span>
 								<?php else : ?>
-									—
+									-
 								<?php endif; ?>
 							</dd>
 						</div>
-					<div><dt><?php esc_html_e( 'Type', 'satori-manifest' ); ?></dt><dd><?php echo esc_html( $satori_manifest_types[ $satori_manifest_app['business_type'] ] ?? '—' ); ?></dd></div>
+					<div><dt><?php esc_html_e( 'Type', 'satori-manifest' ); ?></dt><dd><?php echo esc_html( $satori_manifest_types[ $satori_manifest_app['business_type'] ] ?? '-' ); ?></dd></div>
 					<div><dt><?php esc_html_e( 'Preferred design', 'satori-manifest' ); ?></dt><dd><?php echo esc_html( $satori_manifest_design ? $satori_manifest_design['title'] : __( 'No preference', 'satori-manifest' ) ); ?></dd></div>
 					<div>
 						<dt><?php esc_html_e( 'Website', 'satori-manifest' ); ?></dt>
@@ -137,7 +137,7 @@ $satori_manifest_notices = array(
 							<?php if ( '' !== $satori_manifest_app['website'] ) : ?>
 								<a href="<?php echo esc_url( (string) $satori_manifest_app['website'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( (string) wp_parse_url( (string) $satori_manifest_app['website'], PHP_URL_HOST ) ); ?></a>
 							<?php else : ?>
-								<?php esc_html_e( 'None — standalone page', 'satori-manifest' ); ?>
+								<?php esc_html_e( 'None (standalone page)', 'satori-manifest' ); ?>
 							<?php endif; ?>
 						</dd>
 					</div>
@@ -251,7 +251,7 @@ $satori_manifest_notices = array(
 									<span class="sm-pill sm-pill--<?php echo esc_attr( ! empty( $satori_manifest_email['sent'] ) ? 'approved' : 'declined' ); ?>"><?php echo ! empty( $satori_manifest_email['sent'] ) ? esc_html__( 'Sent', 'satori-manifest' ) : esc_html__( 'Failed', 'satori-manifest' ); ?></span>
 									<strong><?php echo esc_html( (string) ( $satori_manifest_email['subject'] ?? '' ) ); ?></strong>
 									→ <?php echo esc_html( (string) ( $satori_manifest_email['to'] ?? '' ) ); ?>
-									<span class="sm-muted">(<?php echo esc_html( (string) ( $satori_manifest_email['transport'] ?? '' ) ); ?><?php echo ! empty( $satori_manifest_email['error'] ) ? ' — ' . esc_html( (string) $satori_manifest_email['error'] ) : ''; ?>)</span>
+									<span class="sm-muted">(<?php echo esc_html( (string) ( $satori_manifest_email['transport'] ?? '' ) ); ?><?php echo ! empty( $satori_manifest_email['error'] ) ? ' - ' . esc_html( (string) $satori_manifest_email['error'] ) : ''; ?>)</span>
 								</li>
 							<?php endforeach; ?>
 						</ul>

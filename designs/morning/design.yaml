@@ -1,0 +1,26 @@
+# Morning - bright café and brunch page with a split photo hero.
+
+title: Morning
+description: Text beside a big photo, three reasons to visit, the menu as cards, a row of photos and a "come and say hello" section. Warm cream and sage green.
+best_for: Cafés & brunch
+order: 7
+kind: full
+tags: [cafe, brunch, bakery, photos, friendly]
+header: split
+palette:
+  background: '#FBF7F0'
+  surface: '#F2E9DB'
+  text: '#2B211B'
+  muted: '#7A6A5E'
+  accent: '#4F7A5A'
+  accent_text: '#FFFFFF'
+palette_dark:
+  background: '#1A1714'
+  surface: '#26211C'
+  text: '#F6EEE3'
+  muted: '#A99B8C'
+  accent: '#8DB596'
+  accent_text: '#1A1714'
+fonts:
+  heading: dm-serif-display
+  body: dm-sans

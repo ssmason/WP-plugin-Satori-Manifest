@@ -1,0 +1,2 @@
+(()=>{var e;e=function(e,r){var c=new URL(e,window.location.href);return c.searchParams.set("sm_mode",r),c.toString()},document.querySelectorAll("[data-sm-mode-switch]").forEach(function(r){r.addEventListener("change",function(){r.checked&&(document.querySelectorAll(".sm-design-card__preview iframe").forEach(function(c){c.src=e(c.src,r.value)}),document.querySelectorAll(".sm-design-card__open").forEach(function(c){c.href=e(c.href,r.value)}))})})})();
+//# sourceMappingURL=design-screen.js.map

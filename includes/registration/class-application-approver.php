@@ -25,6 +25,7 @@ use SatoriManifest\Billing\Stripe_Settings;
 use SatoriManifest\Branding\Brand;
 use SatoriManifest\Clients\Client_Factory;
 use SatoriManifest\Clients\Client_Repository;
+use SatoriManifest\Clients\First_Password;
 use SatoriManifest\Clients\Set_Password_Link;
 use SatoriManifest\Designs\Design_Registry;
 use SatoriManifest\Mail\Mailer;
@@ -71,7 +72,7 @@ class Application_Approver {
 
 		if ( username_exists( $login ) ) {
 			/* translators: %s: username. */
-			return new \WP_Error( 'satori_manifest_username', sprintf( __( 'The username "%s" is taken — choose another.', 'satori-manifest' ), $login ) );
+			return new \WP_Error( 'satori_manifest_username', sprintf( __( 'The username "%s" is taken. Please choose another.', 'satori-manifest' ), $login ) );
 		}
 
 		$id = (int) $app['id'];
@@ -131,6 +132,8 @@ class Application_Approver {
 		if ( is_wp_error( $user_id ) ) {
 			return $user_id;
 		}
+
+		First_Password::mark_needed( $user_id );
 
 		$names = explode( ' ', trim( (string) $app['contact_name'] ), 2 );
 		wp_update_user(

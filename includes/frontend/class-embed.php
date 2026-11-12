@@ -4,7 +4,7 @@
  *
  * A client can show their price list on their own website with an iframe
  * (see Clients\Embed_Code). With ?sm_embed=1 the client page drops its own
- * header and footer — the host site has its own — hides the admin bar, asks
+ * header and footer - the host site has its own - hides the admin bar, asks
  * search engines not to index the framed copy, and reports its height to the
  * host page so the frame grows to fit.
  *

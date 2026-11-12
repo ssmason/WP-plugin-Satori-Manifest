@@ -124,7 +124,7 @@ class Login_Throttle {
 	}
 
 	/**
-	 * Returns the transient key for the current IP (hashed — no IPs are stored).
+	 * Returns the transient key for the current IP (hashed - no IPs are stored).
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.2.0

@@ -75,6 +75,22 @@ class Client_Repository {
 	public const PAGE_DESIGN = '_satori_manifest_design';
 
 	/**
+	 * Page meta: the colour mode chosen on the Design screen ('light' or 'dark').
+	 *
+	 * @since 3.8.0
+	 * @var   string
+	 */
+	public const PAGE_MODE = '_satori_manifest_colour_mode';
+
+	/**
+	 * Page meta: fingerprint of the content the plugin last put on the page.
+	 *
+	 * @since 3.8.0
+	 * @var   string
+	 */
+	public const PAGE_STARTER = '_satori_manifest_starter_hash';
+
+	/**
 	 * Returns the client's page ID, or 0.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
@@ -170,6 +186,65 @@ class Client_Repository {
 	public static function design_for_page( int $page_id ): string {
 		$slug = (string) get_post_meta( $page_id, self::PAGE_DESIGN, true );
 		return Design_Registry::exists( $slug ) ? $slug : Design_Registry::default_slug();
+	}
+
+	/**
+	 * Returns the page's colour mode, falling back to the design's own mode.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.8.0
+	 * @param  int    $page_id  Client page ID.
+	 * @param  string $design   Design slug.
+	 * @return string  'light' or 'dark'.
+	 */
+	public static function mode_for_page( int $page_id, string $design ): string {
+		$mode = (string) get_post_meta( $page_id, self::PAGE_MODE, true );
+
+		if ( in_array( $mode, Design_Registry::COLOUR_MODES, true ) ) {
+			return $mode;
+		}
+
+		return (string) ( Design_Registry::get( $design )['mode'] ?? 'light' );
+	}
+
+	/**
+	 * Remembers the page's current content as the plugin's own (starter) content.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.8.0
+	 * @param  int $page_id  Client page ID.
+	 * @return void
+	 */
+	public static function remember_starter( int $page_id ): void {
+		update_post_meta( $page_id, self::PAGE_STARTER, self::fingerprint( $page_id ) );
+	}
+
+	/**
+	 * Whether the page still holds the content the plugin put there (not edited by the client).
+	 *
+	 * Pages created before 3.8.0 have no fingerprint and count as edited.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.8.0
+	 * @param  int $page_id  Client page ID.
+	 * @return bool
+	 */
+	public static function page_is_untouched( int $page_id ): bool {
+		$stored = (string) get_post_meta( $page_id, self::PAGE_STARTER, true );
+
+		return '' !== $stored && hash_equals( $stored, self::fingerprint( $page_id ) );
+	}
+
+	/**
+	 * Fingerprint of the page content, ignoring whitespace differences.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.8.0
+	 * @param  int $page_id  Client page ID.
+	 * @return string
+	 */
+	private static function fingerprint( int $page_id ): string {
+		return md5( (string) preg_replace( '/\s+/', '', (string) get_post_field( 'post_content', $page_id, 'raw' ) ) );
 	}
 
 	/**

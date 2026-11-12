@@ -23,13 +23,21 @@ $b: ".satori-manifest-price-list";
 	--sm-content: 72rem;
 	--sm-header-bg: var(--sm-text);
 	--sm-footer-bg: var(--sm-text);
+	--sm-chrome-text: var(--sm-background);
+
+	// Dark mode: header and footer sit on the surface colour with light text.
+	&.sm-mode-dark {
+		--sm-header-bg: var(--sm-surface);
+		--sm-footer-bg: var(--sm-surface);
+		--sm-chrome-text: var(--sm-text);
+	}
 
 	.sm-header {
 		border-bottom: 0;
-		color: var(--sm-background);
+		color: var(--sm-chrome-text);
 
 		.sm-brand__tagline {
-			color: color-mix(in srgb, var(--sm-background) 60%, transparent);
+			color: color-mix(in srgb, var(--sm-chrome-text) 60%, transparent);
 		}
 	}
 
@@ -104,20 +112,20 @@ $b: ".satori-manifest-price-list";
 	}
 
 	.sm-footer {
-		color: var(--sm-background);
+		color: var(--sm-chrome-text);
 
 		&__heading,
 		&__tagline,
 		&__bottom {
-			color: color-mix(in srgb, var(--sm-background) 60%, transparent);
+			color: color-mix(in srgb, var(--sm-chrome-text) 60%, transparent);
 		}
 
 		&__bottom {
-			border-top-color: color-mix(in srgb, var(--sm-background) 15%, transparent);
+			border-top-color: color-mix(in srgb, var(--sm-chrome-text) 15%, transparent);
 		}
 	}
 
 	.sm-social__link {
-		border-color: color-mix(in srgb, var(--sm-background) 25%, transparent);
+		border-color: color-mix(in srgb, var(--sm-chrome-text) 25%, transparent);
 	}
 }

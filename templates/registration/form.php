@@ -5,7 +5,7 @@
  * Receives from Registration_Form::render():
  *   $satori_manifest_result, $satori_manifest_fields, $satori_manifest_types,
  *   $satori_manifest_designs, $satori_manifest_plans, $satori_manifest_toggle, $satori_manifest_plan,
- *   $satori_manifest_interval, $satori_manifest_wrapper.
+ *   $satori_manifest_interval, $satori_manifest_wrapper, $satori_manifest_pay_now.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -45,11 +45,11 @@ foreach ( array_keys( $satori_manifest_plans ) as $satori_manifest_plan_slug ) {
 	<?php if ( ! $satori_manifest_done ) : ?>
 		<form class="sm-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" novalidate>
 			<input type="hidden" name="action" value="<?php echo esc_attr( Registration_Form::ACTION ); ?>" />
-			<input type="hidden" name="_sm_nonce" value="<?php echo esc_attr( wp_create_nonce( Registration_Form::ACTION ) ); ?>" />
+			<?php \SatoriManifest\Core\Security::output_form_nonce( Registration_Form::ACTION, false ); ?>
 			<input type="hidden" name="_sm_started" value="<?php echo esc_attr( (string) time() ); ?>" />
 			<input type="hidden" name="_sm_return" value="<?php echo esc_url( $satori_manifest_return ); ?>" />
 
-			<?php // Honeypot — hidden from people, irresistible to bots. ?>
+			<?php // Honeypot: hidden from people, irresistible to bots. ?>
 			<p class="sm-form__trap" aria-hidden="true">
 				<label for="sm-company-url"><?php esc_html_e( 'Leave this empty', 'satori-manifest' ); ?></label>
 				<input type="text" id="sm-company-url" name="sm_company_url" tabindex="-1" autocomplete="off" />
@@ -120,7 +120,9 @@ foreach ( array_keys( $satori_manifest_plans ) as $satori_manifest_plan_slug ) {
 						</label>
 					<?php endforeach; ?>
 				</fieldset>
-				<p class="sm-form__hint sm-plans__note"><?php esc_html_e( 'Nothing to pay today. We review your application first, then email you a secure payment link.', 'satori-manifest' ); ?></p>
+				<?php if ( ! $satori_manifest_pay_now ) : ?>
+					<p class="sm-form__hint sm-plans__note"><?php esc_html_e( 'Nothing to pay today. We review your application first, then email you a secure payment link.', 'satori-manifest' ); ?></p>
+				<?php endif; ?>
 			<?php endif; ?>
 
 			<div class="sm-form__grid">
@@ -154,8 +156,54 @@ foreach ( array_keys( $satori_manifest_plans ) as $satori_manifest_plan_slug ) {
 				</p>
 			</div>
 
+			<?php
+			$satori_manifest_code_sizes   = \SatoriManifest\Billing\Code_Catalogue::sizes();
+			$satori_manifest_code_std     = \SatoriManifest\Billing\Code_Catalogue::standard();
+			$satori_manifest_code_regions = \SatoriManifest\Billing\Code_Catalogue::regions();
+			?>
+			<?php if ( $satori_manifest_code_sizes ) : ?>
+				<fieldset class="sm-form__codes">
+					<legend><?php echo esc_html( $satori_manifest_fields['codes'] ); ?></legend>
+					<p class="sm-form__hint">
+						<?php
+						echo esc_html(
+							sprintf(
+								/* translators: 1: standard size label, e.g. "M – 35 × 46 mm". */
+								__( 'One %1$s printed QR code is included free and posted after your first payment. Choose another size or add more below; anything extra is added to that payment.', 'satori-manifest' ),
+								$satori_manifest_code_sizes[ $satori_manifest_code_std ]['label']
+							)
+						);
+						?>
+					</p>
+					<details class="sm-form__codes-more">
+						<summary><?php esc_html_e( 'Choose sizes and how many', 'satori-manifest' ); ?></summary>
+						<div class="sm-codes-grid">
+							<?php foreach ( $satori_manifest_code_sizes as $satori_manifest_size => $satori_manifest_size_terms ) : ?>
+								<label class="sm-codes-grid__row">
+									<span class="sm-codes-grid__label"><?php echo esc_html( $satori_manifest_size_terms['label'] ); ?></span>
+									<span class="sm-codes-grid__price"><?php echo esc_html( \SatoriManifest\Registration\Plans::format( $satori_manifest_size_terms['price'] ) ); ?></span>
+									<input type="number" name="<?php echo esc_attr( \SatoriManifest\Billing\Printed_Codes::FIELD . '[' . $satori_manifest_size . ']' ); ?>" value="<?php echo esc_attr( $satori_manifest_size === $satori_manifest_code_std ? '1' : '0' ); ?>" min="0" max="<?php echo esc_attr( (string) \SatoriManifest\Billing\Code_Catalogue::max() ); ?>" step="1" inputmode="numeric" />
+								</label>
+							<?php endforeach; ?>
+						</div>
+					</details>
+					<p class="sm-form__field">
+						<label for="sm-ship-region"><?php echo esc_html( $satori_manifest_fields['ship_region'] ); ?></label>
+						<select id="sm-ship-region" name="<?php echo esc_attr( \SatoriManifest\Billing\Printed_Codes::REGION_FIELD ); ?>">
+							<?php foreach ( $satori_manifest_code_regions as $satori_manifest_region => $satori_manifest_region_terms ) : ?>
+								<option value="<?php echo esc_attr( $satori_manifest_region ); ?>">
+									<?php
+									echo esc_html( \SatoriManifest\Billing\Code_Catalogue::region_label( $satori_manifest_region ) );
+									?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+					</p>
+				</fieldset>
+			<?php endif; ?>
+
 			<fieldset class="sm-form__designs">
-				<legend><?php echo esc_html( $satori_manifest_fields['design'] ); ?> <span class="sm-form__hint"><?php esc_html_e( '— you can change it any time', 'satori-manifest' ); ?></span></legend>
+				<legend><?php echo esc_html( $satori_manifest_fields['design'] ); ?> <span class="sm-form__hint"><?php esc_html_e( '(you can change it any time)', 'satori-manifest' ); ?></span></legend>
 				<label class="sm-form__design">
 					<input type="radio" name="design" value="" checked />
 					<span><?php esc_html_e( 'Not sure yet', 'satori-manifest' ); ?></span>
@@ -178,7 +226,30 @@ foreach ( array_keys( $satori_manifest_plans ) as $satori_manifest_plan_slug ) {
 				<label for="sm-consent"><?php esc_html_e( 'I agree to be contacted about my application and for my details to be stored for that purpose.', 'satori-manifest' ); ?></label>
 			</p>
 
-			<button type="submit" class="sm-button sm-button--large"><?php esc_html_e( 'Send my application', 'satori-manifest' ); ?></button>
+			<?php \SatoriManifest\Hardening\Turnstile::render(); ?>
+			<?php if ( $satori_manifest_pay_now && \SatoriManifest\Registration\Plans::trial_days() > 0 ) : ?>
+				<p class="sm-form__trial">
+					<?php
+					echo esc_html(
+						sprintf(
+							/* translators: 1: number of free days, 2: date of the first payment. */
+							__( 'Free for %1$d days. We take your card now but charge nothing until %2$s. Cancel before then and you pay nothing.', 'satori-manifest' ),
+							\SatoriManifest\Registration\Plans::trial_days(),
+							wp_date( get_option( 'date_format' ), time() + \SatoriManifest\Registration\Plans::trial_days() * DAY_IN_SECONDS )
+						)
+					);
+					?>
+				</p>
+			<?php endif; ?>
+			<button type="submit" class="sm-button sm-button--large">
+				<?php
+				if ( $satori_manifest_pay_now ) {
+					esc_html_e( 'Continue to payment', 'satori-manifest' );
+				} else {
+					esc_html_e( 'Send my application', 'satori-manifest' );
+				}
+				?>
+			</button>
 		</form>
 	<?php endif; ?>
 </div>

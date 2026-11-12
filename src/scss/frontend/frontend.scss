@@ -1,4 +1,4 @@
-// Satori Manifest — Frontend stylesheet
+// Satori Manifest - Frontend stylesheet
 //
 // Styles for the rendered price-list block on the public-facing site.
 // Layout modifier classes (is-layout-*) control structure.
@@ -37,7 +37,7 @@ $sm-fe-space-md: 16px;
 $sm-fe-space-lg: 32px;
 $sm-fe-radius:   6px;
 
-// Block name — used inside modifier contexts where & would concatenate.
+// Block name - used inside modifier contexts where & would concatenate.
 $b: ".satori-manifest-price-list";
 
 // ─── Block ───────────────────────────────────────────────────────────────────
@@ -66,6 +66,20 @@ $b: ".satori-manifest-price-list";
 		border-bottom: 2px solid $sm-fe-color-border;
 		padding-bottom: $sm-fe-space-sm;
 		margin: 0 0 $sm-fe-space-md;
+
+		&.has-icon {
+			display: flex;
+			align-items: center;
+			gap: 0.6em;
+		}
+	}
+
+	// Optional section icon/image, left of the title.
+	&__section-icon {
+		flex: none;
+		width: 1.75em;
+		height: 1.75em;
+		object-fit: contain;
 	}
 
 	&__section-desc {
@@ -128,7 +142,7 @@ $b: ".satori-manifest-price-list";
 		flex-shrink: 0;
 	}
 
-	// Dotted leader between name and price — only shown by the leaders layout.
+	// Dotted leader between name and price - only shown by the leaders layout.
 	&__item-leader {
 		display: none;
 	}

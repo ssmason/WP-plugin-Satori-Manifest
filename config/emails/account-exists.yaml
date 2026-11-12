@@ -11,7 +11,7 @@ body: |
 
   Someone just used this email address to register with {{site_name}}. {{has_account}}
 
-  If this wasn't you, you can safely ignore this email — nothing has changed.
+  If this wasn't you, you can safely ignore this email. Nothing has changed.
 button_label: Log in
 button_url: "{{login_url}}"
 footer: "Forgotten your password? Reset it here: {{lost_password_url}}"

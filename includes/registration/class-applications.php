@@ -5,7 +5,7 @@
  * Each public registration is stored as a private sm_application post
  * (title = business name, details in meta). Only administrators
  * (manage_options) can see or act on applications. Nothing is created for
- * the applicant until staff approve — see Applications_Screen.
+ * the applicant until staff approve - see Applications_Screen.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -79,6 +79,8 @@ class Applications {
 			'plan'          => __( 'Plan', 'satori-manifest' ),
 			'interval'      => __( 'Billing', 'satori-manifest' ),
 			'design'        => __( 'Preferred design', 'satori-manifest' ),
+			'codes'         => __( 'Printed QR codes', 'satori-manifest' ),
+			'ship_region'   => __( 'Post codes to', 'satori-manifest' ),
 			'message'       => __( 'Anything else?', 'satori-manifest' ),
 		);
 	}

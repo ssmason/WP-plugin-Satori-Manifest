@@ -208,7 +208,7 @@ class Yaml {
 			}
 
 			if ( preg_match( self::KEY_PATTERN, $rest ) || $this->is_sequence_item( $rest ) ) {
-				// "- key: value" — rewrite the line so the mapping (or nested
+				// "- key: value" - rewrite the line so the mapping (or nested
 				// list) starts at the column after the dash, then parse it as a
 				// regular block node at that indent.
 				$child_indent              = $indent + ( strlen( $text ) - strlen( $rest ) );

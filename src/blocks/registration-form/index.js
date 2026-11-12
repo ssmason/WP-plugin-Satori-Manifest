@@ -1,5 +1,5 @@
 /**
- * Satori Manifest — Registration form block (editor).
+ * Satori Manifest - Registration form block (editor).
  *
  * The form is rendered on the server (block/registration/render.php); in the
  * editor a static preview card stands in for it.
@@ -40,7 +40,7 @@ registerBlockType(metadata.name, {
 	edit: Edit,
 
 	/**
-	 * Server-side rendered — no save markup.
+	 * Server-side rendered - no save markup.
 	 *
 	 * @return {null} Dynamic block.
 	 */

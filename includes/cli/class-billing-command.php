@@ -7,7 +7,7 @@
  *   wp satori-manifest billing simulate-payment <application_id>
  *
  * "simulate-payment" runs the same code as a real Stripe
- * checkout.session.completed webhook, without calling Stripe — handy for
+ * checkout.session.completed webhook, without calling Stripe - handy for
  * local testing before keys are added.
  *
  * @package SatoriManifest
@@ -59,7 +59,7 @@ class Billing_Command {
 	/**
 	 * Simulates a successful first payment for an application awaiting payment.
 	 *
-	 * Creates the client account, records the payment and sends the emails —
+	 * Creates the client account, records the payment and sends the emails -
 	 * exactly what the Stripe webhook does. No request is made to Stripe.
 	 *
 	 * ## OPTIONS
@@ -89,7 +89,7 @@ class Billing_Command {
 		$token    = substr( md5( (string) wp_rand() ), 0, 12 );
 
 		// Keep the simulation offline: answer any Stripe call it makes.
-		add_filter( 'satori_manifest_pre_stripe_request', static fn() => new \WP_Error( 'simulated', 'Simulated — Stripe not called.' ) );
+		add_filter( 'satori_manifest_pre_stripe_request', static fn() => new \WP_Error( 'simulated', 'Simulated, Stripe not called.' ) );
 
 		Webhooks::dispatch(
 			array(

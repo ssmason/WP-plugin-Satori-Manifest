@@ -25,7 +25,7 @@ class EmbedTest extends Test_Case {
 
 		$this->assertStringContainsString( '<iframe src="' . esc_url( Embed::url( $page_id ) ) . '"', $code );
 		$this->assertStringContainsString( Embed::QUERY_VAR . '=1', $code );
-		$this->assertStringContainsString( 'title="Harbour Lights — prices"', $code );
+		$this->assertStringContainsString( 'title="Harbour Lights prices"', $code );
 		$this->assertStringContainsString( 'data-sm-embed', $code );
 
 		// The resize script only trusts this site's origin and our message type.

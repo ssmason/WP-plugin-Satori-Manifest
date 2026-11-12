@@ -2,15 +2,15 @@
 /**
  * Client isolation and restrictions.
  *
- * Server-side enforcement for client users — independent of what the admin
+ * Server-side enforcement for client users - independent of what the admin
  * UI shows or hides (see Admin\Portal for the UI side):
  *
  *   - Clients cannot create pages, posts, manifests, patterns or menus.
  *   - Admin, REST and media queries only return the client's own content.
- *   - Clients can only open and save their own navigation menu.
  *   - Theme-level REST routes and the Customizer are off-limits.
  *
- * Staff users are never affected.
+ * Staff users are never affected. Menu and page-template rules live in
+ * Menu_Access and Page_Template_Lock.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -21,8 +21,6 @@ declare( strict_types=1 );
 
 namespace SatoriManifest\Clients;
 
-use SatoriManifest\Admin\Portal\Screen_Guard;
-use SatoriManifest\Frontend\Client_Page;
 use SatoriManifest\Manifest\Post_Types;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -117,11 +115,6 @@ class Access_Control {
 		add_filter( 'rest_pre_dispatch', array( self::class, 'restrict_rest' ), 10, 3 );
 		add_filter( 'rest_post_search_query', array( self::class, 'restrict_link_search' ) );
 		add_filter( 'wp_link_query_args', array( self::class, 'restrict_link_search' ) );
-		add_filter( 'wp_get_nav_menus', array( self::class, 'filter_nav_menus' ) );
-		add_action( 'load-nav-menus.php', array( self::class, 'guard_nav_menus_screen' ) );
-		add_filter( 'nav_menu_meta_box_object', array( self::class, 'limit_menu_meta_boxes' ) );
-		add_action( 'save_post_page', array( self::class, 'keep_page_template' ), 10, 2 );
-		add_filter( 'theme_page_templates', array( self::class, 'limit_page_templates' ), 20 );
 	}
 
 	/**
@@ -185,7 +178,7 @@ class Access_Control {
 	/**
 	 * Restricts admin and REST queries to the client's own content.
 	 *
-	 * Front-end queries are untouched — client pages are public.
+	 * Front-end queries are untouched - client pages are public.
 	 * Hooked to 'pre_get_posts'.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
@@ -278,135 +271,6 @@ class Access_Control {
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Hides every nav menu except the client's own in the admin.
-	 *
-	 * Hooked to 'wp_get_nav_menus'.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.0.0
-	 * @param  array<int,\WP_Term> $menus  Menu terms.
-	 * @return array<int,\WP_Term>
-	 */
-	public static function filter_nav_menus( array $menus ): array {
-		if ( ! is_admin() || ! Client_Role::is_client() ) {
-			return $menus;
-		}
-
-		$own = Client_Repository::menu_id( get_current_user_id() );
-
-		return array_values(
-			array_filter(
-				$menus,
-				static fn( $menu ): bool => $menu instanceof \WP_Term && (int) $menu->term_id === $own
-			)
-		);
-	}
-
-	/**
-	 * Keeps clients on their own menu on the Menus screen.
-	 *
-	 * Redirects any request for another menu, the locations tab, menu
-	 * creation or deletion back to the client's menu.
-	 * Hooked to 'load-nav-menus.php'.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.0.0
-	 * @return void
-	 */
-	public static function guard_nav_menus_screen(): void {
-		if ( ! Client_Role::is_client() ) {
-			return;
-		}
-
-		$user_id = get_current_user_id();
-		$own     = Client_Repository::menu_id( $user_id );
-
-		if ( ! $own ) {
-			wp_safe_redirect( Screen_Guard::home_url() );
-			exit;
-		}
-
-		// Read-only routing checks; the form itself is nonce-protected by core.
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		$action = isset( $_REQUEST['action'] ) ? sanitize_key( wp_unslash( $_REQUEST['action'] ) ) : '';
-		$menu   = isset( $_REQUEST['menu'] ) ? absint( $_REQUEST['menu'] ) : $own;
-		// phpcs:enable WordPress.Security.NonceVerification.Recommended
-
-		// A missing or zero "menu" with action=edit/update would create a new menu.
-		$forbidden_action = in_array( $action, array( 'delete', 'delete_menus', 'locations' ), true );
-
-		if ( $menu !== $own || $forbidden_action ) {
-			wp_safe_redirect( admin_url( 'nav-menus.php?action=edit&menu=' . $own ) );
-			exit;
-		}
-
-		// Menu items being deleted must belong to the client's menu.
-		if ( 'delete-menu-item' === $action ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- core verifies the nonce for this action.
-			$item_id = isset( $_REQUEST['menu-item'] ) ? absint( $_REQUEST['menu-item'] ) : 0;
-			if ( $item_id && ! is_object_in_term( $item_id, 'nav_menu', $own ) ) {
-				wp_safe_redirect( admin_url( 'nav-menus.php?action=edit&menu=' . $own ) );
-				exit;
-			}
-		}
-
-		update_user_option( $user_id, 'nav_menu_recently_edited', $own );
-	}
-
-	/**
-	 * Limits the Menus screen's "add items" boxes to custom links for clients.
-	 *
-	 * Hooked to 'nav_menu_meta_box_object'.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.0.0
-	 * @param  mixed $data_object  Post type or taxonomy object.
-	 * @return mixed  False to hide the box.
-	 */
-	public static function limit_menu_meta_boxes( $data_object ) {
-		return Client_Role::is_client() ? false : $data_object;
-	}
-
-	/**
-	 * Re-applies the client page template if a client save changed it.
-	 *
-	 * Hooked to 'save_post_page'.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.0.0
-	 * @param  int      $post_id  Page ID.
-	 * @param  \WP_Post $post     Page object.
-	 * @return void
-	 */
-	public static function keep_page_template( int $post_id, \WP_Post $post ): void {
-		if ( 'revision' === $post->post_type || ! Client_Repository::is_client_page( $post_id ) ) {
-			return;
-		}
-
-		if ( Client_Page::TEMPLATE !== get_post_meta( $post_id, '_wp_page_template', true ) ) {
-			update_post_meta( $post_id, '_wp_page_template', Client_Page::TEMPLATE );
-		}
-	}
-
-	/**
-	 * Offers only the client page template to clients.
-	 *
-	 * Hooked to 'theme_page_templates'.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.0.0
-	 * @param  array<string,string> $templates  Template file => label.
-	 * @return array<string,string>
-	 */
-	public static function limit_page_templates( array $templates ): array {
-		if ( ! Client_Role::is_client() ) {
-			return $templates;
-		}
-
-		return array_intersect_key( $templates, array( Client_Page::TEMPLATE => true ) );
 	}
 
 	/**

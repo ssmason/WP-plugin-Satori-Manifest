@@ -72,6 +72,18 @@ $satori_manifest_date_format = (string) get_option( 'date_format' );
 			<strong class="sm-stat__value"><?php echo esc_html( Plans::format( $satori_manifest_stats['mrr'] ) ); ?></strong>
 		</div>
 		<div class="sm-stat">
+			<span class="sm-stat__label"><?php esc_html_e( 'On free trial', 'satori-manifest' ); ?></span>
+			<strong class="sm-stat__value"><?php echo esc_html( number_format_i18n( $satori_manifest_stats['trials'] ) ); ?></strong>
+			<?php if ( $satori_manifest_stats['trials'] ) : ?>
+				<span class="sm-stat__hint">
+					<?php
+					/* translators: %s: monthly amount, e.g. "€42.00". */
+					echo esc_html( sprintf( __( '%s a month once they pay', 'satori-manifest' ), Plans::format( $satori_manifest_stats['trial_mrr'] ) ) );
+					?>
+				</span>
+			<?php endif; ?>
+		</div>
+		<div class="sm-stat">
 			<span class="sm-stat__label"><?php esc_html_e( 'Paid in the last 30 days', 'satori-manifest' ); ?></span>
 			<strong class="sm-stat__value">
 				<?php
@@ -147,7 +159,7 @@ $satori_manifest_date_format = (string) get_option( 'date_format' );
 									<span class="sm-table__sub"><?php esc_html_e( 'Cancels at period end', 'satori-manifest' ); ?></span>
 								<?php endif; ?>
 							</td>
-							<td><?php echo $satori_manifest_sub['current_period_end'] ? esc_html( wp_date( $satori_manifest_date_format, (int) $satori_manifest_sub['current_period_end'] ) ) : '—'; ?></td>
+							<td><?php echo $satori_manifest_sub['current_period_end'] ? esc_html( wp_date( $satori_manifest_date_format, (int) $satori_manifest_sub['current_period_end'] ) ) : '-'; ?></td>
 							<td class="sm-table__actions">
 								<?php if ( $satori_manifest_page_id ) : ?>
 									<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -188,7 +200,7 @@ $satori_manifest_date_format = (string) get_option( 'date_format' );
 						<tr>
 							<td><?php echo esc_html( mysql2date( $satori_manifest_date_format, $satori_manifest_payment['date'] ) ); ?></td>
 							<td>
-								<?php echo esc_html( $satori_manifest_payer ? $satori_manifest_payer->display_name : '—' ); ?>
+								<?php echo esc_html( $satori_manifest_payer ? $satori_manifest_payer->display_name : '-' ); ?>
 								<?php if ( '' !== $satori_manifest_payment['description'] ) : ?>
 									<span class="sm-table__sub"><?php echo esc_html( $satori_manifest_payment['description'] ); ?></span>
 								<?php endif; ?>
@@ -229,9 +241,9 @@ $satori_manifest_date_format = (string) get_option( 'date_format' );
 				<?php foreach ( $satori_manifest_plans as $satori_manifest_slug => $satori_manifest_plan ) : ?>
 					<tr>
 						<td><strong><?php echo esc_html( $satori_manifest_plan['title'] ); ?></strong></td>
-						<td><?php echo $satori_manifest_plan['prices']['month'] ? esc_html( Plans::format( $satori_manifest_plan['prices']['month'] ) ) : '—'; ?></td>
+						<td><?php echo $satori_manifest_plan['prices']['month'] ? esc_html( Plans::format( $satori_manifest_plan['prices']['month'] ) ) : '-'; ?></td>
 						<td>
-							<?php echo $satori_manifest_plan['prices']['year'] ? esc_html( Plans::format( $satori_manifest_plan['prices']['year'] ) ) : '—'; ?>
+							<?php echo $satori_manifest_plan['prices']['year'] ? esc_html( Plans::format( $satori_manifest_plan['prices']['year'] ) ) : '-'; ?>
 							<?php if ( Plans::yearly_saving( $satori_manifest_slug ) > 0 ) : ?>
 								<span class="sm-table__sub">
 									<?php

@@ -3,7 +3,7 @@
  * Stripe customer portal.
  *
  * Lets a client update their card, switch between monthly and yearly,
- * download invoices or cancel — on Stripe's hosted portal, so none of it
+ * download invoices or cancel - on Stripe's hosted portal, so none of it
  * needs building here. Enable the portal once in the Stripe dashboard
  * (Settings → Billing → Customer portal).
  *

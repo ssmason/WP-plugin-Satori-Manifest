@@ -62,7 +62,7 @@ class Brevo_Transport {
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  2.1.0
 	 * @param  string               $to       Recipient.
-	 * @param  array<string,string> $message  { subject, html, text }.
+	 * @param  array<string,string> $message  { subject, html, text, optional reply_to }.
 	 * @param  string               $template Optional template name (for a Brevo template ID).
 	 * @param  array<string,string> $params   Optional params for a Brevo template.
 	 * @return array{sent:bool,error:string}
@@ -76,6 +76,10 @@ class Brevo_Transport {
 			'to'      => array( array( 'email' => $to ) ),
 			'subject' => $message['subject'],
 		);
+
+		if ( ! empty( $message['reply_to'] ) && is_email( $message['reply_to'] ) ) {
+			$payload['replyTo'] = array( 'email' => $message['reply_to'] );
+		}
 
 		$template_id = (int) Env::get( 'BREVO_TEMPLATE_' . strtoupper( str_replace( '-', '_', $template ) ) );
 

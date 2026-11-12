@@ -36,7 +36,7 @@ const STYLE_ENTRIES = [
  *
  * @type {string[]}
  */
-const BLOCKS = ['price-list', 'registration-form'];
+const BLOCKS = ['price-list', 'registration-form', 'contact-form'];
 
 /**
  * Builds the entry map, discovering designs from the designs/ folder.
@@ -49,6 +49,7 @@ function entries() {
 		'build/js/client-page': './src/js/client-page.js',
 		'build/js/admin-settings': './src/js/admin-settings.js',
 		'build/js/client-home': './src/js/client-home.js',
+		'build/js/design-screen': './src/js/design-screen.js',
 		'build/js/embed': './src/js/embed.js',
 	};
 

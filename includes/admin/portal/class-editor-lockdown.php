@@ -146,7 +146,7 @@ class Editor_Lockdown {
 			$settings['__experimentalBlockPatterns'] = array_values(
 				array_filter(
 					$settings['__experimentalBlockPatterns'],
-					static fn( $pattern ): bool => is_array( $pattern ) && in_array( Patterns::CATEGORY, (array) ( $pattern['categories'] ?? array() ), true )
+					static fn( $pattern ): bool => is_array( $pattern ) && array() !== array_intersect( Patterns::CLIENT_CATEGORIES, (array) ( $pattern['categories'] ?? array() ) )
 				)
 			);
 		}

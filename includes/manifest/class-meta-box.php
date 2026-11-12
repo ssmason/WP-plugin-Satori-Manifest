@@ -94,7 +94,7 @@ class Meta_Box {
 	 */
 	public static function render_legend(): void {
 		$tips = array(
-			array( 'dashicons-category', __( 'Sections group your items — e.g. "Cuts", "Colour", "Treatments".', 'satori-manifest' ) ),
+			array( 'dashicons-category', __( 'Sections group your items, e.g. "Cuts", "Colour", "Treatments".', 'satori-manifest' ) ),
 			array( 'dashicons-sort', __( 'Use the arrows to reorder sections and items.', 'satori-manifest' ) ),
 			array( 'dashicons-heading', __( 'Leave a price empty to turn an item into a sub-heading.', 'satori-manifest' ) ),
 			array( 'dashicons-tag', __( 'Badges like "Popular" or "New" highlight an item.', 'satori-manifest' ) ),
@@ -170,7 +170,7 @@ class Meta_Box {
 	 * @return void
 	 */
 	public static function save( int $post_id ): void {
-		// Skip autosave — the form has not been submitted in this case.
+		// Skip autosave - the form has not been submitted in this case.
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
@@ -191,7 +191,7 @@ class Meta_Box {
 			return;
 		}
 
-		// Read the raw JSON. Only wp_unslash() here — sanitize_text_field() would
+		// Read the raw JSON. Only wp_unslash() here - sanitize_text_field() would
 		// strip angle-bracket characters and corrupt the JSON before decoding.
 		// Field-level sanitization is handled by Sanitizer after decode.
 		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized

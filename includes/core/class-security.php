@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Security {
 
 	/**
-	 * Nonce action prefix — prepended to every action key.
+	 * Nonce action prefix - prepended to every action key.
 	 *
 	 * @since 1.0.0
 	 * @var   string

@@ -463,7 +463,7 @@ class Price_List_Pdf {
 		$this->y = self::MARGIN;
 
 		/* translators: %s: business name. */
-		$this->pdf->text( self::MARGIN, $this->y, Font_Metrics::encode( sprintf( __( '%s — prices (continued)', 'satori-manifest' ), (string) $this->brand['name'] ) ), 8, true, $this->colours['muted'] );
+		$this->pdf->text( self::MARGIN, $this->y, Font_Metrics::encode( sprintf( __( '%s prices (continued)', 'satori-manifest' ), (string) $this->brand['name'] ) ), 8, true, $this->colours['muted'] );
 		$this->y += 18;
 	}
 
@@ -489,6 +489,6 @@ class Price_List_Pdf {
 	private function clean( string $text ): string {
 		$text = html_entity_decode( wp_strip_all_tags( $text ), ENT_QUOTES, 'UTF-8' );
 
-		return Font_Metrics::encode( trim( (string) preg_replace( '/[ \t]+/', ' ', $text ) ) );
+		return Font_Metrics::encode( trim( (string) preg_replace( '/[ \t\x{00A0}]+/u', ' ', $text ) ) );
 	}
 }

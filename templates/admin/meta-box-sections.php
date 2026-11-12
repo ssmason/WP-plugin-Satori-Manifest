@@ -1,6 +1,6 @@
 <?php
 /**
- * Meta box view — Sections & Items editor for a single manifest.
+ * Meta box view - Sections & Items editor for a single manifest.
  *
  * Receives from Meta_Box::render():
  *   $satori_manifest_sections    array  Saved sections.
@@ -9,7 +9,7 @@
  *
  * Sections and items are rendered by the two partial closures below, which
  * are also used to print the <template> elements cloned by
- * build/js/manifest-admin.js when adding rows — one source of markup.
+ * build/js/manifest-admin.js when adding rows - one source of markup.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -80,13 +80,26 @@ $satori_manifest_render_item = static function ( array $item ) use ( $satori_man
  * @return void
  */
 $satori_manifest_render_section = static function ( array $section, bool $expanded ) use ( $satori_manifest_render_item ): void {
-	$items = isset( $section['items'] ) && is_array( $section['items'] ) ? $section['items'] : array();
+	$items    = isset( $section['items'] ) && is_array( $section['items'] ) ? $section['items'] : array();
+	$icon_id  = isset( $section['icon'] ) ? absint( $section['icon'] ) : 0;
+	$icon_url = $icon_id ? (string) wp_get_attachment_image_url( $icon_id, 'thumbnail' ) : '';
 	?>
 	<section class="sm-section<?php echo $expanded ? '' : ' is-collapsed'; ?>" data-sm-id="<?php echo esc_attr( (string) ( $section['id'] ?? '' ) ); ?>">
 		<header class="sm-section__head">
 			<button type="button" class="sm-section__toggle sm-icon-button" data-sm-action="section-toggle" aria-expanded="<?php echo $expanded ? 'true' : 'false'; ?>" aria-label="<?php esc_attr_e( 'Show or hide items', 'satori-manifest' ); ?>">
 				<span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
 			</button>
+			<span class="sm-section__icon<?php echo '' !== $icon_url ? ' has-icon' : ''; ?>">
+				<input type="hidden" class="sm-section__icon-input" value="<?php echo esc_attr( '' !== $icon_url ? (string) $icon_id : '' ); ?>" />
+				<button type="button" class="sm-section__icon-button" data-sm-action="section-icon" title="<?php esc_attr_e( 'Icon or image shown left of the section title', 'satori-manifest' ); ?>" aria-label="<?php esc_attr_e( 'Choose a section icon', 'satori-manifest' ); ?>">
+					<?php if ( '' !== $icon_url ) : ?>
+						<img src="<?php echo esc_url( $icon_url ); ?>" alt="" />
+					<?php else : ?>
+						<span class="dashicons dashicons-format-image" aria-hidden="true"></span>
+					<?php endif; ?>
+				</button>
+				<button type="button" class="sm-section__icon-remove" data-sm-action="section-icon-remove" aria-label="<?php esc_attr_e( 'Remove section icon', 'satori-manifest' ); ?>">&times;</button>
+			</span>
 			<label class="sm-section__title">
 				<span class="screen-reader-text"><?php esc_html_e( 'Section title', 'satori-manifest' ); ?></span>
 				<input type="text" class="sm-section__title-input" value="<?php echo esc_attr( (string) ( $section['title'] ?? '' ) ); ?>" placeholder="<?php esc_attr_e( 'Section title, e.g. Colour', 'satori-manifest' ); ?>" />
@@ -177,7 +190,7 @@ $satori_manifest_render_section = static function ( array $section, bool $expand
 	<div class="sm-manifest-empty" data-sm-empty>
 		<span class="sm-manifest-empty__icon dashicons dashicons-list-view" aria-hidden="true"></span>
 		<h3><?php esc_html_e( 'Your price list is empty', 'satori-manifest' ); ?></h3>
-		<p><?php esc_html_e( 'Start with a section — for example "Cuts", "Colour" or "Drinks" — then add items with prices.', 'satori-manifest' ); ?></p>
+		<p><?php esc_html_e( 'Start with a section, for example "Cuts", "Colour" or "Drinks", then add items with prices.', 'satori-manifest' ); ?></p>
 		<button type="button" class="button button-primary" data-sm-action="section-add"><?php esc_html_e( 'Add your first section', 'satori-manifest' ); ?></button>
 	</div>
 </div>

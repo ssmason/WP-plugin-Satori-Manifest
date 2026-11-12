@@ -1,5 +1,5 @@
 /**
- * Satori Manifest — client page behaviour.
+ * Satori Manifest - client page behaviour.
  *
  * Mobile navigation toggle for the client page header. Progressive
  * enhancement: without JavaScript the navigation is simply always visible.

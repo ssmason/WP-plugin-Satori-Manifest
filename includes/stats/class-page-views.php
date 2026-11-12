@@ -5,7 +5,7 @@
  * Daily visit counts for client pages, stored on the page as
  * array( 'YYYY-MM-DD' => array( views, scans ) ). A "scan" is a visit that
  * arrived through the QR code (?src=qr); every scan is also a view. Only
- * counts are kept — no IP addresses or other personal data. Days older
+ * counts are kept - no IP addresses or other personal data. Days older
  * than RETENTION_DAYS are dropped.
  *
  * @package SatoriManifest

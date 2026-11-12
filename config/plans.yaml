@@ -1,11 +1,13 @@
 # Pricing plans offered on the registration form and charged through Stripe.
 #
 # currency   ISO 4217 code used for display and for Stripe (eur, gbp, usd…).
-# plans      Keyed by slug — the slug is stored on applications and subscriptions.
+# trial_days Free days before the first payment (0 for none). The card is taken at
+#            sign-up and Stripe charges it automatically when the trial ends.
+# plans      Keyed by slug - the slug is stored on applications and subscriptions.
 #   prices         Amount per billing interval, in whole currency units (12 = €12.00).
 #                  Offer both "month" and "year" to show the Monthly / Yearly toggle.
 #   stripe_prices  Optional Stripe Price IDs (price_…) per interval. Leave empty to
-#                  let the plugin create the price on the fly at checkout — no setup
+#                  let the plugin create the price on the fly at checkout - no setup
 #                  in the Stripe dashboard needed.
 #
 # Estimates (review before going live): hosting for every client page runs on one
@@ -15,6 +17,9 @@
 # Override by copying this file to {theme}/satori-manifest/plans.yaml.
 
 currency: eur
+trial_days: 30
+
+# Printed QR codes (sizes, prices, postage): see printed-codes.yaml.
 
 plans:
   self-managed:

@@ -3,7 +3,7 @@
  * Site hardening.
  *
  * Closes the usual ways attackers learn about, or guess into, a WordPress
- * site — none of which this service needs:
+ * site - none of which this service needs:
  *
  *   - XML-RPC is switched off (a common channel for password guessing).
  *   - The REST users list is limited to people who can list users, so

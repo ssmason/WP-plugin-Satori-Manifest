@@ -1,0 +1,26 @@
+# Harbour - warm coastal colours, a big photo hero and the menu split into chapters. Made for restaurants.
+
+title: Harbour
+description: A big photo hero, the menu in three chapters with a photo strip between them and a harbour banner to finish. Warm sand, deep navy and terracotta.
+best_for: Restaurants & seafood
+order: 6
+kind: full
+tags: [restaurant, seafood, photos, warm]
+header: split
+palette:
+  background: '#FAF6EF'
+  surface: '#F1E7D8'
+  text: '#14283A'
+  muted: '#5F6B78'
+  accent: '#D9653B'
+  accent_text: '#FFFFFF'
+palette_dark:
+  background: '#0F1E2C'
+  surface: '#17293A'
+  text: '#F5EFE6'
+  muted: '#9AA7B4'
+  accent: '#E07A4F'
+  accent_text: '#FFFFFF'
+fonts:
+  heading: fraunces
+  body: manrope

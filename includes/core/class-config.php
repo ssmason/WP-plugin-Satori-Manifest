@@ -5,7 +5,7 @@
  * Every editable configuration file (ACF field groups, fonts, demo data)
  * ships inside the plugin under config/. A theme can override any file by
  * placing a file with the same relative path under
- * {theme}/satori-manifest/ — child theme first, then parent theme, then the
+ * {theme}/satori-manifest/ - child theme first, then parent theme, then the
  * plugin default. The plugin therefore works with any theme, while a project
  * theme can still own and edit the configuration.
  *

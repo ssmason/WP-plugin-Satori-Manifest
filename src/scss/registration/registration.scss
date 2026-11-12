@@ -1,8 +1,8 @@
-// Satori Manifest — registration form block styles
+// Satori Manifest - registration form block styles
 //
-// Loaded with the satori-manifest/registration-form block (block.json "style"),
+// Loaded with the satori-manifest/registration-form and contact-form blocks (block.json "style"),
 // so the form looks complete in any theme. Every colour, radius and font is a
-// custom property — a theme restyles the form by setting them, e.g.:
+// custom property - a theme restyles the form by setting them, e.g.:
 //
 //   .wp-block-satori-manifest-registration-form { --sm-form-accent: #b5704a; }
 //
@@ -10,7 +10,8 @@
 // @author  Stephen Mason <steve@satori-digital.com>
 // @since   2.2.0
 
-.wp-block-satori-manifest-registration-form {
+.wp-block-satori-manifest-registration-form,
+.wp-block-satori-manifest-contact-form {
 	--sm-form-accent: #f2a65a;
 	--sm-form-accent-text: #0b1620;
 	--sm-form-accent-strong: #8a4f0f;
@@ -101,6 +102,7 @@
 	input[type="email"],
 	input[type="tel"],
 	input[type="url"],
+	input[type="number"],
 	select,
 	textarea {
 		width: 100%;
@@ -115,6 +117,33 @@
 			border-color: var(--sm-form-accent);
 			outline: 3px solid color-mix(in srgb, var(--sm-form-accent) 18%, transparent);
 			outline-offset: 0;
+		}
+	}
+
+	&__codes {
+		margin: 0.5rem 0 1.25rem;
+		padding: 0;
+		border: 0;
+
+		legend {
+			margin-bottom: 0.4rem;
+			font-size: 0.9rem;
+			font-weight: 700;
+		}
+
+		> .sm-form__hint {
+			display: block;
+			margin: 0 0 0.75rem;
+		}
+	}
+
+	&__codes-more {
+		margin-bottom: 1rem;
+
+		summary {
+			color: var(--sm-form-accent);
+			font-weight: 600;
+			cursor: pointer;
 		}
 	}
 
@@ -184,6 +213,12 @@
 		input {
 			margin-top: 0.25rem;
 		}
+	}
+
+	&__note {
+		margin: 0 0 1.5rem;
+		color: var(--sm-form-muted);
+		font-size: 0.88rem;
 	}
 
 	&__trap {
@@ -308,6 +343,13 @@
 	&__note {
 		margin: -1rem 0 2rem;
 	}
+}
+
+// Free-trial note above the submit button.
+.sm-form__trial {
+	margin: 0 0 1rem;
+	color: var(--sm-form-muted);
+	font-size: 0.95em;
 }
 
 .sm-plan {
@@ -441,5 +483,24 @@
 			background: color-mix(in srgb, var(--sm-form-success) 14%, transparent);
 			color: var(--sm-form-success);
 		}
+	}
+}
+
+// Printed QR codes: one row per size with its price and a quantity.
+.sm-codes-grid {
+	display: grid;
+	gap: 0.5rem;
+	margin-top: 0.75rem;
+
+	&__row {
+		display: grid;
+		grid-template-columns: 1fr auto 5.5rem;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	&__price {
+		color: var(--sm-form-muted);
+		font-size: 0.9em;
 	}
 }

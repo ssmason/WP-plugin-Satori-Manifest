@@ -1,0 +1,40 @@
+# Printed QR codes (3D-printed, self-adhesive) posted to clients.
+#
+# sizes      Keyed by slug: label shown to clients and price per code (currency of plans.yaml).
+# standard   One code of this size is free with every new sign-up. Picking another size
+#            for it costs only the difference; extra codes are charged in full.
+# max        Most codes in one order (all sizes together).
+# regions    Where codes can be posted. `first` is the postage for the first code and
+#            `each` for every further code; 0 means free postage. Stripe Checkout only
+#            accepts addresses in the chosen region's countries (ISO codes).
+#
+# Override by copying this file to {theme}/satori-manifest/printed-codes.yaml.
+
+sizes:
+  xs:   { label: "XS – 15 × 20 mm", price: 2.00 }
+  s:    { label: "S – 25 × 33 mm", price: 2.50 }
+  m:    { label: "M – 35 × 46 mm (standard)", price: 3.00 }
+  l:    { label: "L – 40 × 52 mm", price: 3.50 }
+  xl:   { label: "XL – 45 × 59 mm", price: 4.00 }
+  xxl:  { label: "XXL – 55 × 72 mm", price: 4.50 }
+  xxxl: { label: "XXXL – 60 × 75 mm", price: 5.00 }
+
+standard: m
+max: 50
+
+regions:
+  eu:
+    label: EU or UK
+    first: 0
+    each: 0
+    countries: [AT, BE, BG, HR, CY, CZ, DK, EE, FI, FR, DE, GR, HU, IE, IT, LV, LT, LU, MT, NL, PL, PT, RO, SK, SI, ES, SE, GB]
+  ca:
+    label: Canada
+    first: 23.00
+    each: 0
+    countries: [CA]
+  jp:
+    label: Japan
+    first: 23.00
+    each: 0
+    countries: [JP]

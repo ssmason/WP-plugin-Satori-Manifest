@@ -1,0 +1,2 @@
+(()=>{"use strict";const e=wp.blocks,t=wp.blockEditor,n=wp.components,s=wp.i18n,i=JSON.parse('{"UU":"satori-manifest/contact-form"}');(0,e.registerBlockType)(i.UU,{edit:function(){return wp.element.createElement("div",(0,t.useBlockProps)(),wp.element.createElement(n.Placeholder,{icon:"email",label:(0,s.__)("Contact form","satori-manifest"),instructions:(0,s.__)("Visitors send a name, email and message. It is emailed to the staff address in Manifest → Settings.","satori-manifest")}))},save:function(){return null}})})();
+//# sourceMappingURL=contact-form.js.map

@@ -1,0 +1,149 @@
+// Design: Edge
+//
+// Charcoal and brass, Bebas Neue headlines and DM Sans text. A tall photo
+// beside big condensed type, prices in two columns, a full-width photo strip,
+// walk-in details and a brass banner to finish.
+//
+// @package SatoriManifest
+// @since   3.8.0
+
+$b: ".satori-manifest-price-list";
+
+.sm-design-edge {
+	--sm-background: #121212;
+	--sm-surface: #1d1d1d;
+	--sm-text: #f2f2f2;
+	--sm-muted: #9a9a9a;
+	--sm-accent: #d4a537;
+	--sm-accent-text: #121212;
+	--sm-font-heading: "Bebas Neue", impact, sans-serif;
+	--sm-font-body: "DM Sans", sans-serif;
+	--sm-heading-weight: 400;
+	--sm-heading-tracking: 0.02em;
+	--sm-radius: 0;
+	--sm-content: 72rem;
+	--sm-border: color-mix(in srgb, var(--sm-text) 14%, transparent);
+
+	.sm-header {
+		border-bottom-color: var(--sm-border);
+	}
+
+	.sm-brand__name {
+		font-size: 1.8rem;
+		letter-spacing: 0.06em;
+	}
+
+	.sm-button,
+	.wp-block-button__link {
+		border-radius: 0;
+		background: var(--sm-accent);
+		color: var(--sm-accent-text);
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	.wp-block-button__link {
+		padding: 1rem 2.2rem;
+		font-size: 0.85rem;
+	}
+
+	.sm-hero {
+		gap: 0;
+		margin-bottom: clamp(3rem, 8vw, 6rem);
+
+		> .wp-block-column:last-child {
+			padding: clamp(2rem, 6vw, 5rem);
+		}
+
+		&__photo {
+			margin: 0;
+
+			img {
+				width: 100%;
+				min-height: 70vh;
+				border-radius: 0;
+				object-fit: cover;
+			}
+		}
+
+		h1 {
+			font-size: clamp(3.5rem, 10vw, 7.5rem);
+			line-height: 0.92;
+		}
+	}
+
+	.sm-menu {
+		margin-bottom: clamp(3rem, 8vw, 6rem);
+		scroll-margin-top: 5rem;
+
+		h2 {
+			margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+			color: var(--sm-accent);
+			font-size: clamp(3rem, 8vw, 5rem);
+		}
+	}
+
+	#{$b} {
+
+		&__section-title {
+			font-family: var(--sm-font-heading) !important; // stylelint-disable-line declaration-no-important
+			font-size: 1.9rem !important; // stylelint-disable-line declaration-no-important
+			letter-spacing: 0.04em;
+		}
+
+		&__item-name {
+			font-weight: 600;
+		}
+
+		&__item-price {
+			color: var(--sm-accent);
+			font-weight: 700;
+		}
+	}
+
+	.sm-strip {
+		margin-bottom: clamp(3rem, 8vw, 6rem);
+
+		.wp-block-image {
+			aspect-ratio: 1;
+		}
+
+		.wp-block-image img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			filter: grayscale(0.3);
+		}
+	}
+
+	.sm-info {
+		gap: clamp(1.5rem, 4vw, 3rem);
+		margin-bottom: clamp(3rem, 8vw, 6rem);
+
+		h3 {
+			margin-bottom: 0.5rem;
+			color: var(--sm-accent);
+			font-size: 1.8rem;
+		}
+
+		p {
+			color: var(--sm-muted);
+		}
+	}
+
+	.sm-banner {
+		padding: clamp(3rem, 8vw, 5rem) 1.5rem;
+		background: var(--sm-accent);
+		color: var(--sm-accent-text);
+
+		h2 {
+			font-size: clamp(3.5rem, 10vw, 6rem);
+		}
+
+		.wp-block-button__link {
+			background: var(--sm-accent-text);
+			color: var(--sm-accent);
+		}
+	}
+}

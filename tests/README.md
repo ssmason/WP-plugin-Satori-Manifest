@@ -1,4 +1,4 @@
-# Satori Manifest — tests
+# Satori Manifest - tests
 
 Integration tests on the official WordPress test suite: real WordPress, real database,
 every test wrapped in a transaction that is rolled back afterwards.
@@ -25,7 +25,7 @@ Run one file or test:
 | File | Role |
 |---|---|
 | `bootstrap.php` | Loads the WordPress test library (`wp-phpunit/wp-phpunit`), then the plugin |
-| `wp-tests-config.php` | Database settings, read from the project's `.env` — nothing secret in this file |
+| `wp-tests-config.php` | Database settings, read from the project's `.env` - nothing secret in this file |
 | `support/class-test-case.php` | `Test_Case`: base class with helpers (`make_client()`, `make_application()`, `sent_subjects()`) |
 | `phpunit/*Test.php` | The tests |
 | `tools/check-class-references.php` | Not a test: checks every class reference resolves (`npm run check:classes`) |
@@ -53,6 +53,8 @@ tests can assert what was sent.
 | `HardeningTest` | login lockout, generic login errors, private REST user list, XML-RPC off, price-list save keeps quotes and needs a nonce |
 | `QrTest` | QR code matches a scanner-verified reference, version choice, finder patterns, SVG/PNG output, page QR links |
 | `StatsTest` | visit and scan counting, retention, bot/repeat rules over REST, proxy IP handling, monthly summary once per month and opt-out |
+| `PriceListViewTest` | price list block: own manifest, hidden sections, other clients' manifests ignored, sanitised styles, anchors |
+| `PriceFormatTest` | prices as "£4.50" (symbol before) and "4,50 €" (symbol after) |
 | `PublicFeaturesTest` | public PDF switch, neutral reply to repeat registrations |
 | `BillingTest` | Checkout parameters, webhook signatures, unsigned requests rejected, first payment, renewals (logged once), failed payments, cancellation |
 
@@ -60,4 +62,4 @@ tests can assert what was sent.
 
 Extend `SatoriManifest\Tests\Test_Case`, name the file `SomethingTest.php` in
 `tests/phpunit/`, and prefix methods with `test_`. Create data with the WordPress
-factories (`self::factory()`) or the helpers above — never rely on site content.
+factories (`self::factory()`) or the helpers above - never rely on site content.

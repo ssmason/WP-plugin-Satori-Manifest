@@ -3,7 +3,7 @@
  * Payments screen (administrators only).
  *
  * Subscriptions, recent payments and Stripe setup status in one place. Also
- * lets staff take a client's page offline (or back online) — the plugin
+ * lets staff take a client's page offline (or back online) - the plugin
  * never does that automatically when a subscription lapses.
  *
  * @package SatoriManifest
@@ -140,24 +140,31 @@ class Payments_Screen {
 	/**
 	 * Summarises subscriptions for the headline figures.
 	 *
-	 * Monthly recurring revenue counts yearly plans as a twelfth.
+	 * Monthly recurring revenue counts yearly plans as a twelfth and leaves out
+	 * free trials, which are counted separately until their first payment.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.0.0
 	 * @param  array<int,array<string,mixed>> $rows  Subscriptions::all() rows.
-	 * @return array{active:int,attention:int,mrr:float,last_30:array<string,float>}
+	 * @return array{active:int,attention:int,mrr:float,trials:int,trial_mrr:float,last_30:array<string,float>}
 	 */
 	public static function stats( array $rows ): array {
 		$active    = 0;
 		$attention = 0;
 		$mrr       = 0.0;
+		$trials    = 0;
+		$trial_mrr = 0.0;
 
 		foreach ( $rows as $row ) {
 			$subscription = $row['subscription'];
+			$monthly      = 'year' === $subscription['interval'] ? $subscription['amount'] / 12 : $subscription['amount'];
 
-			if ( Subscriptions::in_good_standing( $subscription['status'] ) ) {
+			if ( 'trialing' === $subscription['status'] ) {
+				++$trials;
+				$trial_mrr += $monthly;
+			} elseif ( Subscriptions::in_good_standing( $subscription['status'] ) ) {
 				++$active;
-				$mrr += 'year' === $subscription['interval'] ? $subscription['amount'] / 12 : $subscription['amount'];
+				$mrr += $monthly;
 			} elseif ( in_array( $subscription['status'], array( 'past_due', 'unpaid', 'incomplete' ), true ) ) {
 				++$attention;
 			}
@@ -167,6 +174,8 @@ class Payments_Screen {
 			'active'    => $active,
 			'attention' => $attention,
 			'mrr'       => round( $mrr, 2 ),
+			'trials'    => $trials,
+			'trial_mrr' => round( $trial_mrr, 2 ),
 			'last_30'   => Payments::totals_last_30_days(),
 		);
 	}

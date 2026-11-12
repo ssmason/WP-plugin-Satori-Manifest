@@ -7,7 +7,7 @@ heading: We couldn't take your payment
 body: |
   Hi {{contact_name}},
 
-  We tried to take {{amount}} for {{business_name}} but the payment didn't go through — this usually means an expired card or a bank check.
+  We tried to take {{amount}} for {{business_name}} but the payment didn't go through. This usually means an expired card or a bank check.
 
   Please log in and update your card under Billing. Stripe will retry automatically over the next few days, and your page stays online in the meantime.
 button_label: Update my card

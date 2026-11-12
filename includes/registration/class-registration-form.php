@@ -3,12 +3,9 @@
  * Public registration form.
  *
  * Rendered by the satori-manifest/registration-form block. Submissions post
- * to admin-post.php (logged-in or not), are validated and spam-checked, and
- * stored as a pending application. The applicant and staff are emailed.
- * The visitor is redirected back with a status flag (post/redirect/get).
- *
- * Spam protection without third parties: nonce, hidden honeypot field,
- * minimum fill time, and a per-IP rate limit.
+ * to admin-post.php and are processed by Registration_Handler; emails go
+ * through Registration_Notifier. This class renders the form, its result
+ * messages and finds the page that holds it.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -19,10 +16,9 @@ declare( strict_types=1 );
 
 namespace SatoriManifest\Registration;
 
-use SatoriManifest\Admin\Screens\Applications_Screen;
+use SatoriManifest\Billing\Stripe_Settings;
+use SatoriManifest\Core\Page_Cache;
 use SatoriManifest\Designs\Design_Registry;
-use SatoriManifest\Hardening\Client_Ip;
-use SatoriManifest\Mail\Mailer;
 use SatoriManifest\Manifest\Block;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Registration_Form
  *
- * Renders and processes the registration form.
+ * Renders the registration form and its result messages.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -57,31 +53,13 @@ class Registration_Form {
 	public const RESULT_VAR = 'sm_registration';
 
 	/**
-	 * Minimum seconds between rendering and submitting (bots are faster).
-	 *
-	 * @since 2.1.0
-	 * @var   int
-	 */
-	private const MIN_SECONDS = 3;
-
-	/**
-	 * Maximum submissions per IP per hour.
-	 *
-	 * @since 2.1.0
-	 * @var   int
-	 */
-	private const RATE_LIMIT = 5;
-
-	/**
-	 * Registers submission handlers.
+	 * Registers the page-URL cache flush (submissions: Registration_Handler).
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  2.1.0
 	 * @return void
 	 */
 	public static function register(): void {
-		add_action( 'admin_post_nopriv_' . self::ACTION, array( self::class, 'handle' ) );
-		add_action( 'admin_post_' . self::ACTION, array( self::class, 'handle' ) );
 		add_action( 'save_post_page', array( self::class, 'flush_page_url' ) );
 	}
 
@@ -94,6 +72,9 @@ class Registration_Form {
 	 * @return string
 	 */
 	public static function render( string $wrapper_attributes = '' ): string {
+		// The form carries a single-use nonce (and the spam check): never serve it from a page cache.
+		Page_Cache::exclude_current_page();
+
 		// Display-only flag set by our own redirect.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$satori_manifest_result  = isset( $_GET[ self::RESULT_VAR ] ) ? sanitize_key( wp_unslash( $_GET[ self::RESULT_VAR ] ) ) : '';
@@ -102,6 +83,7 @@ class Registration_Form {
 		$satori_manifest_designs = Design_Registry::all();
 		$satori_manifest_plans   = Plans::all();
 		$satori_manifest_toggle  = Plans::has_interval_choice();
+		$satori_manifest_pay_now = Stripe_Settings::is_configured();
 		$satori_manifest_wrapper = $wrapper_attributes;
 
 		// Optional pre-selection via ?plan=slug&billing=year (e.g. from a pricing link).
@@ -184,11 +166,17 @@ class Registration_Form {
 			),
 			'paid'              => array(
 				'type' => 'success',
-				'text' => __( 'Payment received — thank you! Your account is being set up now. Check your email for a link to choose your password.', 'satori-manifest' ),
+				'text' => Plans::trial_days() > 0
+					? __( 'Thank you! Your free trial has started and your account is being set up now. Check your email for a link to choose your password.', 'satori-manifest' )
+					: __( 'Payment received, thank you! Your account is being set up now. Check your email for a link to choose your password.', 'satori-manifest' ),
 			),
 			'payment-cancelled' => array(
 				'type' => 'info',
-				'text' => __( 'Payment was cancelled and nothing was charged. You can use the link in your approval email whenever you are ready.', 'satori-manifest' ),
+				'text' => __( 'Payment was cancelled and nothing was charged. Fill in the form again whenever you are ready.', 'satori-manifest' ),
+			),
+			'spam-check'        => array(
+				'type' => 'error',
+				'text' => __( 'We could not confirm you are a person. Please try again.', 'satori-manifest' ),
 			),
 			'slow-down'         => array(
 				'type' => 'error',
@@ -199,169 +187,5 @@ class Registration_Form {
 				'text' => __( 'Your session expired. Please submit the form again.', 'satori-manifest' ),
 			),
 		);
-	}
-
-	/**
-	 * Processes a submission. Hooked to admin_post(_nopriv)_satori_manifest_register.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.1.0
-	 * @return void
-	 */
-	public static function handle(): void {
-		// Fields are read after the nonce is verified via wp_verify_nonce() below.
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		$return = isset( $_POST['_sm_return'] ) ? esc_url_raw( wp_unslash( $_POST['_sm_return'] ) ) : home_url( '/' );
-		$return = wp_validate_redirect( $return, home_url( '/' ) );
-
-		$nonce = isset( $_POST['_sm_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_sm_nonce'] ) ) : '';
-		if ( ! wp_verify_nonce( $nonce, self::ACTION ) ) {
-			self::finish( $return, 'expired' );
-		}
-
-		// Honeypot: humans never see or fill this field. Pretend success to bots.
-		$honeypot = isset( $_POST['sm_company_url'] ) ? sanitize_text_field( wp_unslash( $_POST['sm_company_url'] ) ) : '';
-		$started  = isset( $_POST['_sm_started'] ) ? absint( $_POST['_sm_started'] ) : 0;
-		if ( '' !== $honeypot || time() - $started < self::MIN_SECONDS ) {
-			self::finish( $return, 'received' );
-		}
-
-		if ( ! self::within_rate_limit() ) {
-			self::finish( $return, 'slow-down' );
-		}
-
-		$types   = Applications::business_types();
-		$plans   = Plans::all();
-		$plan    = isset( $_POST['plan'] ) ? sanitize_key( wp_unslash( $_POST['plan'] ) ) : '';
-		$type    = isset( $_POST['business_type'] ) ? sanitize_key( wp_unslash( $_POST['business_type'] ) ) : '';
-		$design  = isset( $_POST['design'] ) ? sanitize_key( wp_unslash( $_POST['design'] ) ) : '';
-		$website = isset( $_POST['website'] ) ? esc_url_raw( wp_unslash( $_POST['website'] ) ) : '';
-		$billing = isset( $_POST['billing'] ) ? sanitize_key( wp_unslash( $_POST['billing'] ) ) : '';
-
-		$data    = array(
-			'business_name' => isset( $_POST['business_name'] ) ? sanitize_text_field( wp_unslash( $_POST['business_name'] ) ) : '',
-			'contact_name'  => isset( $_POST['contact_name'] ) ? sanitize_text_field( wp_unslash( $_POST['contact_name'] ) ) : '',
-			'email'         => isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '',
-			'phone'         => isset( $_POST['phone'] ) ? sanitize_text_field( wp_unslash( $_POST['phone'] ) ) : '',
-			'website'       => $website,
-			'business_type' => isset( $types[ $type ] ) ? $type : 'other',
-			'plan'          => isset( $plans[ $plan ] ) ? $plan : '',
-			'interval'      => in_array( $billing, Plans::intervals_for( $plan ), true ) ? $billing : Plans::DEFAULT_INTERVAL,
-			'design'        => Design_Registry::exists( $design ) ? $design : '',
-			'message'       => isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '',
-		);
-		$consent = ! empty( $_POST['consent'] );
-		// phpcs:enable WordPress.Security.NonceVerification.Missing
-
-		if ( '' === $data['plan'] || '' === $data['business_name'] || '' === $data['contact_name'] || ! is_email( $data['email'] ) || ! $consent ) {
-			self::finish( $return, 'invalid' );
-		}
-
-		// Same answer as a new application, so the form never reveals which
-		// emails are registered; the address owner gets an email instead.
-		if ( email_exists( $data['email'] ) || Applications::has_pending_for( $data['email'] ) ) {
-			self::notify_existing( $data );
-			self::finish( $return, 'received' );
-		}
-
-		$id = Applications::create( $data );
-
-		if ( $id ) {
-			Applications::set_meta( $id, 'return_url', $return );
-			self::notify( $id, $data );
-		}
-
-		self::finish( $return, $id ? 'received' : 'invalid' );
-	}
-
-	/**
-	 * Emails the applicant and staff about a new application.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.1.0
-	 * @param  int                  $id    Application ID.
-	 * @param  array<string,string> $data  Application fields.
-	 * @return void
-	 */
-	private static function notify( int $id, array $data ): void {
-		$types  = Applications::business_types();
-		$design = Design_Registry::get( $data['design'] );
-		$vars   = array_merge(
-			$data,
-			array(
-				'contact_name'  => explode( ' ', trim( $data['contact_name'] ), 2 )[0],
-				'full_name'     => $data['contact_name'],
-				'business_type' => $types[ $data['business_type'] ] ?? $data['business_type'],
-				'plan'          => Plans::title( $data['plan'] ),
-				'billing'       => Plans::intervals()[ $data['interval'] ] ?? '',
-				'price'         => Plans::format( Plans::price( $data['plan'], $data['interval'] ) ) . ' ' . Plans::period_label( $data['interval'] ),
-				'design'        => $design ? (string) $design['title'] : __( 'No preference', 'satori-manifest' ),
-				'review_url'    => Applications_Screen::url(),
-			)
-		);
-
-		Applications::log_email( $id, Mailer::send( 'application-received', $data['email'], $vars ) );
-
-		foreach ( Mailer::staff_recipients() as $recipient ) {
-			Applications::log_email( $id, Mailer::send( 'application-staff-notice', $recipient, $vars ) );
-		}
-	}
-
-	/**
-	 * Tells the owner of an already-registered email that someone registered again.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  3.3.0
-	 * @param  array<string,string> $data  Submitted fields.
-	 * @return void
-	 */
-	private static function notify_existing( array $data ): void {
-		$has_account = (bool) email_exists( $data['email'] );
-
-		Mailer::send(
-			'account-exists',
-			$data['email'],
-			array(
-				'contact_name'      => explode( ' ', trim( $data['contact_name'] ), 2 )[0],
-				'has_account'       => $has_account
-					? __( 'You already have an account, so there is nothing more to do — just log in.', 'satori-manifest' )
-					: __( 'We already have your application and will be in touch soon.', 'satori-manifest' ),
-				'lost_password_url' => wp_lostpassword_url(),
-			)
-		);
-	}
-
-	/**
-	 * Allows RATE_LIMIT submissions per hashed IP per hour.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.1.0
-	 * @return bool
-	 */
-	private static function within_rate_limit(): bool {
-		$key = 'sm_reg_' . Client_Ip::hash( 'registration' );
-
-		$count = (int) get_transient( $key );
-
-		if ( $count >= self::RATE_LIMIT ) {
-			return false;
-		}
-
-		set_transient( $key, $count + 1, HOUR_IN_SECONDS );
-		return true;
-	}
-
-	/**
-	 * Redirects back to the form with a result code, anchored to the form.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  2.1.0
-	 * @param  string $url     Page to return to.
-	 * @param  string $result  Result code (see messages()).
-	 * @return never
-	 */
-	private static function finish( string $url, string $result ): void {
-		wp_safe_redirect( add_query_arg( self::RESULT_VAR, $result, remove_query_arg( self::RESULT_VAR, $url ) ) . '#sm-register' );
-		exit;
 	}
 }

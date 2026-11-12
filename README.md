@@ -1,6 +1,6 @@
 # Satori Manifest
 
-Hosted, branded price-list pages for QR-code clients — with sign-up, approval,
+Hosted, branded price-list pages for QR-code clients - with sign-up, approval,
 Stripe subscriptions, branded emails and a client portal built in.
 
 Each client gets **one login, one page and one price list**. The page is rendered by the
@@ -9,7 +9,7 @@ five designs, brand it (logo, colours, fonts, header, footer), manage navigation
 Appearance → Menus, and edit their prices in a purpose-built editor. Everything else in
 wp-admin is hidden from them, and server-side rules keep every client isolated.
 
-No runtime PHP dependencies — no Composer packages, no Stripe SDK. ACF (free or Pro) is
+No runtime PHP dependencies - no Composer packages, no Stripe SDK. ACF (free or Pro) is
 needed only for the Branding screen; pages still render without it.
 
 ---
@@ -55,7 +55,7 @@ wp satori-manifest stats list [--days=30]
 wp satori-manifest stats send-summary [--month=YYYY-MM] [--client=<id>] [--to=<email>]
 ```
 
-Environment settings (`.env` or `wp-config.php` constants — secrets never live in the database):
+Environment settings (`.env` or `wp-config.php` constants - secrets never live in the database):
 
 | Name | Purpose |
 |---|---|
@@ -88,45 +88,45 @@ Visitor ──Register form──▶ Application (pending)
                                Price list, My page, Billing
 ```
 
-* **Register** — the `satori-manifest/registration-form` block: plan cards with a
+* **Register** - the `satori-manifest/registration-form` block: plan cards with a
   Monthly / Yearly toggle (pure CSS), business details, preferred design. Guarded by a
   nonce, honeypot, minimum fill time and a per-IP rate limit. `?plan=managed&billing=year`
   pre-selects.
-* **Approve** — `Application_Approver`. With Stripe connected and "Take payment first"
+* **Approve** - `Application_Approver`. With Stripe connected and "Take payment first"
   ticked, the applicant gets a payment link (status *Awaiting payment*); otherwise the
   account is created straight away. Staff can resend the link or create the account
   without payment.
-* **Activate** — creating the account is idempotent, so a repeated Stripe webhook never
+* **Activate** - creating the account is idempotent, so a repeated Stripe webhook never
   makes a second client.
-* **Portal** — clients land on Home, with a "New here?" link to the five-step **Help**
+* **Portal** - clients land on Home, with a "New here?" link to the five-step **Help**
   guide. Every client screen also has a short contextual Help tab (WordPress's Help
   button, top right). Help text lives in `config/help.yaml`.
-* **Embed on their own website** — the client Home screen shows a copy-and-paste
+* **Embed on their own website** - the client Home screen shows a copy-and-paste
   snippet (`Clients\Embed_Code`): an iframe of their page with `?sm_embed=1`, which drops
   the page's own header and footer, is kept out of search results, and reports its height
   so the frame grows to fit (`Frontend\Embed`, `src/js/embed.js`). The resize script only
   trusts messages from this site. Without scripts the frame still works at a fixed height.
-* **PDF** — "Download PDF" on the client Home screen (and "PDF" on staff Clients) builds a
+* **PDF** - "Download PDF" on the client Home screen (and "PDF" on staff Clients) builds a
   print-ready A4 price list on the server (`Pdf\Price_List_Pdf`) with the plugin's own
   dependency-free PDF writer (`Pdf\Pdf_Document`, standard Helvetica fonts): logo, sections,
   right-aligned prices with dotted leaders, contact details, page numbers and the live page
   address. Brand colours too light for paper are swapped for readable ones; white logos are
   placed on a dark tile. Nonce-protected; clients can only download their own.
-* **QR code** — every client page has one, built by the plugin's own encoder
+* **QR code** - every client page has one, built by the plugin's own encoder
   (`Qr\Qr_Encoder`, ISO 18004, no library; verified with a real scanner). It opens the page
   with `?src=qr` and uses error correction Q (25%) so worn prints still scan. Clients see it
   on Home and download it as PNG (print) or SVG (designers); staff from Clients ("QR"); it is
   also printed on the PDF.
-* **Visits and scans** — `Stats\View_Counter` counts visits with a small background request
+* **Visits and scans** - `Stats\View_Counter` counts visits with a small background request
   (works with page caching): bots, the client, staff and repeat visits within 30 minutes are
   not counted; QR scans are visits that came from `?src=qr`. Only daily totals are stored, on
   the page (`Stats\Page_Views`, 400 days). Home shows the last 30 days.
-* **Monthly summary** — on the 1st, each client gets last month's visits and scans compared
+* **Monthly summary** - on the 1st, each client gets last month's visits and scans compared
   with the month before (`Stats\Monthly_Summary`, daily WP-Cron check). Staff can switch it off
   in Settings; clients on their Home screen.
-* **Public PDF** — client pages show "Download price list (PDF)" (`?sm_pdf=1`, cached for 10
-  minutes) unless the client switches it off under Branding → Footer.
-* **Login** — `wp-login.php` is branded with the portal logo and colours and links to
+* **Page CSS helpers** - in client-page.scss: `sm-flush-top` / `sm-flush-bottom` (full-width
+  photo against the header / footer) and `sm-display` (title that scales on phones).
+* **Login** - `wp-login.php` is branded with the portal logo and colours and links to
   the Register page.
 
 ---
@@ -161,7 +161,7 @@ Price IDs can be added per plan instead.
 | `customer.subscription.deleted` | Marked cancelled, client and staff emailed |
 
 Webhooks are signature-checked (5-minute tolerance) and de-duplicated by event ID.
-A lapsed subscription never takes a page offline automatically — staff decide, with the
+A lapsed subscription never takes a page offline automatically - staff decide, with the
 *Take offline / Put online* button on **Manifest → Payments** (administrators only).
 Clients see their plan, next payment, invoices and a *Manage billing* button (Stripe
 customer portal) under **Billing**.
@@ -174,9 +174,12 @@ customer portal) under **Billing**.
 `config/emails/{template}.yaml` into the branded HTML layout `templates/email/layout.php`
 (logo, accent colour, details table, button, plain-text alternative).
 
-Delivery: Brevo API when `BREVO_API_KEY` is set, otherwise `wp_mail()` — which goes
-through **WP Mail SMTP** once its mail server is configured. WordPress's own
-password-reset email uses the same branded layout (`Core_Emails`).
+Delivery: Brevo API when `BREVO_API_KEY` is set, otherwise `wp_mail()` - which goes
+through **WP Mail SMTP** once its mail server is configured. With a Brevo key,
+`WP_Mail_Relay` also sends everything else that calls `wp_mail()` (login-screen password
+resets, two-factor codes, admin notices) through Brevo. WordPress's own password-reset
+email uses the same branded layout (`Core_Emails`). Sender: `SATORI_MANIFEST_MAIL_FROM` /
+`SATORI_MANIFEST_MAIL_FROM_NAME`; Reply-To: the support email (the sender, for contact messages).
 
 | Template | Sent to | When |
 |---|---|---|
@@ -212,12 +215,12 @@ On top of that:
 * The registration form answers the same way for new and already-registered emails; the
   owner of an existing email gets an email instead, so the form can't be used to find out
   who is registered.
-* `Hardening\Client_Ip` — the real visitor IP behind Cloudflare or another proxy (Manifest →
+* `Hardening\Client_Ip` - the real visitor IP behind Cloudflare or another proxy (Manifest →
   Settings → "Site is behind"), used by the login throttle, the sign-up limit and visit counts.
 * Two-step login: the **Two Factor** plugin (WordPress.org) is installed; each user switches
   it on under Users → Profile.
-* `Hardening\Login_Throttle` — 5 failed logins from one IP lock it out for 15 minutes.
-* `Hardening\Site_Hardening` — XML-RPC blocked, REST user list private (no username
+* `Hardening\Login_Throttle` - 5 failed logins from one IP lock it out for 15 minutes.
+* `Hardening\Site_Hardening` - XML-RPC blocked, REST user list private (no username
   harvesting), login errors don't reveal whether a username exists, WordPress version hidden.
   Each measure can be switched off with the `satori_manifest_hardening` filter.
 * Secrets only in the environment (`Core\Env`), never in the database or code.
@@ -236,20 +239,20 @@ Client user (role: satori_manifest_client)
 ```
 
 `Client_Repository` is the only class that knows how these are linked.
-**Provisioning** — giving a user the client role creates the page, manifest and menu
+**Provisioning** - giving a user the client role creates the page, manifest and menu
 (`Provisioner`, idempotent). New clients are always created through `Client_Factory`.
 
-**Designs** — one folder each: `designs/{slug}/design.yaml` (metadata, palette, fonts),
+**Designs** - one folder each: `designs/{slug}/design.yaml` (metadata, palette, fonts),
 `content.html` (starter blocks), `style.scss` (→ `build/designs/{slug}.css`). Shipped:
 Atelier, Studio, Noir, Bloom, Mono. Switching design keeps or replaces the content
 (`Design_Applier`). Styling layers: `client-page.css` → design CSS → inline brand
 variables (`--sm-*`). The same CSS is rescoped into the block editor, so editing is WYSIWYG.
 
-**Price-list block** — `satori-manifest/price-list`; shows the page's own manifest by
+**Price-list block** - `satori-manifest/price-list`; shows the page's own manifest by
 default; layouts single-column, two-column, card-style, minimal, leaders; "Sections to
 hide" (`excludedSectionIds`, permanent `s_xxxxxxxx` section IDs) lets one page mix layouts.
 
-**Portal brand** — `Branding\Portal_Brand`: logo and colours of the service itself
+**Portal brand** - `Branding\Portal_Brand`: logo and colours of the service itself
 (login, client dashboard, emails) from Manifest → Settings, falling back to the site logo
 and site icon.
 
@@ -269,7 +272,7 @@ Parsed by the plugin's own dependency-free reader (`Core\Yaml`).
 | `config/demo/*.yaml` | Demo clients |
 | `designs/*/design.yaml` | Design metadata |
 
-**Theme overrides** — any file can be overridden at the same path under
+**Theme overrides** - any file can be overridden at the same path under
 `{theme}/satori-manifest/` (child theme, then parent, then plugin). The plugin never
 requires the theme.
 
@@ -284,7 +287,7 @@ UI (`Admin\Portal\*`) and enforcement (`Clients\Access_Control`) are separate.
 | Allow-list of admin screens; anything else redirects to Home | `Admin\Portal\Screen_Guard` |
 | Menu, admin bar, notices and footer trimmed and branded | `Admin\Portal\Client_Chrome` |
 | No Query Loop / Navigation / HTML blocks, no code editor, plugin patterns only, no SEO panels | `Admin\Portal\Editor_Lockdown` |
-| Cannot create posts, pages, manifests, patterns, templates — any path | `Access_Control::block_new_posts` |
+| Cannot create posts, pages, manifests, patterns, templates - any path | `Access_Control::block_new_posts` |
 | Admin, AJAX and REST queries return only their own content | `Access_Control::restrict_queries` (+ media/link search) |
 | Own menu only; no create/delete/locations | `Access_Control` nav-menu guards |
 | Theme-level REST routes blocked; Customizer and theme editing denied | `Access_Control::restrict_rest`, `map_meta_cap` |
@@ -299,24 +302,31 @@ One folder per area, one namespace per folder, one responsibility per class.
 ```
 satori-manifest.php          bootstrap, constants, autoloader (namespace → folder)
 includes/
-  class-plugin.php           Plugin — wires every area's hooks
-  core/          Core\         Yaml, Config, Env, Settings, Security, Sanitizer, Migrations, Multisite
-  manifest/      Manifest\     Post_Types, Manifest_Repository, Meta_Box, Block, Patterns
+  class-plugin.php           Plugin - wires every area's hooks
+  core/          Core\         Yaml, Config, Env, Settings, Security, Sanitizer, Migrations, Multisite,
+                               Media_Importer, Page_Cache
+  manifest/      Manifest\     Post_Types, Manifest_Repository, Meta_Box, Block, Patterns,
+                               Price_List_View (block view data)
   clients/       Clients\      Client_Role, Client_Repository, Provisioner, Access_Control,
+                               Menu_Access, Page_Template_Lock, First_Password,
                                Client_Factory, Client_Summary, Set_Password_Link, Embed_Code,
                                Demo_Seeder
   designs/       Designs\      Design_Registry, Design_Applier
   branding/      Branding\     Brand, Fonts, Icons, Page_Title_Sync, Portal_Brand
-  registration/  Registration\ Plans, Applications, Application_Approver, Registration_Form
+  registration/  Registration\ Plans, Applications, Application_Approver, Registration_Form,
+                               Registration_Handler, Registration_Notifier, Abandoned_Checkouts
   billing/       Billing\      Stripe_Settings, Stripe_Client, Checkout, Webhooks,
-                               Subscriptions, Payments, Billing_Portal
-  mail/          Mail\         Mailer, Email_Builder, Brevo_Transport, Core_Emails
+                               Webhook_Signature, Webhook_Events, Billing_Notifier,
+                               Subscriptions, Payments, Billing_Portal, Checkout_Return,
+                               Code_Catalogue, Printed_Codes (printed QR code orders)
+  mail/          Mail\         Mailer, Email_Builder, Brevo_Transport, Core_Emails, WP_Mail_Relay
+  contact/       Contact\      Contact_Form (block + dashboard panel), Contact_Handler
   fields/        Fields\       Field_Loader (YAML → ACF)
-  frontend/      Frontend\     Client_Page, Embed, Editor
+  frontend/      Frontend\     Client_Page, Embed, Editor, Design_Preview
   login/         Login\        Login_Screen
   pdf/           Pdf\          Pdf_Document, Font_Metrics, Print_Colour, Pdf_Image,
-                               Price_List_Pdf, Pdf_Download, Public_Pdf
-  hardening/     Hardening\    Login_Throttle, Site_Hardening, Client_Ip
+                               Price_List_Pdf, Pdf_Download
+  hardening/     Hardening\    Login_Throttle, Site_Hardening, Client_Ip, Turnstile
   qr/            Qr\           Qr_Encoder, Qr_Renderer, Page_Qr, Qr_Download
   stats/         Stats\        Page_Views, View_Counter, Monthly_Summary
   help/          Help\         Help_Content, Help_Tabs
@@ -329,13 +339,14 @@ templates/
   admin/                     one view per admin screen
   client-page/               page.php, header.php, footer.php
   registration/form.php
+  contact/form.php
   email/layout.php
 blocks/{name}/               block.json + render.php per block
 src/blocks/{name}/           block editor JS          ─┐
 src/js/, src/scss/           admin, login, front end   ├─▶ build/ (never edit by hand)
 designs/{slug}/              design.yaml, content.html, style.scss
 config/                      YAML (see above)
-tests/                       PHPUnit integration tests — see tests/README.md
+tests/                       PHPUnit integration tests - see tests/README.md
 ```
 
 Screens only read input, call a service and render a template; business rules live in

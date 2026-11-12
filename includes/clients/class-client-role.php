@@ -2,7 +2,7 @@
 /**
  * Client role and capability management.
  *
- * Registers the "Manifest Client" role — a deliberately small capability set
+ * Registers the "Manifest Client" role - a deliberately small capability set
  * that lets a client edit their own page, price list, navigation menu and
  * media, and nothing else. Ownership rules that capabilities alone cannot
  * express (one page per client, menu isolation) live in Access_Control.

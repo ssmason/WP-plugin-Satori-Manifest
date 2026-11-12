@@ -5,7 +5,7 @@
  * Registers each design's starter layout (designs/{slug}/content.html) as a
  * block pattern in the "Manifest" category, so the layouts can also be
  * inserted from the block editor's pattern inserter. The Manifest block in
- * these patterns has no manifest selected — on a client page it
+ * these patterns has no manifest selected - on a client page it
  * automatically shows that client's price list.
  *
  * @package SatoriManifest
@@ -41,6 +41,14 @@ class Patterns {
 	 * @var   string
 	 */
 	public const CATEGORY = 'satori-manifest';
+
+	/**
+	 * Every category clients may insert patterns from.
+	 *
+	 * @since 3.6.0
+	 * @var   array<int,string>
+	 */
+	public const CLIENT_CATEGORIES = array( self::CATEGORY );
 
 	/**
 	 * Registers the pattern category and design patterns.

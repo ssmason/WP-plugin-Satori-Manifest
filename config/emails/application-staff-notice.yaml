@@ -15,7 +15,7 @@ details: |
   Website: {{website}}
   Type: {{business_type}}
   Plan: {{plan}}
-  Billing: {{billing}} — {{price}}
+  Billing: {{billing}}, {{price}}
   Preferred design: {{design}}
 button_label: Review application
 button_url: "{{review_url}}"

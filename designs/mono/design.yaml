@@ -1,7 +1,7 @@
-# Mono — typographic, minimal, numbered. Made for standalone pages.
+# Mono - typographic, minimal, numbered. Made for standalone pages.
 
 title: Mono
-description: Typographic and minimal — an oversized name, numbered sections and monospaced prices. Ideal as a standalone page.
+description: Typographic and minimal, with an oversized name, numbered sections and monospaced prices. Ideal as a standalone page.
 best_for: Cafés & standalone pages
 order: 5
 tags: [minimal, typographic, cafe, standalone]
@@ -13,6 +13,13 @@ palette:
   muted: '#6E6A62'
   accent: '#161616'
   accent_text: '#F1EEE6'
+palette_dark:
+  background: '#141414'
+  surface: '#1F1F1F'
+  text: '#F1EEE6'
+  muted: '#9C988F'
+  accent: '#F1EEE6'
+  accent_text: '#141414'
 fonts:
   heading: space-grotesk
   body: ibm-plex-mono

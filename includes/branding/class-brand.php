@@ -60,14 +60,16 @@ class Brand {
 	 * @since  2.0.0
 	 * @param  int    $page_id      Client page ID.
 	 * @param  string $design_slug  Optional design override (e.g. for previews).
+	 * @param  string $mode         Optional colour mode override ('light' or 'dark').
 	 * @return array<string,mixed>
 	 */
-	public static function for_page( int $page_id, string $design_slug = '' ): array {
+	public static function for_page( int $page_id, string $design_slug = '', string $mode = '' ): array {
 		$design_slug = Design_Registry::exists( $design_slug ) ? $design_slug : Client_Repository::design_for_page( $page_id );
-		$cache_key   = $page_id . ':' . $design_slug;
+		$mode        = in_array( $mode, Design_Registry::COLOUR_MODES, true ) ? $mode : Client_Repository::mode_for_page( $page_id, $design_slug );
+		$cache_key   = $page_id . ':' . $design_slug . ':' . $mode;
 
 		if ( ! isset( self::$cache[ $cache_key ] ) ) {
-			self::$cache[ $cache_key ] = self::resolve( $page_id, $design_slug );
+			self::$cache[ $cache_key ] = self::resolve( $page_id, $design_slug, $mode );
 		}
 
 		return self::$cache[ $cache_key ];
@@ -80,15 +82,17 @@ class Brand {
 	 * @since  2.0.0
 	 * @param  int    $page_id      Client page ID.
 	 * @param  string $design_slug  Valid design slug.
+	 * @param  string $mode         Valid colour mode.
 	 * @return array<string,mixed>
 	 */
-	private static function resolve( int $page_id, string $design_slug ): array {
-		$design = (array) Design_Registry::get( $design_slug );
+	private static function resolve( int $page_id, string $design_slug, string $mode ): array {
+		$design  = (array) Design_Registry::get( $design_slug );
+		$palette = (array) ( $design['palettes'][ $mode ] ?? $design['palette'] ?? array() );
 
 		$colours = array();
 		foreach ( Design_Registry::PALETTE_KEYS as $key ) {
 			$override        = sanitize_hex_color( self::meta( $page_id, 'sm_colour_' . $key ) );
-			$colours[ $key ] = $override ? $override : (string) ( $design['palette'][ $key ] ?? '' );
+			$colours[ $key ] = $override ? $override : (string) ( $palette[ $key ] ?? '' );
 		}
 
 		$heading_font = sanitize_key( self::meta( $page_id, 'sm_font_heading' ) );
@@ -101,10 +105,12 @@ class Brand {
 
 		return array(
 			'design'   => $design_slug,
+			'mode'     => $mode,
 			'name'     => self::meta( $page_id, 'sm_brand_name', get_the_title( $page_id ) ),
 			'tagline'  => self::meta( $page_id, 'sm_brand_tagline' ),
 			'logo_id'  => absint( self::meta( $page_id, 'sm_brand_logo' ) ),
 			'logo_w'   => $logo_width ? min( 400, max( 40, $logo_width ) ) : 160,
+			'bg_image' => (string) wp_get_attachment_image_url( absint( self::meta( $page_id, 'sm_background_image' ) ), 'full' ),
 			'currency' => array(
 				'symbol'   => self::meta( $page_id, 'sm_currency_symbol', '£' ),
 				'position' => 'after' === self::meta( $page_id, 'sm_currency_position' ) ? 'after' : 'before',
@@ -128,7 +134,6 @@ class Brand {
 				'email'       => self::meta( $page_id, 'sm_footer_email' ),
 				'note'        => self::meta( $page_id, 'sm_footer_note' ),
 				'show_credit' => '0' !== self::meta( $page_id, 'sm_footer_show_credit', '1' ),
-				'show_pdf'    => '0' !== self::meta( $page_id, 'sm_footer_show_pdf', '1' ),
 				'social'      => array_filter(
 					array(
 						'website'   => self::meta( $page_id, 'sm_social_website' ),
@@ -168,11 +173,18 @@ class Brand {
 
 		$vars[] = '--sm-logo-width:' . (int) $brand['logo_w'] . 'px';
 
+		if ( ! empty( $brand['bg_image'] ) ) {
+			$vars[] = '--sm-background-image:url("' . esc_url_raw( (string) $brand['bg_image'] ) . '")';
+		}
+
 		return $selector . '{' . implode( ';', $vars ) . '}';
 	}
 
 	/**
 	 * Formats a price with the brand's currency symbol.
+	 *
+	 * Symbol before follows the site locale ("£4.50"); symbol after uses the
+	 * continental European style - decimal comma and a non-breaking space ("4,50 €").
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  2.0.0
@@ -182,10 +194,13 @@ class Brand {
 	 */
 	public static function format_price( float $amount, array $currency ): string {
 		$decimals = ( floor( $amount ) === $amount ) ? 0 : 2;
-		$number   = number_format_i18n( $amount, $decimals );
 		$symbol   = (string) ( $currency['symbol'] ?? '' );
 
-		return 'after' === ( $currency['position'] ?? 'before' ) ? $number . $symbol : $symbol . $number;
+		if ( 'after' === ( $currency['position'] ?? 'before' ) ) {
+			return number_format( $amount, $decimals, ',', '.' ) . ( '' !== $symbol ? "\u{00A0}" . $symbol : '' );
+		}
+
+		return $symbol . number_format_i18n( $amount, $decimals );
 	}
 
 	/**

@@ -2,7 +2,7 @@
 # Placeholders: event, business_name, email, details, review_url.
 
 subject: "{{event}}: {{business_name}}"
-preheader: "{{event}} — {{business_name}} ({{email}})."
+preheader: "{{event}}: {{business_name}} ({{email}})."
 heading: "{{event}}"
 details: |
   Client: {{business_name}}

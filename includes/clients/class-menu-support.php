@@ -5,7 +5,7 @@
  * Every client edits their header links under Appearance → Menus, and
  * WordPress only offers that screen when the active theme declares menu
  * support. The plugin declares it itself, so client navigation works with
- * any theme — including one that registers no menus.
+ * any theme - including one that registers no menus.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>

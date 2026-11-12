@@ -1,5 +1,5 @@
 /**
- * Satori Manifest — Settings screen.
+ * Satori Manifest - Settings screen.
  *
  * Wires the portal logo picker to the WordPress media library.
  *

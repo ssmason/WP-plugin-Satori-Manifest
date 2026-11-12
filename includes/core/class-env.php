@@ -3,7 +3,7 @@
  * Environment settings.
  *
  * Reads secrets and deployment settings (API keys, sender addresses) from a
- * PHP constant or an environment variable — never from the database, so
+ * PHP constant or an environment variable - never from the database, so
  * credentials stay out of backups and out of wp-admin.
  *
  * @package SatoriManifest

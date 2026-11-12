@@ -101,10 +101,12 @@ class View_Counter {
 					'page'   => array(
 						'type'     => 'integer',
 						'required' => true,
+						'minimum'  => 1,
 					),
 					'source' => array(
 						'type'    => 'string',
 						'default' => '',
+						'enum'    => array( '', Page_Views::SOURCE_QR ),
 					),
 				),
 			)

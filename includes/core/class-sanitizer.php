@@ -35,7 +35,7 @@ class Sanitizer {
 	 * Sanitizes a decoded sections array.
 	 *
 	 * Rebuilds the array with only expected keys (id, title, description,
-	 * items), re-numbers sort_order from the array position (honouring
+	 * icon, items), re-numbers sort_order from the array position (honouring
 	 * client-side reordering), and delegates item sanitization to
 	 * sanitize_items().
 	 *
@@ -70,12 +70,27 @@ class Sanitizer {
 				'id'          => $id,
 				'title'       => isset( $section['title'] ) ? sanitize_text_field( (string) $section['title'] ) : '',
 				'description' => isset( $section['description'] ) ? sanitize_textarea_field( (string) $section['description'] ) : '',
+				'icon'        => self::image_id( $section['icon'] ?? 0 ),
 				'sort_order'  => count( $out ),
 				'items'       => self::sanitize_items( $raw_items ),
 			);
 		}
 
 		return $out;
+	}
+
+	/**
+	 * Validates an image attachment id (0 when it is not an image).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.5.0
+	 * @param  mixed $id  Candidate attachment id.
+	 * @return int
+	 */
+	public static function image_id( $id ): int {
+		$id = absint( $id );
+
+		return $id && wp_attachment_is_image( $id ) ? $id : 0;
 	}
 
 	/**

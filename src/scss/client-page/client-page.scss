@@ -1,4 +1,4 @@
-// Satori Manifest — client page base stylesheet
+// Satori Manifest - client page base stylesheet
 //
 // Structure and sensible defaults for the theme-independent client page
 // (templates/client-page.php): tokens, header, navigation, content flow,
@@ -37,7 +37,11 @@ $breakpoint-nav: 760px;
 	--sm-heading-tracking: -0.01em;
 
 	margin: 0;
-	background: var(--sm-background);
+	background-color: var(--sm-background);
+	background-image: var(--sm-background-image, none);
+	background-position: center;
+	background-size: cover;
+	background-attachment: fixed;
 	color: var(--sm-text);
 	font-family: var(--sm-font-body);
 	font-size: 1.0625rem;
@@ -323,9 +327,42 @@ a.sm-button,
 
 // ─── Content ─────────────────────────────────────────────────────────────────
 
+// In-page links (menu items like "#starters") land clear of a sticky header.
+@media (prefers-reduced-motion: no-preference) {
+
+	html:has(> .sm-client-page) {
+		scroll-behavior: smooth;
+	}
+}
+
+.sm-main [id] {
+	scroll-margin-top: 6rem;
+}
+
+// A background photo: the content sits on a soft panel so it stays readable.
+.sm-has-background-image .sm-main {
+	width: min(100% - 2 * var(--sm-gutter), var(--sm-wide));
+	margin: clamp(1.5rem, 4vw, 3rem) auto;
+	border-radius: var(--sm-radius);
+	background: color-mix(in srgb, var(--sm-background) 90%, transparent);
+	box-shadow: 0 1.5rem 3rem rgb(0 0 0 / 18%);
+	backdrop-filter: blur(6px);
+}
+
 .sm-main {
+	--sm-main-pad: clamp(2.5rem, 7vw, 5rem);
+
 	flex: 1;
-	padding-block: clamp(2.5rem, 7vw, 5rem);
+	padding-block: var(--sm-main-pad);
+
+	// Layout patterns: a full-width photo flush under the header / on the footer.
+	> .sm-flush-top:first-child {
+		margin-top: calc(-1 * var(--sm-main-pad));
+	}
+
+	> .sm-flush-bottom:last-child {
+		margin-bottom: calc(-1 * var(--sm-main-pad));
+	}
 
 	> * {
 		max-width: var(--sm-content);
@@ -378,6 +415,30 @@ a.sm-button,
 	.sm-lead {
 		color: var(--sm-muted);
 		font-size: 1.15rem;
+	}
+
+	// Large display title (layout patterns) that scales down on phones.
+	.sm-display {
+		font-size: clamp(2.5rem, 10vw, 5.5rem);
+		letter-spacing: 0.18em;
+		line-height: 1.05;
+	}
+
+	// Text on a photo (cover) follows the cover's light text, not the muted colour.
+	.wp-block-cover .sm-lead,
+	.wp-block-cover .sm-eyebrow {
+		color: inherit;
+	}
+
+	// Full-width photo strip: square edges, photo to photo.
+	.wp-block-gallery.alignfull .wp-block-image img {
+		border-radius: 0;
+	}
+
+	.sm-display--banner {
+		font-size: clamp(2.25rem, 7vw, 4.5rem);
+		font-weight: 700;
+		letter-spacing: 0;
 	}
 
 	.sm-intro {
@@ -577,32 +638,3 @@ body.sm-embed {
 	text-underline-offset: 0.2em;
 }
 
-// "Download price list (PDF)" — a quiet outlined pill in the design's accent.
-.sm-footer__pdf {
-	margin: 0 0 1.5rem;
-	text-align: center;
-}
-
-.sm-footer__pdf-link {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.4em;
-	padding: 0.6em 1.2em;
-	border: 1px solid currentcolor;
-	border-radius: 999px;
-	color: var(--sm-accent);
-	font-size: 0.9rem;
-	font-weight: 600;
-	text-decoration: none;
-
-	&::before {
-		content: "↓";
-	}
-
-	&:hover,
-	&:focus-visible {
-		background: var(--sm-accent);
-		border-color: var(--sm-accent);
-		color: var(--sm-accent-text);
-	}
-}

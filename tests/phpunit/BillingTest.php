@@ -13,6 +13,7 @@ namespace SatoriManifest\Tests;
 use SatoriManifest\Billing\Checkout;
 use SatoriManifest\Billing\Payments;
 use SatoriManifest\Billing\Subscriptions;
+use SatoriManifest\Billing\Webhook_Signature;
 use SatoriManifest\Billing\Webhooks;
 use SatoriManifest\Registration\Application_Approver;
 use SatoriManifest\Registration\Applications;
@@ -78,6 +79,46 @@ class BillingTest extends Test_Case {
 		$this->assertSame( 'year', $params['line_items'][0]['price_data']['recurring']['interval'] );
 		$this->assertSame( 24000, $params['line_items'][0]['price_data']['unit_amount'] );
 		$this->assertSame( 'eur', $params['line_items'][0]['price_data']['currency'] );
+		$this->assertSame( '30', $params['subscription_data']['trial_period_days'] );
+		$this->assertSame( 'always', $params['payment_method_collection'] );
+	}
+
+	/**
+	 * A free trial creates the account without a payment; the first real
+	 * payment is recorded and tells staff to post the printed QR code.
+	 */
+	public function test_free_trial(): void {
+		$app = $this->make_application();
+		Application_Approver::approve( $app, '', '', false, true );
+		$user_id = $this->complete_checkout( (int) $app['id'], 0 );
+
+		$this->assertGreaterThan( 0, $user_id );
+		$this->assertCount( 0, Payments::recent( 10, $user_id ) );
+
+		$invoice = array(
+			'id'             => 'in_trial',
+			'customer'       => 'cus_1',
+			'amount_paid'    => 0,
+			'currency'       => 'eur',
+			'billing_reason' => 'subscription_create',
+		);
+		$this->event( 'invoice.paid', $invoice );
+		$this->assertCount( 0, Payments::recent( 10, $user_id ) );
+
+		$this->event(
+			'invoice.paid',
+			array_merge(
+				$invoice,
+				array(
+					'id'             => 'in_first',
+					'amount_paid'    => 900,
+					'billing_reason' => 'subscription_cycle',
+				)
+			)
+		);
+
+		$this->assertCount( 1, Payments::recent( 10, $user_id ) );
+		$this->assertNotEmpty( preg_grep( '/^First payment received: print and post the QR code/', $this->sent_subjects() ) );
 	}
 
 	/**
@@ -88,11 +129,11 @@ class BillingTest extends Test_Case {
 		$now     = 1700000000;
 		$valid   = 't=' . $now . ',v1=' . hash_hmac( 'sha256', $now . '.' . $payload, 'whsec_test' );
 
-		$this->assertTrue( Webhooks::verify( $payload, $valid, 'whsec_test', $now ) );
-		$this->assertFalse( Webhooks::verify( $payload, $valid, 'whsec_other', $now ) );
-		$this->assertFalse( Webhooks::verify( $payload . ' ', $valid, 'whsec_test', $now ) );
-		$this->assertFalse( Webhooks::verify( $payload, $valid, 'whsec_test', $now + 600 ) );
-		$this->assertFalse( Webhooks::verify( $payload, $valid, '', $now ) );
+		$this->assertTrue( Webhook_Signature::verify( $payload, $valid, 'whsec_test', $now ) );
+		$this->assertFalse( Webhook_Signature::verify( $payload, $valid, 'whsec_other', $now ) );
+		$this->assertFalse( Webhook_Signature::verify( $payload . ' ', $valid, 'whsec_test', $now ) );
+		$this->assertFalse( Webhook_Signature::verify( $payload, $valid, 'whsec_test', $now + 600 ) );
+		$this->assertFalse( Webhook_Signature::verify( $payload, $valid, '', $now ) );
 	}
 
 	/**
@@ -143,7 +184,7 @@ class BillingTest extends Test_Case {
 		$this->event( 'invoice.paid', $invoice );
 
 		$this->assertCount( 2, Payments::recent( 10, $user_id ) );
-		$this->assertContains( 'Payment received — thank you', $this->sent_subjects() );
+		$this->assertContains( 'Payment received, thank you', $this->sent_subjects() );
 
 		$this->event(
 			'invoice.payment_failed',
@@ -158,6 +199,52 @@ class BillingTest extends Test_Case {
 
 		$this->assertSame( 'past_due', Subscriptions::for_user( $user_id )['status'] );
 		$this->assertContains( 'Your payment didn\'t go through', $this->sent_subjects() );
+	}
+
+	/**
+	 * Self-service sign-ups left unpaid for a week are deleted; staff-approved ones stay.
+	 */
+	public function test_abandoned_checkouts_are_purged(): void {
+		$abandoned = $this->make_application();
+		$approved  = $this->make_application( array( 'email' => 'staff-approved@example.test' ) );
+
+		Application_Approver::approve( $abandoned, '', '', false, true );
+		Application_Approver::approve( $approved, '', '', false, true );
+		Applications::set_meta( (int) $abandoned['id'], \SatoriManifest\Registration\Abandoned_Checkouts::SELF_CHECKOUT, '1' );
+
+		$this->assertSame( 0, \SatoriManifest\Registration\Abandoned_Checkouts::purge() );
+		$this->assertSame( 1, \SatoriManifest\Registration\Abandoned_Checkouts::purge( time() + 8 * DAY_IN_SECONDS ) );
+		$this->assertNull( Applications::get( (int) $abandoned['id'] ) );
+		$this->assertNotNull( Applications::get( (int) $approved['id'] ) );
+	}
+
+	/**
+	 * Free trials are counted on their own, not in monthly revenue.
+	 */
+	public function test_trials_are_not_revenue(): void {
+		$stats = \SatoriManifest\Admin\Screens\Payments_Screen::stats(
+			array(
+				array(
+					'subscription' => array(
+						'status'   => 'trialing',
+						'interval' => 'year',
+						'amount'   => 240.0,
+					),
+				),
+				array(
+					'subscription' => array(
+						'status'   => 'active',
+						'interval' => 'month',
+						'amount'   => 9.0,
+					),
+				),
+			)
+		);
+
+		$this->assertSame( 1, $stats['active'] );
+		$this->assertSame( 9.0, $stats['mrr'] );
+		$this->assertSame( 1, $stats['trials'] );
+		$this->assertSame( 20.0, $stats['trial_mrr'] );
 	}
 
 	/**
@@ -186,9 +273,10 @@ class BillingTest extends Test_Case {
 	 * Dispatches checkout.session.completed and returns the new client.
 	 *
 	 * @param  int $app_id  Application ID.
+	 * @param  int $amount  Amount charged at checkout, in cents (0 for a free trial).
 	 * @return int
 	 */
-	private function complete_checkout( int $app_id ): int {
+	private function complete_checkout( int $app_id, int $amount = 9000 ): int {
 		$this->event(
 			'checkout.session.completed',
 			array(
@@ -198,7 +286,7 @@ class BillingTest extends Test_Case {
 				'customer'            => 'cus_1',
 				'subscription'        => 'sub_1',
 				'invoice'             => 'in_1',
-				'amount_total'        => 9000,
+				'amount_total'        => $amount,
 				'currency'            => 'eur',
 			)
 		);

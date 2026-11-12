@@ -1,5 +1,5 @@
 /**
- * Satori Manifest — Inspector sidebar controls.
+ * Satori Manifest - Inspector sidebar controls.
  *
  * Renders the InspectorControls panel for the price-list block,
  * providing manifest selection, layout preset, and display toggles.
@@ -335,7 +335,7 @@ export default function Inspector({
 								'satori-manifest'
 							)
 						: __(
-								'All sections are shown. Tick a section to hide it here — e.g. hide drinks in this block and show them in another block with two columns.',
+								'All sections are shown. Tick a section to hide it here, e.g. hide drinks in this block and show them in another block with two columns.',
 								'satori-manifest'
 							)}
 				</p>

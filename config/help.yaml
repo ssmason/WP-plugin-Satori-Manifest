@@ -1,11 +1,11 @@
-# Client help — shown on the Help screen and as the "Help" tab on each client
+# Client help - shown on the Help screen and as the "Help" tab on each client
 # screen. Keep it short: one idea per sentence.
 #
 # steps     The getting-started checklist. "screen" links the step to a screen:
 #           home, page, prices, design, branding, menus, billing, profile.
 # tabs      Contextual help, keyed by screen (same keys as above).
 # faq       Short questions and answers.
-# resources External reading — opens in a new window.
+# resources External reading - opens in a new window.
 #
 # Override by copying to {theme}/satori-manifest/help.yaml.
 
@@ -19,7 +19,7 @@ steps:
 
   - title: Choose a design
     screen: design
-    text: Pick the look that suits your business. You can switch at any time — your prices and branding stay.
+    text: Pick the look that suits your business. You can switch at any time and your prices and branding stay.
 
   - title: Enter your prices
     screen: prices
@@ -27,7 +27,7 @@ steps:
 
   - title: Check your page
     screen: page
-    text: Edit the heading, intro text and pictures. Your price list updates on its own — there is no need to touch it here.
+    text: Edit the heading, intro text and pictures. Your price list updates on its own, so there is no need to touch it here.
 
   - title: Add links (optional)
     screen: menus
@@ -39,7 +39,7 @@ tabs:
     text: Each card opens one part of your page. "View page" shows exactly what customers see when they scan your QR code.
   page:
     title: Editing your page
-    text: Click any text to change it. Use the + button to add a heading, paragraph or picture. Press Save when you are done. Your price list is the "Manifest" block — move it, but there is no need to edit it here.
+    text: Click any text to change it. Use the + button to add a heading, paragraph or picture. Press Save when you are done. Your price list is the "Manifest" block. You can move it, but there is no need to edit it here.
   prices:
     title: Your price list
     text: Each section is a group of services. Drag the handle (or use the arrows) to reorder. A "from" prefix shows as "from £25". Leave the price empty to turn an item into a sub-heading. Press Update to save.
@@ -51,14 +51,14 @@ tabs:
     text: Leave a colour or font empty to use the design's default. The header button can link to bookings, a phone number or email. Press Save on each tab.
   menus:
     title: Navigation links
-    text: Add "Custom links" with the full web address, then press Save Menu. The links appear in your page header. Remove them all for a standalone page.
+    text: Add "Custom links" with the full web address, then press Save Menu. The links appear in your page header. To jump to a section of your price list, use its title with a # in front: "Hot drinks" becomes #hot-drinks. Remove all links for a standalone page.
   billing:
     title: Billing
     text: Manage billing opens our secure payment provider, Stripe, where you can update your card, download invoices, switch between monthly and yearly, or cancel.
 
 faq:
   - q: Where does my QR code point?
-    a: To your page address, shown on your dashboard. It never changes — even if you rename your business — so printed codes keep working.
+    a: To your page address, shown on your dashboard. It never changes, even if you rename your business, so printed codes keep working.
   - q: How quickly do changes show?
     a: Straight away. Save, then refresh your page to see it.
   - q: Can I change my design later?
@@ -81,5 +81,5 @@ resources:
     url: https://support.apple.com/guide/iphone/scan-a-qr-code-iphe8bda8762/ios
   - label: Scanning a QR code on Android
     url: https://support.google.com/camerafromgoogle/answer/12033278?hl=en
-  - label: 3D-printed QR stands and signs — Satori 3D Printing
+  - label: 3D-printed QR stands and signs by Satori 3D Printing
     url: https://3dprinting.satori-digital.com/

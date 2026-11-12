@@ -16,6 +16,13 @@
 
 // phpcs:disable WordPress.WP.AlternativeFunctions, WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.NamingConventions.PrefixAllGlobals -- CLI developer tool.
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+// Core classes WordPress only loads on demand.
+require_once ABSPATH . WPINC . '/class-wp-admin-bar.php';
+
 $satori_manifest_root     = dirname( __DIR__, 2 );
 $satori_manifest_problems = array();
 $satori_manifest_files    = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $satori_manifest_root, FilesystemIterator::SKIP_DOTS ) );

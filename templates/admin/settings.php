@@ -103,7 +103,7 @@ $satori_manifest_s = $satori_manifest_settings;
 			<p class="sm-field">
 				<label for="sm-proxy"><?php esc_html_e( 'Site is behind', 'satori-manifest' ); ?></label>
 				<select id="sm-proxy" name="settings[proxy]">
-					<option value="none" <?php selected( $satori_manifest_s['proxy'], 'none' ); ?>><?php esc_html_e( 'Nothing — visitors connect directly', 'satori-manifest' ); ?></option>
+					<option value="none" <?php selected( $satori_manifest_s['proxy'], 'none' ); ?>><?php esc_html_e( 'Nothing, visitors connect directly', 'satori-manifest' ); ?></option>
 					<option value="cloudflare" <?php selected( $satori_manifest_s['proxy'], 'cloudflare' ); ?>><?php esc_html_e( 'Cloudflare', 'satori-manifest' ); ?></option>
 					<option value="forwarded" <?php selected( $satori_manifest_s['proxy'], 'forwarded' ); ?>><?php esc_html_e( 'Another proxy or load balancer (X-Forwarded-For)', 'satori-manifest' ); ?></option>
 				</select>

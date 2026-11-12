@@ -1,5 +1,5 @@
 /**
- * Satori Manifest — Price List block registration.
+ * Satori Manifest - Price List block registration.
  *
  * Registers the satori-manifest/price-list block in the editor.
  *
@@ -20,7 +20,7 @@ registerBlockType(metadata.name, {
 	edit: Edit,
 
 	/**
-	 * Server-side rendered — no save needed.
+	 * Server-side rendered - no save needed.
 	 *
 	 * @return {null} Returns null for dynamic blocks.
 	 */

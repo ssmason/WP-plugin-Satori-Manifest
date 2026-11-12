@@ -1,5 +1,5 @@
 /**
- * Satori Manifest — Block utility functions.
+ * Satori Manifest - Block utility functions.
  *
  * Shared helpers used by the block editor components. Keeping these in a
  * dedicated module prevents utility logic from accumulating inside component

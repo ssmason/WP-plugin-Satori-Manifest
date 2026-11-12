@@ -1,6 +1,6 @@
 <?php
 /**
- * PHPUnit bootstrap — boots the WordPress test suite, then the plugin.
+ * PHPUnit bootstrap - boots the WordPress test suite, then the plugin.
  *
  * Uses the wp-phpunit/wp-phpunit package (a Composer dev dependency) and
  * tests/wp-tests-config.php. Run inside the PHP container:

@@ -122,6 +122,17 @@ class Plans {
 	}
 
 	/**
+	 * Returns the free trial length in days (0 when there is no trial).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.8.0
+	 * @return int
+	 */
+	public static function trial_days(): int {
+		return self::catalogue()['trial_days'];
+	}
+
+	/**
 	 * Returns the billing intervals a plan can be bought on.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
@@ -252,7 +263,7 @@ class Plans {
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.0.0
-	 * @return array{currency:string,plans:array<string,array<string,mixed>>}
+	 * @return array{currency:string,trial_days:int,plans:array<string,array<string,mixed>>}
 	 */
 	private static function catalogue(): array {
 		if ( null !== self::$catalogue ) {
@@ -286,8 +297,9 @@ class Plans {
 		}
 
 		self::$catalogue = array(
-			'currency' => sanitize_key( (string) ( $config['currency'] ?? 'eur' ) ),
-			'plans'    => $plans,
+			'currency'   => sanitize_key( (string) ( $config['currency'] ?? 'eur' ) ),
+			'trial_days' => min( 730, absint( $config['trial_days'] ?? 0 ) ),
+			'plans'      => $plans,
 		);
 
 		return self::$catalogue;

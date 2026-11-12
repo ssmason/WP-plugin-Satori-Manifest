@@ -1,5 +1,5 @@
 /**
- * Satori Manifest — Block edit component.
+ * Satori Manifest - Block edit component.
  *
  * Renders a live preview of the selected manifests in the editor, matching
  * the front-end markup in block/render.php so design styles apply 1:1.
@@ -25,7 +25,7 @@ import { DEMO_SECTIONS, editorData, parseSections, formatPrice } from './utils';
 /**
  * Fields requested from the REST API for each manifest record.
  *
- * Module-level so the object reference is stable across renders —
+ * Module-level so the object reference is stable across renders -
  * hasFinishedResolution() matches arguments by reference.
  *
  * @type {Object}
@@ -308,7 +308,7 @@ export default function Edit({ attributes, setAttributes }) {
 						className="satori-manifest-price-list__demo-notice"
 					>
 						{__(
-							'Preview — choose a price list in the block settings to show real prices.',
+							'Preview. Choose a price list in the block settings to show real prices.',
 							'satori-manifest'
 						)}
 					</Notice>

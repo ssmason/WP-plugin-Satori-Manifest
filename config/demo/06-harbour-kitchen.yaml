@@ -1,0 +1,173 @@
+# Demo client - the complete example. Studio design with every branding,
+# header and footer setting filled in: logo, all six colours, both fonts, euro
+# pricing after the number, sticky header, menu links that jump to sections
+# (#starters …), a header button, full contact details, socials and a footer note,
+# an icon beside each section title (Lucide icons, ISC licence) and a page
+# with its own photos and the sections each price list shows.
+#
+# Photos (Wikimedia Commons, CC0 / public domain): grilled octopus rice (hero),
+# garlic prawns, seafood paella, paella valenciana, wine glasses, Piran harbour.
+# The price list shows section descriptions, badges, "from" prices and sub-headings.
+
+user:
+  login: harbourkitchen
+  email: hola@harbourkitchen.test
+  name: Harbour Kitchen
+design: studio
+brand:
+  # Brand
+  sm_brand_name: Harbour Kitchen
+  sm_brand_tagline: Seafood & wine by the sea
+  sm_brand_logo: assets/harbour-kitchen-logo.png
+  sm_brand_logo_width: 120
+  sm_currency_symbol: €
+  sm_currency_position: after
+  # Colours
+  sm_colour_background: "#faf6ef"
+  sm_colour_surface: "#f1e7d8"
+  sm_colour_text: "#14283a"
+  sm_colour_muted: "#5f6b78"
+  sm_colour_accent: "#d9653b"
+  sm_colour_accent_text: "#ffffff"
+  # Fonts
+  sm_font_heading: fraunces
+  sm_font_body: manrope
+  # Header
+  sm_header_layout: split
+  sm_header_show_nav: true
+  sm_header_sticky: true
+  sm_header_cta_label: Book a table
+  sm_header_cta_url: "tel:+34952000000"
+  # Footer - contact
+  sm_footer_address: |-
+    Paseo Marítimo 12
+    29016 Málaga
+  sm_footer_hours: |-
+    Tue–Thu 12:30 – 23:00
+    Fri–Sun 12:30 – midnight
+    Monday closed
+  sm_footer_phone: +34 952 000 000
+  sm_footer_email: hola@harbourkitchen.test
+  # Footer - social
+  sm_social_website: https://harbourkitchen.test
+  sm_social_instagram: https://instagram.com/harbourkitchen
+  sm_social_facebook: https://facebook.com/harbourkitchen
+  sm_social_tiktok: https://tiktok.com/@harbourkitchen
+  # Footer - extras
+  sm_footer_note: Please tell us about any allergies and our team will happily help. Prices include VAT.
+  sm_footer_show_credit: true
+menu:
+  - { label: Starters, url: "#starters" }
+  - { label: Mains, url: "#mains" }
+  - { label: Desserts, url: "#desserts" }
+  - { label: Drinks, url: "#drinks" }
+sections:
+  - title: Starters
+    icon: assets/harbour-kitchen-salad.png
+    description: Made to share, so order a few for the table.
+    items:
+      - { label: Pan con tomate, description: "Toasted sourdough, grated tomato, olive oil", price: 4.5 }
+      - { label: Gambas al pil-pil, description: "Prawns, garlic, chilli, sizzling oil", price: 12, badge: Signature }
+      - { label: Boquerones, description: "White anchovies in vinegar, parsley", price: 8 }
+      - { label: Croquetas, description: "Jamón ibérico, four pieces", price: 7.5, badge: Popular }
+      - { label: Padrón peppers, description: "Blistered, sea salt", price: 6, badge: Vegan }
+  - title: Mains
+    icon: assets/harbour-kitchen-fish.png
+    description: Fish arrives every morning from the Málaga market.
+    items:
+      - { label: From the grill }
+      - { label: Catch of the day, description: "Ask your server, priced by weight", price: 24, price_prefix: from }
+      - { label: Grilled octopus, description: "Potato purée, smoked paprika", price: 22 }
+      - { label: Ribeye steak, description: "300 g, chimichurri, fries", price: 28 }
+      - { label: Rice dishes, description: "For two, allow 25 minutes" }
+      - { label: Seafood paella, description: "Prawns, mussels, squid, saffron", price: 38, badge: For two }
+      - { label: Black rice, description: "Cuttlefish ink, alioli", price: 34 }
+      - { label: Vegetable paella, description: "Artichoke, peppers, green beans", price: 30, badge: Vegan }
+  - title: Desserts
+    icon: assets/harbour-kitchen-cake-slice.png
+    items:
+      - { label: Crema catalana, price: 6.5 }
+      - { label: Basque cheesecake, description: "Burnt top, berry compote", price: 7, badge: New }
+      - { label: Churros, description: "Hot chocolate for dipping", price: 6 }
+  - title: Drinks
+    icon: assets/harbour-kitchen-wine.png
+    description: Wines by the glass from Andalusian vineyards.
+    items:
+      - { label: Wine }
+      - { label: House white or red, description: "Glass", price: 4.5 }
+      - { label: Fino sherry, description: "Glass, served chilled", price: 4 }
+      - { label: Bottle of the week, description: "Ask for today's choice", price: 22, price_prefix: from }
+      - { label: Beer & soft drinks }
+      - { label: Draught beer, description: "Caña", price: 2.8 }
+      - { label: Fresh orange juice, price: 4 }
+      - { label: Coffee, price: 1.8 }
+
+# Page content. Placeholders: {{image_id:key}} / {{image_url:key}} for the photos
+# below, {{hide_except:Title,Title}} for a price list showing only those sections.
+page_images:
+  hero: assets/harbour-kitchen-hero.jpg
+  prawns: assets/harbour-kitchen-prawns.jpg
+  paella: assets/harbour-kitchen-paella.jpg
+  rice: assets/harbour-kitchen-rice.jpg
+  glasses: assets/harbour-kitchen-glasses.jpg
+  harbour: assets/harbour-kitchen-background.jpg
+content: |
+  <!-- wp:cover {"url":"{{image_url:hero}}","id":{{image_id:hero}},"dimRatio":40,"overlayColor":"black","isUserOverlayColor":true,"minHeight":80,"minHeightUnit":"vh","align":"full","className":"sm-flush-top","layout":{"type":"constrained"}} -->
+  <div class="wp-block-cover alignfull sm-flush-top" style="min-height:80vh"><img class="wp-block-cover__image-background wp-image-{{image_id:hero}}" alt="" src="{{image_url:hero}}" data-object-fit="cover"/><span aria-hidden="true" class="wp-block-cover__background has-black-background-color has-background-dim-40 has-background-dim"></span><div class="wp-block-cover__inner-container"><!-- wp:paragraph {"className":"sm-eyebrow","style":{"typography":{"textAlign":"center"}}} -->
+  <p class="has-text-align-center sm-eyebrow">Seafood &amp; wine by the sea</p>
+  <!-- /wp:paragraph -->
+
+  <!-- wp:heading {"level":1,"className":"sm-display","style":{"typography":{"textAlign":"center"}}} -->
+  <h1 class="wp-block-heading has-text-align-center sm-display">Our menu</h1>
+  <!-- /wp:heading -->
+
+  <!-- wp:paragraph {"className":"sm-lead","style":{"typography":{"textAlign":"center"}}} -->
+  <p class="has-text-align-center sm-lead">Fish from the Málaga market every morning, cooked over the grill and served with a view of the harbour.</p>
+  <!-- /wp:paragraph --></div></div>
+  <!-- /wp:cover -->
+
+  <!-- wp:paragraph {"className":"sm-eyebrow","style":{"typography":{"textAlign":"center"}}} -->
+  <p class="has-text-align-center sm-eyebrow">Made to share</p>
+  <!-- /wp:paragraph -->
+
+  <!-- wp:satori-manifest/price-list {"excludedSectionIds":{{hide_except:Starters}},"layout":"leaders","colorScheme":"brand","showBackground":false,"showItemBorder":false} /-->
+
+  <!-- wp:paragraph {"className":"sm-eyebrow","style":{"typography":{"textAlign":"center"}}} -->
+  <p class="has-text-align-center sm-eyebrow">From the grill</p>
+  <!-- /wp:paragraph -->
+
+  <!-- wp:satori-manifest/price-list {"excludedSectionIds":{{hide_except:Mains}},"layout":"leaders","colorScheme":"brand","showBackground":false,"showItemBorder":false} /-->
+
+  <!-- wp:gallery {"columns":4,"linkTo":"none","align":"full","style":{"spacing":{"blockGap":{"top":"0","left":"0"}}}} -->
+  <figure class="wp-block-gallery alignfull has-nested-images columns-4 is-cropped"><!-- wp:image {"id":{{image_id:prawns}},"sizeSlug":"large","linkDestination":"none"} -->
+  <figure class="wp-block-image size-large"><img src="{{image_url:prawns}}" alt="" class="wp-image-{{image_id:prawns}}"/></figure>
+  <!-- /wp:image -->
+
+  <!-- wp:image {"id":{{image_id:paella}},"sizeSlug":"large","linkDestination":"none"} -->
+  <figure class="wp-block-image size-large"><img src="{{image_url:paella}}" alt="" class="wp-image-{{image_id:paella}}"/></figure>
+  <!-- /wp:image -->
+
+  <!-- wp:image {"id":{{image_id:rice}},"sizeSlug":"large","linkDestination":"none"} -->
+  <figure class="wp-block-image size-large"><img src="{{image_url:rice}}" alt="" class="wp-image-{{image_id:rice}}"/></figure>
+  <!-- /wp:image -->
+
+  <!-- wp:image {"id":{{image_id:glasses}},"sizeSlug":"large","linkDestination":"none"} -->
+  <figure class="wp-block-image size-large"><img src="{{image_url:glasses}}" alt="" class="wp-image-{{image_id:glasses}}"/></figure>
+  <!-- /wp:image --></figure>
+  <!-- /wp:gallery -->
+
+  <!-- wp:paragraph {"className":"sm-eyebrow","style":{"typography":{"textAlign":"center"}}} -->
+  <p class="has-text-align-center sm-eyebrow">Something sweet &amp; a glass of something</p>
+  <!-- /wp:paragraph -->
+
+  <!-- wp:satori-manifest/price-list {"excludedSectionIds":{{hide_except:Desserts,Drinks}},"layout":"two-column","colorScheme":"brand","showBackground":false,"showItemBorder":false,"align":"wide"} /-->
+
+  <!-- wp:paragraph {"className":"sm-small-print","style":{"typography":{"textAlign":"center"}}} -->
+  <p class="has-text-align-center sm-small-print">Please tell us about any allergies and our team will happily help. Prices include VAT.</p>
+  <!-- /wp:paragraph -->
+
+  <!-- wp:cover {"url":"{{image_url:harbour}}","id":{{image_id:harbour}},"dimRatio":30,"overlayColor":"black","isUserOverlayColor":true,"minHeight":60,"minHeightUnit":"vh","align":"full","className":"sm-flush-bottom","layout":{"type":"constrained"}} -->
+  <div class="wp-block-cover alignfull sm-flush-bottom" style="min-height:60vh"><img class="wp-block-cover__image-background wp-image-{{image_id:harbour}}" alt="" src="{{image_url:harbour}}" data-object-fit="cover"/><span aria-hidden="true" class="wp-block-cover__background has-black-background-color has-background-dim-30 has-background-dim"></span><div class="wp-block-cover__inner-container"><!-- wp:heading {"className":"sm-display sm-display\u002d\u002dbanner","style":{"typography":{"textAlign":"center"}}} -->
+  <h2 class="wp-block-heading has-text-align-center sm-display sm-display--banner">See you by the sea</h2>
+  <!-- /wp:heading --></div></div>
+  <!-- /wp:cover -->

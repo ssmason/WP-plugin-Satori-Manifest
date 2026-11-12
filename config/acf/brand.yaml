@@ -1,4 +1,4 @@
-# Brand — identity, colours, typography and currency for a client page.
+# Brand - identity, colours, typography and currency for a client page.
 #
 # Field definitions are plain ACF settings. Keys are generated from the file
 # name and field name (field_sm_brand_<name>) so they can be omitted.
@@ -56,8 +56,8 @@ fields:
     type: button_group
     default_value: before
     choices:
-      before: Before (£25)
-      after: After (25€)
+      before: Before (£25.50)
+      after: After (25,50 €)
     wrapper: { width: 50 }
 
   - type: tab
@@ -93,6 +93,15 @@ fields:
     label: Text on accent
     type: color_picker
     wrapper: { width: 33 }
+
+  - name: sm_background_image
+    label: Background image
+    type: image
+    return_format: id
+    preview_size: medium
+    library: uploadedTo
+    mime_types: jpg, jpeg, png, webp
+    instructions: Optional. A photo behind the whole page. The page background colour shows while it loads. Large, calm images work best.
 
   - type: tab
     label: Typography

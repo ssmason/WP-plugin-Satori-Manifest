@@ -2,7 +2,7 @@
 /**
  * Client summary.
  *
- * Read model describing one client at a glance — used by the client Home
+ * Read model describing one client at a glance - used by the client Home
  * screen, the staff Clients list and WP-CLI.
  *
  * @package SatoriManifest

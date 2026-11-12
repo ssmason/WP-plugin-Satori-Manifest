@@ -1,4 +1,4 @@
-# Satori Manifest — notes for Claude
+# Satori Manifest - notes for Claude
 
 WordPress plugin: hosted QR price-list pages, client portal, sign-up/approval, Stripe
 subscriptions and branded email. Architecture and conventions: `README.md`.
@@ -12,7 +12,7 @@ Tests: `tests/README.md`.
 - One folder = one namespace (`includes/billing/` → `SatoriManifest\Billing\`), one
   responsibility per class. Screens read input, call a service, render a template.
 - Config is YAML (`config/`), never PHP arrays. Secrets only via `Core\Env` (.env).
-- SCSS for plugin styles (compiled to `build/` — never edit `build/` by hand); vanilla JS.
+- SCSS for plugin styles (compiled to `build/` - never edit `build/` by hand); vanilla JS.
 - After adding or moving PHP classes: `composer dump-autoload -o` at the project root.
 - Never read `.env`.
 

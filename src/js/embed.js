@@ -1,5 +1,5 @@
 /**
- * Satori Manifest — embed mode.
+ * Satori Manifest - embed mode.
  *
  * Runs inside the iframe when a client page is shown on another website
  * (?sm_embed=1). Tells the host page how tall the content is, so the embed

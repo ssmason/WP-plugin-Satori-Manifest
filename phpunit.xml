@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-	Satori Manifest — PHPUnit configuration.
+	Satori Manifest - PHPUnit configuration.
 	Integration tests on the WordPress test suite; see tests/README.md.
 -->
 <phpunit

@@ -71,7 +71,7 @@ class Migrations {
 	}
 
 	/**
-	 * 2.2.0 — gives every manifest section a permanent id.
+	 * 2.2.0 - gives every manifest section a permanent id.
 	 *
 	 * Re-saving through Sanitizer assigns ids to sections that lack one and
 	 * leaves existing ids untouched.
@@ -107,7 +107,7 @@ class Migrations {
 	}
 
 	/**
-	 * 3.2.0 — turns "Willow &amp; Rose" back into "Willow & Rose" in the
+	 * 3.2.0 - turns "Willow &amp; Rose" back into "Willow & Rose" in the
 	 * titles of client pages and price lists.
 	 *
 	 * Earlier versions created them from the HTML-encoded display name, and

@@ -128,6 +128,64 @@ $sm-item-columns: 18px minmax(140px, 1.3fr) minmax(140px, 1.6fr) 110px 80px 120p
 		flex: 1;
 	}
 
+	// Optional icon/image shown left of the section title on the page.
+	&__icon {
+		position: relative;
+		flex: none;
+	}
+
+	&__icon-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		padding: 0;
+		overflow: hidden;
+		border: 1px dashed $sm-color-border;
+		border-radius: 8px;
+		background: #fff;
+		color: $sm-color-text-light;
+		cursor: pointer;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+		}
+
+		&:hover,
+		&:focus-visible {
+			border-color: $sm-color-primary;
+			color: $sm-color-primary;
+		}
+	}
+
+	&__icon.has-icon &__icon-button {
+		border-style: solid;
+	}
+
+	&__icon-remove {
+		position: absolute;
+		top: -6px;
+		right: -6px;
+		display: none;
+		width: 18px;
+		height: 18px;
+		padding: 0;
+		border: 0;
+		border-radius: 50%;
+		background: $sm-ink;
+		color: #fff;
+		font-size: 12px;
+		line-height: 18px;
+		cursor: pointer;
+	}
+
+	&__icon.has-icon &__icon-remove {
+		display: block;
+	}
+
 	&__title-input {
 		width: 100%;
 		padding: 6px 10px !important; // stylelint-disable-line declaration-no-important

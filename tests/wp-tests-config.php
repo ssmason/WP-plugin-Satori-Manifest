@@ -3,7 +3,7 @@
  * WordPress test-suite configuration.
  *
  * Runs the tests against the project's own database but in separate
- * "wptests_" tables, which the suite creates and empties on every run — real
+ * "wptests_" tables, which the suite creates and empties on every run - real
  * site data (wp_ tables) is never touched. Database credentials are read from
  * the Bedrock .env at the project root, so nothing secret lives in this file.
  *

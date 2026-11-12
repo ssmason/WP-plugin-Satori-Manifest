@@ -58,6 +58,14 @@ class Client_Page {
 	public const PREVIEW_VAR = 'sm_design';
 
 	/**
+	 * Query var for previewing a colour mode ('light' or 'dark').
+	 *
+	 * @since 3.8.0
+	 * @var   string
+	 */
+	public const MODE_VAR = 'sm_mode';
+
+	/**
 	 * Registers front-end hooks.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
@@ -127,6 +135,22 @@ class Client_Page {
 	}
 
 	/**
+	 * Returns the colour mode to preview, or '' for the page's own mode.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.8.0
+	 * @param  int $page_id  Client page ID.
+	 * @return string
+	 */
+	public static function mode_for_request( int $page_id ): string {
+		// Read-only view switch restricted to editors of the page.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$mode = isset( $_GET[ self::MODE_VAR ] ) ? sanitize_key( wp_unslash( $_GET[ self::MODE_VAR ] ) ) : '';
+
+		return in_array( $mode, Design_Registry::COLOUR_MODES, true ) && current_user_can( 'edit_post', $page_id ) ? $mode : '';
+	}
+
+	/**
 	 * Routes client pages to the plugin template.
 	 *
 	 * Hooked late to 'template_include' so it wins over theme routers.
@@ -154,10 +178,15 @@ class Client_Page {
 		$page_id = self::current_page_id();
 
 		if ( $page_id ) {
-			$brand     = Brand::for_page( $page_id, self::design_for_request( $page_id ) );
+			$brand     = Brand::for_page( $page_id, self::design_for_request( $page_id ), self::mode_for_request( $page_id ) );
 			$classes[] = 'sm-client-page';
 			$classes[] = 'sm-design-' . $brand['design'];
+			$classes[] = 'sm-mode-' . $brand['mode'];
 			$classes[] = 'sm-header-' . $brand['header']['layout'];
+
+			if ( '' !== $brand['bg_image'] ) {
+				$classes[] = 'sm-has-background-image';
+			}
 		}
 
 		return $classes;
@@ -179,7 +208,7 @@ class Client_Page {
 			return;
 		}
 
-		$brand  = Brand::for_page( $page_id, self::design_for_request( $page_id ) );
+		$brand  = Brand::for_page( $page_id, self::design_for_request( $page_id ), self::mode_for_request( $page_id ) );
 		$design = (array) Design_Registry::get( $brand['design'] );
 
 		Assets::enqueue_style( 'satori-manifest-client-page', 'build/css/client-page.css' );

@@ -241,7 +241,7 @@ class Monthly_Summary {
 	 */
 	public static function change_text( int $current, int $previous ): string {
 		if ( 0 === $previous ) {
-			return $current > 0 ? __( 'your first month of visits', 'satori-manifest' ) : __( 'no visits yet — make sure your QR code is on display', 'satori-manifest' );
+			return $current > 0 ? __( 'your first month of visits', 'satori-manifest' ) : __( 'no visits yet, so make sure your QR code is on display', 'satori-manifest' );
 		}
 
 		$percent = (int) round( ( $current - $previous ) / $previous * 100 );

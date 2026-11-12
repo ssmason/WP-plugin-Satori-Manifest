@@ -50,8 +50,8 @@ class Block {
 	/**
 	 * Registers the block type with WordPress.
 	 *
-	 * All block configuration — attributes, supports, editor script, styles,
-	 * and the render template path — is declared in each blocks/{name}/block.json.
+	 * All block configuration - attributes, supports, editor script, styles,
+	 * and the render template path - is declared in each blocks/{name}/block.json.
 	 * Hooked to 'init'.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>

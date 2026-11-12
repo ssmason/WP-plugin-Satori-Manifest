@@ -1,0 +1,27 @@
+# Edge - bold, dark barber page with big condensed type.
+
+title: Edge
+description: A tall photo beside big condensed headlines, the price list in two columns, a full-width photo strip, walk-in details and a brass banner. Charcoal and brass.
+best_for: Barbers
+order: 9
+kind: full
+tags: [barber, bold, dark, photos]
+header: split
+mode: dark
+palette:
+  background: '#121212'
+  surface: '#1D1D1D'
+  text: '#F2F2F2'
+  muted: '#9A9A9A'
+  accent: '#D4A537'
+  accent_text: '#121212'
+palette_light:
+  background: '#F2F0EB'
+  surface: '#FFFFFF'
+  text: '#151515'
+  muted: '#6B6B6B'
+  accent: '#A87D1E'
+  accent_text: '#FFFFFF'
+fonts:
+  heading: bebas-neue
+  body: dm-sans

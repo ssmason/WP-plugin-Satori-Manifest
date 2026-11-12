@@ -50,10 +50,12 @@ class Mailer {
 	 * @param  string               $template  Template name (config/emails/{template}.yaml).
 	 * @param  string               $to        Recipient email address.
 	 * @param  array<string,string> $vars      Placeholder values (unescaped).
+	 * @param  string               $reply_to  Optional Reply-To address (default: the support email).
 	 * @return array{template:string,to:string,subject:string,transport:string,sent:bool,error:string,time:int}
 	 */
-	public static function send( string $template, string $to, array $vars = array() ): array {
+	public static function send( string $template, string $to, array $vars = array(), string $reply_to = '' ): array {
 		$message   = Email_Builder::build( $template, $vars );
+		$reply_to  = is_email( $reply_to ) ? $reply_to : Portal_Brand::support_email();
 		$transport = self::transport();
 		$result    = array(
 			'template'  => $template,
@@ -91,7 +93,7 @@ class Mailer {
 		}
 
 		if ( 'brevo' === $transport ) {
-			$delivery = Brevo_Transport::send( $to, $message, $template, array_map( 'strval', $vars ) );
+			$delivery = Brevo_Transport::send( $to, $message + array( 'reply_to' => $reply_to ), $template, array_map( 'strval', $vars ) );
 		} else {
 			$delivery = array(
 				'sent'  => wp_mail(
@@ -101,14 +103,14 @@ class Mailer {
 					array(
 						'Content-Type: text/html; charset=UTF-8',
 						sprintf( 'From: %s <%s>', self::from_name(), self::from_email() ),
-						sprintf( 'Reply-To: %s', Portal_Brand::support_email() ),
+						sprintf( 'Reply-To: %s', $reply_to ),
 					)
 				),
 				'error' => '',
 			);
 
 			if ( ! $delivery['sent'] ) {
-				$delivery['error'] = 'wp_mail() returned false — check the site mail configuration.';
+				$delivery['error'] = 'wp_mail() returned false. Check the site mail configuration.';
 			}
 		}
 

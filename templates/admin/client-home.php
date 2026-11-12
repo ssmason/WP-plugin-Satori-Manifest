@@ -58,7 +58,7 @@ $satori_manifest_cards = array(
 	array(
 		'icon'  => 'palette',
 		'title' => __( 'Design', 'satori-manifest' ),
-		'text'  => __( 'Choose the look of your page. Switch any time — your content stays.', 'satori-manifest' ),
+		'text'  => __( 'Choose the look of your page. Switch any time and your content stays.', 'satori-manifest' ),
 		'meta'  => $satori_manifest_s['design'] ? sprintf( /* translators: %s: design name. */ __( 'Current design: %s', 'satori-manifest' ), $satori_manifest_s['design']['title'] ) : '',
 		'url'   => Admin_Menu::url( Admin_Menu::DESIGN_SLUG, $satori_manifest_s['user'] ? $satori_manifest_s['user']->ID : 0 ),
 		'cta'   => __( 'Change design', 'satori-manifest' ),
@@ -74,10 +74,10 @@ $satori_manifest_cards = array(
 	array(
 		'icon'  => 'link',
 		'title' => __( 'Navigation', 'satori-manifest' ),
-		'text'  => __( 'Links in your page header — for example back to your main website or a booking page.', 'satori-manifest' ),
+		'text'  => __( 'Links in your page header, for example back to your main website or a booking page.', 'satori-manifest' ),
 		'meta'  => $satori_manifest_s['menu_items']
 			? sprintf( /* translators: %d: number of links. */ _n( '%d link', '%d links', $satori_manifest_s['menu_items'], 'satori-manifest' ), $satori_manifest_s['menu_items'] )
-			: __( 'No links — standalone page', 'satori-manifest' ),
+			: __( 'No links (standalone page)', 'satori-manifest' ),
 		'url'   => $satori_manifest_s['menu_id'] ? admin_url( 'nav-menus.php?action=edit&menu=' . $satori_manifest_s['menu_id'] ) : '',
 		'cta'   => __( 'Edit links', 'satori-manifest' ),
 	),
@@ -145,12 +145,65 @@ $satori_manifest_cards = array(
 	<?php else : ?>
 		<a class="sm-guide-banner" href="<?php echo esc_url( Admin_Menu::url( Admin_Menu::HELP_SLUG ) ); ?>">
 			<span class="sm-guide-banner__label"><?php esc_html_e( 'New here?', 'satori-manifest' ); ?></span>
-			<span class="sm-guide-banner__text"><?php esc_html_e( 'Follow the five-step getting started guide — most people are done in twenty minutes.', 'satori-manifest' ); ?></span>
+			<span class="sm-guide-banner__text"><?php esc_html_e( 'Follow the five-step getting started guide. Most people are done in twenty minutes.', 'satori-manifest' ); ?></span>
 			<span class="sm-guide-banner__cta"><?php esc_html_e( 'Open guide', 'satori-manifest' ); ?> <?php Icons::render( 'arrow', 16 ); ?></span>
 		</a>
 
+		<?php if ( 'welcome' === $satori_manifest_notice ) : ?>
+			<div class="sm-notice sm-notice--success"><?php Icons::render( 'check', 18 ); ?> <?php esc_html_e( 'Welcome! Your account is ready and your free trial has started.', 'satori-manifest' ); ?></div>
+		<?php endif; ?>
+
+		<?php if ( \SatoriManifest\Clients\First_Password::needed( get_current_user_id() ) ) : ?>
+			<div class="sm-notice sm-notice--warning sm-password-prompt">
+				<?php Icons::render( 'lock', 18 ); ?>
+				<span><?php esc_html_e( 'Choose a password now so you can log in again next time.', 'satori-manifest' ); ?></span>
+				<a class="button button-primary" href="<?php echo esc_url( admin_url( 'profile.php#password' ) ); ?>"><?php esc_html_e( 'Choose my password', 'satori-manifest' ); ?></a>
+			</div>
+		<?php endif; ?>
+
 		<?php if ( 'summary' === $satori_manifest_notice ) : ?>
 			<div class="sm-notice sm-notice--success"><?php Icons::render( 'check', 18 ); ?> <?php esc_html_e( 'Your email preference is saved.', 'satori-manifest' ); ?></div>
+		<?php endif; ?>
+
+		<?php if ( 'codes-ordered' === $satori_manifest_notice ) : ?>
+			<div class="sm-notice sm-notice--success"><?php Icons::render( 'check', 18 ); ?> <?php esc_html_e( 'Thank you! Your printed QR codes are paid for. We will print and post them to you shortly.', 'satori-manifest' ); ?></div>
+		<?php elseif ( 'codes-empty' === $satori_manifest_notice ) : ?>
+			<div class="sm-notice sm-notice--warning"><?php esc_html_e( 'Please enter how many codes you would like in at least one size.', 'satori-manifest' ); ?></div>
+		<?php elseif ( 'codes-failed' === $satori_manifest_notice ) : ?>
+			<div class="sm-notice sm-notice--warning"><?php esc_html_e( 'We could not start the payment just now. Please try again in a few minutes.', 'satori-manifest' ); ?></div>
+		<?php endif; ?>
+
+		<?php if ( \SatoriManifest\Billing\Printed_Codes::can_order() ) : ?>
+			<section class="sm-panel sm-codes-panel">
+				<h2 class="sm-panel__title"><?php esc_html_e( 'Order printed QR codes', 'satori-manifest' ); ?></h2>
+				<p class="sm-panel__intro"><?php esc_html_e( 'Durable 3D-printed, self-adhesive QR codes for tables, the counter or the window, posted to you. Until they arrive you can download and print your code above.', 'satori-manifest' ); ?></p>
+				<form class="sm-codes-panel__form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+					<input type="hidden" name="action" value="<?php echo esc_attr( \SatoriManifest\Billing\Printed_Codes::ACTION ); ?>" />
+					<?php \SatoriManifest\Core\Security::output_form_nonce( \SatoriManifest\Billing\Printed_Codes::ACTION ); ?>
+					<div class="sm-codes-panel__sizes">
+						<?php foreach ( \SatoriManifest\Billing\Code_Catalogue::sizes() as $satori_manifest_size => $satori_manifest_size_terms ) : ?>
+							<label class="sm-codes-panel__size">
+								<span><?php echo esc_html( $satori_manifest_size_terms['label'] ); ?></span>
+								<span class="sm-muted"><?php echo esc_html( \SatoriManifest\Registration\Plans::format( $satori_manifest_size_terms['price'] ) ); ?></span>
+								<input type="number" name="<?php echo esc_attr( \SatoriManifest\Billing\Printed_Codes::FIELD . '[' . $satori_manifest_size . ']' ); ?>" value="0" min="0" max="<?php echo esc_attr( (string) \SatoriManifest\Billing\Code_Catalogue::max() ); ?>" step="1" inputmode="numeric" />
+							</label>
+						<?php endforeach; ?>
+					</div>
+					<p class="sm-codes-panel__region">
+						<label for="sm-codes-region"><?php esc_html_e( 'Post to', 'satori-manifest' ); ?></label>
+						<select id="sm-codes-region" name="<?php echo esc_attr( \SatoriManifest\Billing\Printed_Codes::REGION_FIELD ); ?>">
+							<?php foreach ( \SatoriManifest\Billing\Code_Catalogue::regions() as $satori_manifest_region => $satori_manifest_region_terms ) : ?>
+								<option value="<?php echo esc_attr( $satori_manifest_region ); ?>">
+									<?php
+									echo esc_html( \SatoriManifest\Billing\Code_Catalogue::region_label( $satori_manifest_region ) );
+									?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+						<button type="submit" class="button button-primary"><?php esc_html_e( 'Order and pay', 'satori-manifest' ); ?></button>
+					</p>
+				</form>
+			</section>
 		<?php endif; ?>
 
 		<?php if ( '' !== $satori_manifest_embed ) : ?>
@@ -158,7 +211,7 @@ $satori_manifest_cards = array(
 				<div class="sm-embed-panel__text">
 					<h2 class="sm-panel__title"><?php esc_html_e( 'Add your price list to your website', 'satori-manifest' ); ?></h2>
 					<p class="sm-panel__intro">
-						<?php esc_html_e( 'Copy this code and paste it into an HTML or embed block on your own website — for example a Custom HTML block in WordPress, Embed code in Wix or a Code block in Squarespace. It always shows your latest prices.', 'satori-manifest' ); ?>
+						<?php esc_html_e( 'Copy this code and paste it into an HTML or embed block on your own website, for example a Custom HTML block in WordPress, Embed code in Wix or a Code block in Squarespace. It always shows your latest prices.', 'satori-manifest' ); ?>
 					</p>
 				</div>
 				<div class="sm-embed-panel__code">
@@ -202,5 +255,37 @@ $satori_manifest_cards = array(
 			</label>
 			<button type="submit" class="button"><?php esc_html_e( 'Save', 'satori-manifest' ); ?></button>
 		</form>
+
+		<?php
+		$satori_manifest_contact_result   = \SatoriManifest\Contact\Contact_Form::result();
+		$satori_manifest_contact_messages = \SatoriManifest\Contact\Contact_Form::messages();
+		$satori_manifest_contact_support  = Portal_Brand::support_email();
+		?>
+		<section class="sm-panel sm-contact-panel" id="sm-contact">
+			<h2 class="sm-panel__title"><?php esc_html_e( 'Need a hand?', 'satori-manifest' ); ?></h2>
+			<p class="sm-panel__intro">
+				<?php
+				printf(
+					/* translators: %s: support email address (link). */
+					esc_html__( 'Send us a message and we will reply by email, or write to %s.', 'satori-manifest' ),
+					'<a href="mailto:' . esc_attr( $satori_manifest_contact_support ) . '">' . esc_html( $satori_manifest_contact_support ) . '</a>'
+				);
+				?>
+			</p>
+			<?php if ( isset( $satori_manifest_contact_messages[ $satori_manifest_contact_result ] ) ) : ?>
+				<div class="sm-notice sm-notice--<?php echo esc_attr( 'success' === $satori_manifest_contact_messages[ $satori_manifest_contact_result ]['type'] ? 'success' : 'warning' ); ?>" role="status">
+					<?php echo esc_html( $satori_manifest_contact_messages[ $satori_manifest_contact_result ]['text'] ); ?>
+				</div>
+			<?php endif; ?>
+			<form class="sm-contact-panel__form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<input type="hidden" name="action" value="<?php echo esc_attr( \SatoriManifest\Contact\Contact_Form::ACTION ); ?>" />
+				<?php Security::output_form_nonce( \SatoriManifest\Contact\Contact_Form::ACTION, false ); ?>
+				<input type="hidden" name="_sm_started" value="<?php echo esc_attr( (string) time() ); ?>" />
+				<input type="hidden" name="_sm_return" value="<?php echo esc_url( Admin_Menu::url( Admin_Menu::HOME_SLUG ) ); ?>" />
+				<label class="screen-reader-text" for="sm-contact-panel-message"><?php esc_html_e( 'Your message', 'satori-manifest' ); ?></label>
+				<textarea id="sm-contact-panel-message" name="message" rows="3" required maxlength="5000" placeholder="<?php esc_attr_e( 'Your question or request…', 'satori-manifest' ); ?>"></textarea>
+				<button type="submit" class="button button-primary"><?php esc_html_e( 'Send message', 'satori-manifest' ); ?></button>
+			</form>
+		</section>
 	<?php endif; ?>
 </div>
