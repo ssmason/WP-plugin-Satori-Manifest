@@ -322,7 +322,7 @@ includes/
   mail/          Mail\         Mailer, Email_Builder, Brevo_Transport, Core_Emails, WP_Mail_Relay
   contact/       Contact\      Contact_Form (block + dashboard panel), Contact_Handler
   fields/        Fields\       Field_Loader (YAML → ACF)
-  frontend/      Frontend\     Client_Page, Embed, Editor, Design_Preview
+  frontend/      Frontend\     Client_Page, Embed, Editor, Design_Preview, Example_Bar
   login/         Login\        Login_Screen
   pdf/           Pdf\          Pdf_Document, Font_Metrics, Print_Colour, Pdf_Image,
                                Price_List_Pdf, Pdf_Download

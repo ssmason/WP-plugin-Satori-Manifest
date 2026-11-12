@@ -62,6 +62,7 @@ On Stripe's own pages (Checkout and the customer portal). Card details never rea
 * Sign-up goes straight to Stripe Checkout with a free trial (card up front, first charge when the trial ends); customers are logged in and asked to choose a password on return.
 * Printed QR codes: some included, extras added to the first payment, more can be ordered from the dashboard; Stripe collects the postal address.
 * Five complete page designs with photos (Noir, Harbour, Morning, Serene, Edge), light and dark mode for every design, and full-page previews on the Design screen.
+* Demo pages show an examples bar linking to every other example; demo clients for every design.
 * Optional Cloudflare Turnstile spam check, unfinished sign-ups removed after 7 days, page-cache support (clears client pages on change, keeps forms uncached).
 * With a Brevo key, all WordPress email (login-screen password resets, two-factor codes, admin notices) is sent through Brevo too.
 * Contact form block (public Contact page) and a "Need a hand?" panel on the client dashboard; messages go to the staff address with Reply-To set to the sender.
