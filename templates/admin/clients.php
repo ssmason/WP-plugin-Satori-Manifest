@@ -86,6 +86,7 @@ use SatoriManifest\Qr\Qr_Download;
 									<?php if ( $satori_manifest_row['page_id'] ) : ?>
 										<a class="button button-small" href="<?php echo esc_url( admin_url( 'post.php?post=' . $satori_manifest_row['page_id'] . '&action=edit' ) ); ?>"><?php esc_html_e( 'Page', 'satori-manifest' ); ?></a>
 										<a class="button button-small" href="<?php echo esc_url( Pdf_Download::url( (int) $satori_manifest_row['page_id'] ) ); ?>"><?php esc_html_e( 'PDF', 'satori-manifest' ); ?></a>
+										<a class="button button-small" href="<?php echo esc_url( Pdf_Download::url( (int) $satori_manifest_row['page_id'], 'a3' ) ); ?>"><?php esc_html_e( 'A3', 'satori-manifest' ); ?></a>
 										<a class="button button-small" href="<?php echo esc_url( Qr_Download::url( (int) $satori_manifest_row['page_id'] ) ); ?>"><?php esc_html_e( 'QR', 'satori-manifest' ); ?></a>
 									<?php endif; ?>
 									<?php if ( $satori_manifest_row['manifest_id'] ) : ?>

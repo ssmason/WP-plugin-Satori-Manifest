@@ -63,6 +63,9 @@ On Stripe's own pages (Checkout and the customer portal). Card details never rea
 * The assistant can only reach the client's own page (no billing, account or other WordPress data); its key works on its endpoint only and is stored hashed.
 * Included per plan (config/ai-assistant.yaml) or switched on/off per client under Manifest → AI assistant.
 
+= 3.8.1 =
+* Price list PDF in A3 as well as A4: the same layout enlarged for posters and boards ("PDF (A3)" on the client Home screen, "A3" on the staff Clients screen).
+
 = 3.8.0 =
 * Sign-up goes straight to Stripe Checkout with a free trial (card up front, first charge when the trial ends); customers are logged in and asked to choose a password on return.
 * Printed QR codes: some included, extras added to the first payment, more can be ordered from the dashboard; Stripe collects the postal address.

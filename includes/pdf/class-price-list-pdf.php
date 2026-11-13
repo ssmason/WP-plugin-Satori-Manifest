@@ -2,7 +2,7 @@
 /**
  * Price list PDF.
  *
- * Lays out a client's price list as a print-ready A4 PDF: logo, business
+ * Lays out a client's price list as a print-ready A4 (or A3) PDF: logo, business
  * name and tagline, the page's QR code, every section and item with right-aligned prices,
  * contact details, and a footer on each page with the live page address.
  * Uses the client's brand colours, adjusted when needed so text stays
@@ -45,6 +45,15 @@ class Price_List_Pdf {
 	 * @var   float
 	 */
 	private const MARGIN = 50.0;
+
+	/**
+	 * Paper sizes in points. The layout is drawn on A4 and enlarged for larger
+	 * A-series paper, which keeps the same proportions.
+	 */
+	public const PAPER_SIZES = array(
+		'a4' => array( 595.28, 841.89 ),
+		'a3' => array( 841.89, 1190.55 ),
+	);
 
 	/**
 	 * Space kept clear at the bottom of each page for the footer.
@@ -99,29 +108,50 @@ class Price_List_Pdf {
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.2.0
-	 * @param  int $page_id  Client page ID.
+	 * @param  int    $page_id  Client page ID.
+	 * @param  string $paper    Key of PAPER_SIZES ('a4' or 'a3').
 	 * @return string  PDF bytes, or '' when the page is not a client page.
 	 */
-	public static function render( int $page_id ): string {
+	public static function render( int $page_id, string $paper = 'a4' ): string {
 		if ( ! Client_Repository::is_client_page( $page_id ) ) {
 			return '';
 		}
 
-		return ( new self( $page_id ) )->build( $page_id );
+		$document = new self( $page_id );
+		$document->pdf->set_output_size( ...self::PAPER_SIZES[ self::paper( $paper ) ] );
+
+		return $document->build( $page_id );
 	}
 
 	/**
-	 * Returns a download file name for a page, e.g. "blue-door-barbers-prices.pdf".
+	 * Returns a download file name for a page, e.g. "blue-door-barbers-prices.pdf"
+	 * ("…-prices-a3.pdf" for A3).
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.2.0
-	 * @param  int $page_id  Client page ID.
+	 * @param  int    $page_id  Client page ID.
+	 * @param  string $paper    Key of PAPER_SIZES.
 	 * @return string
 	 */
-	public static function filename( int $page_id ): string {
-		$slug = sanitize_title( (string) Brand::for_page( $page_id )['name'] );
+	public static function filename( int $page_id, string $paper = 'a4' ): string {
+		$slug  = sanitize_title( (string) Brand::for_page( $page_id )['name'] );
+		$paper = self::paper( $paper );
 
-		return ( '' !== $slug ? $slug : 'price-list' ) . '-prices.pdf';
+		return ( '' !== $slug ? $slug : 'price-list' ) . '-prices' . ( 'a4' !== $paper ? '-' . $paper : '' ) . '.pdf';
+	}
+
+	/**
+	 * A known paper size key, A4 for anything else.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.8.1
+	 * @param  string $paper  Requested size.
+	 * @return string
+	 */
+	public static function paper( string $paper ): string {
+		$paper = strtolower( $paper );
+
+		return isset( self::PAPER_SIZES[ $paper ] ) ? $paper : 'a4';
 	}
 
 	/**

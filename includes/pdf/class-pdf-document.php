@@ -105,6 +105,22 @@ class Pdf_Document {
 	private string $title = '';
 
 	/**
+	 * Factor every page is enlarged by on output (1 = as drawn).
+	 *
+	 * @since 3.8.1
+	 * @var   float
+	 */
+	private float $scale = 1.0;
+
+	/**
+	 * Output page size in points; 0 = the drawing size.
+	 *
+	 * @since 3.8.1
+	 * @var   array{0:float,1:float}
+	 */
+	private array $output_size = array( 0.0, 0.0 );
+
+	/**
 	 * Creates an empty document.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
@@ -115,6 +131,23 @@ class Pdf_Document {
 	public function __construct( float $width = self::A4_WIDTH, float $height = self::A4_HEIGHT ) {
 		$this->width  = $width;
 		$this->height = $height;
+	}
+
+	/**
+	 * Prints the pages on a larger paper size, e.g. an A4 layout on A3.
+	 *
+	 * Drawing still uses the original page size; on output each page is
+	 * enlarged to fit the new size (same proportions for A-series paper).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.8.1
+	 * @param  float $width   Output page width in points.
+	 * @param  float $height  Output page height in points.
+	 * @return void
+	 */
+	public function set_output_size( float $width, float $height ): void {
+		$this->scale       = max( 1.0, min( $width / $this->width, $height / $this->height ) );
+		$this->output_size = array( $width, $height );
 	}
 
 	/**
@@ -354,21 +387,25 @@ class Pdf_Document {
 			foreach ( $this->links[ $index ] as $link ) {
 				$objects[ $next ] = sprintf(
 					'<< /Type /Annot /Subtype /Link /Rect [%.2F %.2F %.2F %.2F] /Border [0 0 0] /A << /S /URI /URI (%s) >> >>',
-					$link[0],
-					$link[1],
-					$link[0] + $link[2],
-					$link[1] + $link[3],
+					$link[0] * $this->scale,
+					$link[1] * $this->scale,
+					( $link[0] + $link[2] ) * $this->scale,
+					( $link[1] + $link[3] ) * $this->scale,
 					self::escape( $link[4] )
 				);
 				$annots[]         = $next . ' 0 R';
 				++$next;
 			}
 
+			if ( 1.0 !== $this->scale ) {
+				$ops = array_merge( array( sprintf( 'q %.5F 0 0 %.5F 0 0 cm', $this->scale, $this->scale ) ), $ops, array( 'Q' ) );
+			}
+
 			$stream                  = (string) gzcompress( implode( "\n", $ops ) );
 			$objects[ $page_ref ]    = sprintf(
 				'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 %.2F %.2F] /Resources %s /Contents %d 0 R%s >>',
-				$this->width,
-				$this->height,
+				$this->output_size[0] > 0 ? $this->output_size[0] : $this->width,
+				$this->output_size[1] > 0 ? $this->output_size[1] : $this->height,
 				$resources,
 				$content_ref,
 				$annots ? ' /Annots [' . implode( ' ', $annots ) . ']' : ''

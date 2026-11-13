@@ -124,7 +124,10 @@ $satori_manifest_cards = array(
 						<?php esc_html_e( 'View page', 'satori-manifest' ); ?>
 					</a>
 					<a class="button sm-qr-card__pdf" href="<?php echo esc_url( Pdf_Download::url( (int) $satori_manifest_s['page_id'] ) ); ?>">
-						<?php esc_html_e( 'Download PDF', 'satori-manifest' ); ?>
+						<?php esc_html_e( 'PDF (A4)', 'satori-manifest' ); ?>
+					</a>
+					<a class="button sm-qr-card__pdf" href="<?php echo esc_url( Pdf_Download::url( (int) $satori_manifest_s['page_id'], 'a3' ) ); ?>">
+						<?php esc_html_e( 'PDF (A3)', 'satori-manifest' ); ?>
 					</a>
 				</div>
 				<p class="sm-qr-card__downloads">

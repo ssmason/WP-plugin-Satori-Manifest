@@ -56,16 +56,23 @@ class Pdf_Download {
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.2.0
-	 * @param  int $page_id  Client page ID.
+	 * @param  int    $page_id  Client page ID.
+	 * @param  string $paper    'a4' (default) or 'a3'.
 	 * @return string
 	 */
-	public static function url( int $page_id ): string {
+	public static function url( int $page_id, string $paper = 'a4' ): string {
+		$args = array(
+			'action'  => self::ACTION,
+			'page_id' => $page_id,
+		);
+
+		if ( 'a4' !== Price_List_Pdf::paper( $paper ) ) {
+			$args['paper'] = Price_List_Pdf::paper( $paper );
+		}
+
 		return wp_nonce_url(
 			add_query_arg(
-				array(
-					'action'  => self::ACTION,
-					'page_id' => $page_id,
-				),
+				$args,
 				admin_url( 'admin-post.php' )
 			),
 			self::ACTION . '_' . $page_id
@@ -87,11 +94,12 @@ class Pdf_Download {
 			wp_die( esc_html__( 'Sorry, you cannot download this price list.', 'satori-manifest' ), 403 );
 		}
 
-		$pdf = Price_List_Pdf::render( $page_id );
+		$paper = Price_List_Pdf::paper( isset( $_GET['paper'] ) ? sanitize_key( wp_unslash( $_GET['paper'] ) ) : 'a4' );
+		$pdf   = Price_List_Pdf::render( $page_id, $paper );
 
 		nocache_headers();
 		header( 'Content-Type: application/pdf' );
-		header( 'Content-Disposition: attachment; filename="' . Price_List_Pdf::filename( $page_id ) . '"' );
+		header( 'Content-Disposition: attachment; filename="' . Price_List_Pdf::filename( $page_id, $paper ) . '"' );
 		header( 'Content-Length: ' . strlen( $pdf ) );
 		header( 'X-Content-Type-Options: nosniff' );
 
