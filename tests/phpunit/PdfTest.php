@@ -101,6 +101,14 @@ class PdfTest extends Test_Case {
 		$this->assertMatchesRegularExpression( '#/Count [2-9]#', $out, 'A long list spans several pages.' );
 		$this->assertSame( 'harbour-lights-prices.pdf', Price_List_Pdf::filename( $page_id ) );
 		$this->assertSame( '', Price_List_Pdf::render( self::factory()->post->create( array( 'post_type' => 'page' ) ) ) );
+
+		// A3 is the same layout enlarged by √2: A3 page box, scaled content, own file name.
+		$this->assertStringContainsString( '/MediaBox [0 0 595.28 841.89]', $out );
+		$a3 = Price_List_Pdf::render( $page_id, 'a3' );
+		$this->assertStringContainsString( '/MediaBox [0 0 841.89 1190.55]', $a3 );
+		$this->assertMatchesRegularExpression( '#/Count [2-9]#', $a3 );
+		$this->assertSame( 'harbour-lights-prices-a3.pdf', Price_List_Pdf::filename( $page_id, 'a3' ) );
+		$this->assertSame( 'a4', Price_List_Pdf::paper( 'letter' ) );
 	}
 
 	/**
@@ -113,5 +121,7 @@ class PdfTest extends Test_Case {
 		$this->assertStringContainsString( 'action=' . Pdf_Download::ACTION, $url );
 		$this->assertStringContainsString( 'page_id=' . $page_id, $url );
 		$this->assertStringContainsString( '_wpnonce=', $url );
+		$this->assertStringNotContainsString( 'paper=', $url );
+		$this->assertStringContainsString( 'paper=a3', Pdf_Download::url( $page_id, 'a3' ) );
 	}
 }

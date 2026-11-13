@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 3.8.0
+Stable tag: 3.8.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,9 @@ No. Ownership is checked on the server for admin screens, REST requests, media, 
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.8.1 =
+* Price list PDF in A3 as well as A4: the same layout enlarged for posters and boards ("PDF (A3)" on the client Home screen, "A3" on the staff Clients screen).
 
 = 3.8.0 =
 * Sign-up goes straight to Stripe Checkout with a free trial (card up front, first charge when the trial ends); customers are logged in and asked to choose a password on return.
