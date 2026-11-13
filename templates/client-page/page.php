@@ -41,8 +41,13 @@ $satori_manifest_brand   = \SatoriManifest\Branding\Brand::for_page(
 	// Embedded on the client's own website: their site supplies the header and footer.
 	$satori_manifest_embedded = \SatoriManifest\Frontend\Embed::is_active();
 
+	// Jump links to the price list's headings: under the header, or on their own when it is hidden.
+	$satori_manifest_jump_links = $satori_manifest_embedded ? array() : \SatoriManifest\Manifest\Headings::jump_links( $satori_manifest_page_id );
+
 	if ( ! $satori_manifest_embedded && 'hidden' !== $satori_manifest_brand['header']['layout'] ) {
 		require __DIR__ . '/header.php';
+	} elseif ( ! $satori_manifest_embedded ) {
+		require __DIR__ . '/jump-links.php';
 	}
 	?>
 

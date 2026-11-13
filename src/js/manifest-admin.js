@@ -101,6 +101,9 @@
 			title: valueOf(heading, '.sm-heading__title-input'),
 			description: valueOf(heading, '.sm-heading__note-input'),
 			visible: Boolean(visible),
+			in_menu: Boolean(
+				heading.querySelector('.sm-heading__in-menu')?.checked
+			),
 			style: {
 				background: own
 					? valueOf(heading, '.sm-heading__background')

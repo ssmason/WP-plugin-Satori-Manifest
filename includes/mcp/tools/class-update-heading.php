@@ -51,7 +51,7 @@ final class Update_Heading extends Client_Tool {
 	 * @return string
 	 */
 	public function description(): string {
-		return 'Changes a menu heading: title, note, colours, size, or visible (false hides the heading and all sections under it, e.g. "turn the breakfast menu off"; true shows them again). Only the fields given change. Can be undone.';
+		return 'Changes a menu heading: title, note, colours, size, in_menu (a link to it in the jump-link bar under the page header), or visible (false hides the heading and all sections under it, e.g. "turn the breakfast menu off"; true shows them again). Only the fields given change. Can be undone.';
 	}
 
 	/**

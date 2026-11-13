@@ -6,11 +6,12 @@
  * "Starters & Snacks" or "Main Menu". It groups every section below it up
  * to the next heading, so one heading can cover several sections. It has a
  * note ("Served until 2 p.m. daily"), an on/off switch that hides it and its
- * sections, and its own look (background, text colour, size).
+ * sections, its own look (background, text colour, size) and an optional
+ * jump link in a bar under the page header.
  *
  * Stored shape (the other keys match a section so existing code that walks
  * sections and items keeps working):
- *   { id, type: "heading", title, description (the note), visible,
+ *   { id, type: "heading", title, description (the note), visible, in_menu,
  *     style: { background, text, size }, icon: 0, sort_order, items: [] }
  *
  * @package SatoriManifest
@@ -77,6 +78,7 @@ final class Headings {
 			'title'       => sanitize_text_field( (string) ( $raw['title'] ?? '' ) ),
 			'description' => sanitize_text_field( (string) ( $raw['description'] ?? '' ) ),
 			'visible'     => ! isset( $raw['visible'] ) || filter_var( $raw['visible'], FILTER_VALIDATE_BOOLEAN ),
+			'in_menu'     => isset( $raw['in_menu'] ) && filter_var( $raw['in_menu'], FILTER_VALIDATE_BOOLEAN ),
 			'style'       => array(
 				'background' => (string) sanitize_hex_color( (string) ( $style['background'] ?? '' ) ),
 				'text'       => (string) sanitize_hex_color( (string) ( $style['text'] ?? '' ) ),
@@ -111,6 +113,76 @@ final class Headings {
 		}
 
 		return $out;
+	}
+
+	/**
+	 * Jump links for a client page: headings ticked "In jump links" that are
+	 * switched on and shown by at least one price list block on the page.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.10.0
+	 * @param  int $page_id  Client page ID.
+	 * @return array<int,array{title:string,anchor:string}>
+	 */
+	public static function jump_links( int $page_id ): array {
+		$manifest_id = \SatoriManifest\Clients\Client_Repository::manifest_for_page( $page_id );
+		$excluded    = self::excluded_on_page( (string) get_post_field( 'post_content', $page_id ) );
+
+		if ( ! $manifest_id || null === $excluded ) {
+			return array();
+		}
+
+		$links = array();
+		$seen  = array();
+
+		foreach ( self::visible( Manifest_Repository::get_sections( $manifest_id ) ) as $entry ) {
+			if ( ! self::is_heading( $entry ) || empty( $entry['in_menu'] ) || in_array( (string) $entry['id'], $excluded, true ) ) {
+				continue;
+			}
+
+			$title  = (string) ( $entry['title'] ?? '' );
+			$anchor = Price_List_View::anchor( $title, $seen );
+
+			if ( '' !== $anchor ) {
+				$links[] = array(
+					'title'  => $title,
+					'anchor' => $anchor,
+				);
+			}
+		}
+
+		return $links;
+	}
+
+	/**
+	 * Ids hidden by every price list block on a page (null when there is none).
+	 *
+	 * A heading counts as shown when any one block shows it.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.10.0
+	 * @param  string $content  Page content.
+	 * @return array<int,string>|null
+	 */
+	private static function excluded_on_page( string $content ): ?array {
+		$sets = array();
+		$walk = static function ( array $blocks ) use ( &$walk, &$sets ): void {
+			foreach ( $blocks as $block ) {
+				if ( 'satori-manifest/price-list' === ( $block['blockName'] ?? '' ) ) {
+					$sets[] = array_map( 'strval', (array) ( $block['attrs']['excludedSectionIds'] ?? array() ) );
+				}
+
+				$walk( (array) ( $block['innerBlocks'] ?? array() ) );
+			}
+		};
+
+		$walk( parse_blocks( $content ) );
+
+		if ( array() === $sets ) {
+			return null;
+		}
+
+		return count( $sets ) > 1 ? array_values( array_intersect( ...$sets ) ) : $sets[0];
 	}
 
 	/**

@@ -339,6 +339,75 @@ a.sm-button,
 	scroll-margin-top: 6rem;
 }
 
+// ─── Jump links ──────────────────────────────────────────────────────────────
+// Links to the price list's headings ("Main Menu"), in their own row under the
+// header (inside it, so a sticky header keeps them), separate from the
+// navigation. One scrollable row on phones.
+
+.sm-jump {
+	max-width: var(--sm-wide);
+	margin: 1rem auto 0;
+	padding-top: 0.85rem;
+	border-top: 1px solid color-mix(in srgb, currentcolor 15%, transparent);
+
+	// Header hidden: the bar stands on its own and sticks to the top.
+	.sm-site > & {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		max-width: none;
+		margin: 0;
+		padding: 0.75rem var(--sm-gutter);
+		border-top: 0;
+		border-bottom: 1px solid var(--sm-border);
+		background: var(--sm-header-bg);
+	}
+
+	&__list {
+		display: flex;
+		gap: 0.5rem;
+		justify-content: center;
+		margin: 0;
+		padding: 0;
+		overflow-x: auto;
+		list-style: none;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		@media (max-width: $breakpoint-nav) {
+			justify-content: flex-start;
+		}
+	}
+
+	&__link {
+		display: inline-block;
+		padding: 0.35rem 0.95rem;
+		border: 1px solid color-mix(in srgb, currentcolor 30%, transparent);
+		border-radius: 999px;
+		color: inherit;
+		font-size: 0.88rem;
+		font-weight: 500;
+		text-decoration: none;
+		white-space: nowrap;
+		transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+		&:hover,
+		&:focus-visible {
+			border-color: var(--sm-accent);
+			background: var(--sm-accent);
+			color: var(--sm-accent-text);
+		}
+	}
+}
+
+// Room for the header plus the jump bar above a linked heading.
+.sm-site:has(.sm-jump) .sm-main [id] {
+	scroll-margin-top: 9rem;
+}
+
 // A background photo: the content sits on a soft panel so it stays readable.
 .sm-has-background-image .sm-main {
 	width: min(100% - 2 * var(--sm-gutter), var(--sm-wide));

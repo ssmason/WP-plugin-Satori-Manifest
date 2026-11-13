@@ -165,6 +165,7 @@ $satori_manifest_render_heading = static function ( array $heading ): void {
 	$own        = '' !== $background || '' !== $text;
 	$size       = (string) ( $style['size'] ?? 'm' );
 	$visible    = ! isset( $heading['visible'] ) || false !== $heading['visible'];
+	$in_menu    = ! empty( $heading['in_menu'] );
 	$sizes      = array(
 		's' => __( 'Small', 'satori-manifest' ),
 		'm' => __( 'Medium', 'satori-manifest' ),
@@ -187,6 +188,10 @@ $satori_manifest_render_heading = static function ( array $heading ): void {
 				<label class="sm-heading__option">
 					<input type="checkbox" class="sm-heading__visible" <?php checked( $visible ); ?> />
 					<?php esc_html_e( 'Show on page', 'satori-manifest' ); ?>
+				</label>
+				<label class="sm-heading__option" title="<?php esc_attr_e( 'Adds a link to this heading in a bar under the page header.', 'satori-manifest' ); ?>">
+					<input type="checkbox" class="sm-heading__in-menu" <?php checked( $in_menu ); ?> />
+					<?php esc_html_e( 'In jump links', 'satori-manifest' ); ?>
 				</label>
 				<label class="sm-heading__option">
 					<?php esc_html_e( 'Size', 'satori-manifest' ); ?>

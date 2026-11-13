@@ -60,6 +60,7 @@ On Stripe's own pages (Checkout and the customer portal). Card details never rea
 
 = 3.10.0 =
 * Menu headings in the price list (e.g. "Starters & Snacks", "Main Menu"): each groups the sections below it, has an optional note, its own banner colours and size, and a "Show on page" switch that hides the whole menu from the page and PDF.
+* Jump links: tick "In jump links" on a heading to add a link to it in a bar under the page header (separate from the navigation; one scrollable row on phones; only headings that are on and shown on the page).
 * Drag and drop for sections, headings and items in the price list editor (arrows still work).
 * AI assistant: add_heading and update_heading tools; set-up can start headings from a menu; price changes can target everything under a heading.
 

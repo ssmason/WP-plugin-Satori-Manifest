@@ -198,6 +198,10 @@ abstract class Client_Tool implements Tool {
 				'type'        => 'boolean',
 				'description' => 'false hides the heading and every section under it from the page and PDF (kept for later).',
 			),
+			'in_menu'     => array(
+				'type'        => 'boolean',
+				'description' => 'true adds a link to this heading in the jump-link bar under the page header.',
+			),
 			'background'  => $hex + array( 'description' => 'Banner colour as hex, e.g. #4B5F57; "" for the design\'s own.' ),
 			'text_colour' => $hex + array( 'description' => 'Heading text colour as hex; "" for the design\'s own. Keep it readable on the background.' ),
 			'size'        => array(

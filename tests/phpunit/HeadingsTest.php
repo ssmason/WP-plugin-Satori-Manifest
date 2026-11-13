@@ -144,6 +144,56 @@ class HeadingsTest extends Test_Case {
 	}
 
 	/**
+	 * Jump links: ticked headings that are on and shown by a block on the page.
+	 */
+	public function test_jump_links(): void {
+		$client  = $this->make_client( 'Jump Bar' );
+		$store   = new Page_Store( Client_Context::for_user( $client ) );
+		$page_id = Client_Repository::page_id( $client );
+		$entries = $this->entries();
+
+		$entries[1]['in_menu'] = true;
+		$saved                 = $store->save_sections( $entries );
+		$heading_id            = $saved[1]['id'];
+
+		wp_update_post(
+			array(
+				'ID'           => $page_id,
+				'post_content' => '<!-- wp:satori-manifest/price-list /-->',
+			)
+		);
+		$this->assertSame(
+			array(
+				array(
+					'title'  => 'Main Menu',
+					'anchor' => 'main-menu',
+				),
+			),
+			Headings::jump_links( $page_id )
+		);
+
+		// Hidden by the only block on the page: no link to nowhere.
+		wp_update_post(
+			array(
+				'ID'           => $page_id,
+				'post_content' => '<!-- wp:satori-manifest/price-list {"excludedSectionIds":["' . $heading_id . '"]} /-->',
+			)
+		);
+		$this->assertSame( array(), Headings::jump_links( $page_id ) );
+
+		// Switched off: no link either.
+		wp_update_post(
+			array(
+				'ID'           => $page_id,
+				'post_content' => '<!-- wp:satori-manifest/price-list /-->',
+			)
+		);
+		$saved[1]['visible'] = false;
+		$store->save_sections( $saved );
+		$this->assertSame( array(), Headings::jump_links( $page_id ) );
+	}
+
+	/**
 	 * The assistant adds, switches off and prices by heading, and never puts items in one.
 	 */
 	public function test_assistant_tools(): void {

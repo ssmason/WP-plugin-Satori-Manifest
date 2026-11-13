@@ -43,6 +43,7 @@ $satori_manifest_classes = array(
 	'sm-header--' . $satori_manifest_header['layout'],
 	$satori_manifest_header['sticky'] ? 'is-sticky' : '',
 	'' !== $satori_manifest_nav ? 'has-nav' : '',
+	! empty( $satori_manifest_jump_links ) ? 'has-jump' : '',
 );
 ?>
 <header class="<?php echo esc_attr( implode( ' ', array_filter( $satori_manifest_classes ) ) ); ?>">
@@ -90,4 +91,5 @@ $satori_manifest_classes = array(
 			</div>
 		<?php endif; ?>
 	</div>
+	<?php require __DIR__ . '/jump-links.php'; ?>
 </header>

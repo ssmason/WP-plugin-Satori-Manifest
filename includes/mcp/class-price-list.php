@@ -61,6 +61,7 @@ final class Price_List {
 				'title'   => (string) ( $section['title'] ?? '' ),
 				'note'    => (string) ( $section['description'] ?? '' ),
 				'visible' => false !== ( $section['visible'] ?? true ),
+				'in_menu' => ! empty( $section['in_menu'] ),
 				'style'   => (array) ( $section['style'] ?? array() ),
 			) : array(
 				'id'          => (string) ( $section['id'] ?? '' ),
@@ -180,6 +181,7 @@ final class Price_List {
 				'title'       => '',
 				'description' => '',
 				'visible'     => true,
+				'in_menu'     => false,
 				'style'       => array(
 					'background' => '',
 					'text'       => '',
@@ -199,6 +201,9 @@ final class Price_List {
 		}
 		if ( array_key_exists( 'visible', $input ) ) {
 			$heading['visible'] = (bool) $input['visible'];
+		}
+		if ( array_key_exists( 'in_menu', $input ) ) {
+			$heading['in_menu'] = (bool) $input['in_menu'];
 		}
 		if ( array_key_exists( 'size', $input ) ) {
 			$heading['style']['size'] = (string) $input['size'];
