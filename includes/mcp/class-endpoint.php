@@ -132,9 +132,21 @@ final class Endpoint {
 		// Run as the client, so WordPress's own rules (no scripts in content, own page only) apply too.
 		wp_set_current_user( $user_id );
 
-		$reply = Toolbox::server( $context )->handle( $body );
+		$reply    = Toolbox::server( $context )->handle( $body );
+		$response = null === $reply ? new \WP_REST_Response( null, 202 ) : new \WP_REST_Response( $reply, 200 );
 
-		return null === $reply ? new \WP_REST_Response( null, 202 ) : new \WP_REST_Response( $reply, 200 );
+		// The server keeps no session state, but some clients expect a session id after initialize.
+		$session = (string) $request->get_header( 'mcp_session_id' );
+
+		if ( '' === $session && is_array( $reply ) && isset( $reply['result']['protocolVersion'] ) ) {
+			$session = wp_generate_uuid4();
+		}
+
+		if ( '' !== $session && 1 === preg_match( '/^[\x21-\x7E]{1,128}$/', $session ) ) {
+			$response->header( 'Mcp-Session-Id', $session );
+		}
+
+		return $response;
 	}
 
 	/**
@@ -158,7 +170,21 @@ final class Endpoint {
 			return true;
 		}
 
-		echo wp_json_encode( $result->get_data(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON response body.
+		$json = (string) wp_json_encode( $result->get_data(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+
+		// Clients that accept a stream get the reply as one server-sent event.
+		if ( 200 === $result->get_status() && str_contains( (string) $request->get_header( 'accept' ), 'text/event-stream' ) ) {
+			if ( ! headers_sent() ) {
+				header( 'Content-Type: text/event-stream; charset=UTF-8' );
+				header( 'X-Accel-Buffering: no' );
+			}
+
+			echo "event: message\ndata: " . $json . "\n\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Event-stream response body.
+
+			return true;
+		}
+
+		echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON response body.
 
 		return true;
 	}
