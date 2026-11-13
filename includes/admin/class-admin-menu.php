@@ -166,14 +166,18 @@ class Admin_Menu {
 	 * @return array<int,string>
 	 */
 	public static function client_hooks(): array {
-		return array_values(
-			array_filter(
-				array_map(
-					array( self::class, 'hook' ),
-					array( self::HOME_SLUG, self::DESIGN_SLUG, self::BRANDING_SLUG, self::BILLING_SLUG, self::HELP_SLUG )
-				)
-			)
+		$hooks = array_map(
+			array( self::class, 'hook' ),
+			array( self::HOME_SLUG, self::DESIGN_SLUG, self::BRANDING_SLUG, self::BILLING_SLUG, self::HELP_SLUG )
 		);
+
+		/**
+		 * Filters the screens (hook suffixes) clients may open, for screens added by other modules.
+		 *
+		 * @since 3.9.0
+		 * @param array<int,string> $hooks  Hook suffixes.
+		 */
+		return array_values( array_filter( array_map( 'strval', (array) apply_filters( 'satori_manifest_client_screens', $hooks ) ) ) );
 	}
 
 	/**

@@ -1,0 +1,25 @@
+# AI assistant: clients connect Claude, ChatGPT or another AI app (over MCP) and
+# set up or update their own price list and page by asking in plain language.
+#
+# The assistant can only touch the client's own price list, page details and design.
+# It never reaches billing, their account, other clients or the rest of WordPress.
+#
+# enabled      Master switch. false hides the AI screens and closes the endpoint.
+# plans        Plan slugs (plans.yaml) that include the assistant. Staff can also switch
+#              it on or off per client under Manifest → AI assistant, which overrides
+#              the plan (and is how clients set up by staff, with no plan, get it).
+# rate_limit   Requests allowed per connection in a rolling window.
+# history      Changes kept per client for the activity list and undo.
+#
+# Override by copying this file to {theme}/satori-manifest/ai-assistant.yaml.
+
+enabled: true
+
+plans:
+  - managed
+
+rate_limit:
+  requests: 120
+  minutes: 5
+
+history: 30

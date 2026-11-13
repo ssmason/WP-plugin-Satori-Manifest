@@ -3,7 +3,7 @@
  * Plugin Name: Satori Manifest
  * Plugin URI:  https://github.com/ssmason/WP-Plugin-manifest
  * Description: Hosted price-list pages for QR-code clients. Each client gets one branded page, a manifest of sections and items, five starter designs and a slimmed-down wp-admin. No external PHP dependencies.
- * Version:     3.8.0
+ * Version:     3.9.0
  * Author:      Stephen Mason (Satori Digital)
  * Author URI:  https://satori-digital.com
  * License:     GPL-2.0-or-later
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants.
-define( 'SATORI_MANIFEST_VERSION', '3.8.0' );
+define( 'SATORI_MANIFEST_VERSION', '3.9.0' );
 define( 'SATORI_MANIFEST_FILE', __FILE__ );
 define( 'SATORI_MANIFEST_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SATORI_MANIFEST_URL', plugin_dir_url( __FILE__ ) );
@@ -53,12 +53,16 @@ spl_autoload_register(
 		}
 
 		$parts  = explode( '\\', substr( $class_name, strlen( $prefix ) ) );
-		$file   = 'class-' . strtolower( str_replace( '_', '-', (string) array_pop( $parts ) ) ) . '.php';
+		$name   = strtolower( str_replace( '_', '-', (string) array_pop( $parts ) ) ) . '.php';
 		$folder = strtolower( str_replace( '_', '-', implode( '/', $parts ) ) );
-		$path   = SATORI_MANIFEST_PATH . 'includes/' . ( '' !== $folder ? $folder . '/' : '' ) . $file;
+		$base   = SATORI_MANIFEST_PATH . 'includes/' . ( '' !== $folder ? $folder . '/' : '' );
 
-		if ( is_readable( $path ) ) {
-			require_once $path;
+		// Classes live in class-{name}.php, interfaces in interface-{name}.php.
+		foreach ( array( 'class-', 'interface-' ) as $kind ) {
+			if ( is_readable( $base . $kind . $name ) ) {
+				require_once $base . $kind . $name;
+				return;
+			}
 		}
 	}
 );

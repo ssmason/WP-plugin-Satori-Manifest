@@ -1,0 +1,121 @@
+// Satori Manifest - AI assistant screens (client "AI assistant", staff "Manifest → AI assistant").
+//
+// @package SatoriManifest
+// @author  Stephen Mason <steve@satori-digital.com>
+// @since   3.9.0
+
+@use "variables" as *;
+
+.sm-ai-link {
+	margin: $sm-space-md 0 $sm-space-sm;
+
+	&__input {
+		width: 100%;
+		padding: $sm-space-sm $sm-space-md;
+		border: 1px solid $sm-color-border;
+		border-radius: $sm-radius;
+		background: $sm-color-bg;
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 12px;
+	}
+
+	&__actions {
+		display: flex;
+		align-items: center;
+		gap: $sm-space-md;
+		margin-top: $sm-space-sm;
+	}
+
+	&__status {
+		color: $sm-color-success;
+		font-weight: 600;
+	}
+}
+
+.sm-ai-small {
+	color: $sm-color-text-light;
+	font-size: 13px;
+}
+
+.sm-ai-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: $sm-space-sm;
+
+	form {
+		margin: 0;
+	}
+}
+
+.sm-ai-list {
+	margin: 0 0 $sm-space-md;
+	padding-left: 1.2em;
+	list-style: disc;
+
+	li {
+		margin-bottom: $sm-space-sm;
+		line-height: 1.5;
+	}
+
+	&--no li::marker {
+		color: $sm-color-danger;
+	}
+}
+
+.sm-ai-examples {
+	display: grid;
+	gap: $sm-space-sm;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		margin: 0;
+		padding: $sm-space-sm $sm-space-md;
+		border-left: 3px solid $sm-amber;
+		border-radius: $sm-radius;
+		background: $sm-color-bg;
+		font-style: italic;
+	}
+}
+
+.sm-ai-details {
+	margin: $sm-space-sm 0;
+
+	summary {
+		cursor: pointer;
+		color: $sm-color-text-light;
+	}
+}
+
+.sm-ai-code {
+	display: block;
+	padding: $sm-space-sm $sm-space-md;
+	overflow-x: auto;
+	white-space: nowrap;
+}
+
+.sm-ai-changes__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: $sm-space-md;
+	margin-bottom: $sm-space-md;
+
+	.sm-panel__title,
+	form {
+		margin: 0;
+	}
+}
+
+.sm-ai-screen tr.is-undone td {
+	color: $sm-color-text-light;
+}
+
+.sm-ai-access-form {
+	display: inline-flex;
+	align-items: center;
+	gap: $sm-space-sm;
+	margin: 0;
+}

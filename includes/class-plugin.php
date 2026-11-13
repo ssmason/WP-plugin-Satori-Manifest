@@ -88,6 +88,7 @@ use SatoriManifest\Hardening\Site_Hardening;
 use SatoriManifest\Help\Help_Tabs;
 use SatoriManifest\Login\Login_Screen;
 use SatoriManifest\Mail\Core_Emails;
+use SatoriManifest\Mcp\Mcp;
 use SatoriManifest\Mail\WP_Mail_Relay;
 use SatoriManifest\Contact\Contact_Form;
 use SatoriManifest\Contact\Contact_Handler;
@@ -164,6 +165,9 @@ class Plugin {
 		$this->register_admin();
 		$this->register_hardening();
 		$this->register_cli();
+
+		// AI assistant (MCP): a self-contained module, see includes/mcp/class-mcp.php.
+		Mcp::register();
 
 		if ( is_multisite() ) {
 			add_action( 'wpmu_new_blog', array( Multisite::class, 'new_site_setup' ) );

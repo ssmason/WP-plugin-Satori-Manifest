@@ -21,13 +21,14 @@ needed only for the Branding screen; pages still render without it.
 3. [Security](#security)
 4. [Payments (Stripe)](#payments-stripe)
 5. [Email](#email)
-6. [How it fits together](#how-it-fits-together)
-7. [Configuration in YAML](#configuration-in-yaml)
-8. [Client isolation](#client-isolation)
-9. [Directory structure](#directory-structure)
-10. [Coding standards and tests](#coding-standards-and-tests)
-11. [Data model](#data-model)
-12. [Hooks](#hooks)
+6. [AI assistant (MCP)](#ai-assistant-mcp)
+7. [How it fits together](#how-it-fits-together)
+8. [Configuration in YAML](#configuration-in-yaml)
+9. [Client isolation](#client-isolation)
+10. [Directory structure](#directory-structure)
+11. [Coding standards and tests](#coding-standards-and-tests)
+12. [Data model](#data-model)
+13. [Hooks](#hooks)
 
 ---
 
@@ -227,6 +228,40 @@ On top of that:
 
 ---
 
+## AI assistant (MCP)
+
+Clients connect an AI app (Claude, ChatGPT, Claude Code…) over the Model Context Protocol and
+manage their page by asking: "here's a photo of our menu, set up my page", "Guinness is now 5.50",
+"cocktails up 5%, show me first", "undo that".
+
+* **Module** - everything lives in `includes/mcp/`, wired by one call (`Mcp::register()` in
+  `Plugin`). `server/` is a generic, stateless MCP server (JSON-RPC 2.0, Streamable HTTP with JSON
+  responses, protocol 2024-11-05 to 2025-11-25) that knows nothing about price lists.
+* **Endpoint** - `POST /wp-json/satori-manifest/v1/mcp/{key}` (or `/mcp` with
+  `Authorization: Bearer {key}`). One link to paste; survives hosts that strip the Authorization
+  header. Rate-limited per client, 1 MB body limit, no GET/DELETE.
+* **Keys** - `Tokens`: `smai_{user}_{40 hex}`, one per client, HMAC-hashed with the auth salt,
+  shown once. Not a WordPress password: works on this endpoint only.
+* **Scope** - the key decides the client; tools get a `Client_Context` (that client's page and
+  price list IDs) and write only through `Page_Store` (price list via `Sanitizer`, details via
+  `Brand::set`, design via `Design_Applier`). Requests also run as the client, so WordPress's
+  own rules apply. Billing, account, media and other content are unreachable.
+* **Tools** - get_page, set_up_price_list, update_items, add_items, remove_items,
+  adjust_prices (with preview), add/update/move/remove_section, update_page_details,
+  list_designs, choose_design, list_changes, undo_last_change, get_visits. Plus prompts
+  (set up from my menu, change my prices, add specials, check my price list) and server
+  instructions telling the model to keep the business's wording and confirm big changes.
+* **Undo** - `Change_Log` stores what each change replaced (private `sm_ai_change` posts,
+  last 30 per client). Undo steps back one change at a time; also on the client's screen.
+* **Who gets it** - `config/ai-assistant.yaml`: `plans` that include it (paid up), plus a
+  per-client Follow plan / On / Off under **Manifest → AI assistant** (administrators).
+  Switching off disconnects. Filters: `satori_manifest_ai_enabled`, `satori_manifest_ai_allowed`,
+  `satori_manifest_ai_tools`.
+* **Client screen** - **AI assistant**: create/replace/disconnect the private link, how to add
+  it to an AI app, example requests, what it can and can't do, recent changes with undo.
+
+---
+
 ## How it fits together
 
 ```
@@ -266,6 +301,7 @@ Parsed by the plugin's own dependency-free reader (`Core\Yaml`).
 |---|---|
 | `config/acf/*.yaml` | Branding screen field groups (brand, header, footer) |
 | `config/plans.yaml` | Plans, currency, monthly/yearly prices, optional Stripe Price IDs |
+| `config/ai-assistant.yaml` | AI assistant: on/off, plans that include it, rate limit, history kept |
 | `config/emails/*.yaml` | Email subject, heading, body, details, button, footer |
 | `config/help.yaml` | Getting-started steps, contextual help tabs, FAQ, links |
 | `config/fonts.yaml` | Font library for the font selects |
@@ -323,6 +359,11 @@ includes/
   contact/       Contact\      Contact_Form (block + dashboard panel), Contact_Handler
   fields/        Fields\       Field_Loader (YAML → ACF)
   frontend/      Frontend\     Client_Page, Embed, Editor, Design_Preview, Example_Bar
+  mcp/           Mcp\          AI assistant module (see "AI assistant (MCP)"): Mcp, Access, Tokens,
+                               Endpoint, Toolbox, Page_Store, Price_List, Prices, Change_Log
+    server/      Mcp\Server\  generic MCP/JSON-RPC: Server, Tool, Tool_Result, Prompt, Schema_Validator
+    tools/       Mcp\Tools\   one class per tool (Client_Tool base)
+    admin/       Mcp\Admin\   Connect_Screen (clients), Access_Screen (staff)
   login/         Login\        Login_Screen
   pdf/           Pdf\          Pdf_Document, Font_Metrics, Print_Colour, Pdf_Image,
                                Price_List_Pdf, Pdf_Download

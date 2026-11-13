@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 3.8.0
+Stable tag: 3.9.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,11 @@ No. Ownership is checked on the server for admin screens, REST requests, media, 
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.9.0 =
+* AI assistant (MCP): clients connect Claude, ChatGPT or another AI app with a private link and set up or update their own price list, page details and design in plain language - from a photo of their menu, one line at a time or as a previewed price rise. Every change is logged and can be undone.
+* The assistant can only reach the client's own page (no billing, account or other WordPress data); its key works on its endpoint only and is stored hashed.
+* Included per plan (config/ai-assistant.yaml) or switched on/off per client under Manifest → AI assistant.
 
 = 3.8.0 =
 * Sign-up goes straight to Stripe Checkout with a free trial (card up front, first charge when the trial ends); customers are logged in and asked to choose a password on return.
