@@ -5,8 +5,9 @@ Stripe subscriptions, branded emails and a client portal built in.
 
 Each client gets **one login, one page and one price list**. The page is rendered by the
 plugin itself (not the theme), so it works on any WordPress install. Clients pick one of
-five designs, brand it (logo, colours, fonts, header, footer), manage navigation under
-Appearance → Menus, and edit their prices in a purpose-built editor. Everything else in
+nine designs, brand it (logo, colours, fonts, header, footer), manage navigation under
+Appearance → Menus, and edit their prices in a purpose-built editor (sections, items and
+menu headings, drag and drop) - or ask an AI app to do it for them. Everything else in
 wp-admin is hidden from them, and server-side rules keep every client isolated.
 
 No runtime PHP dependencies - no Composer packages, no Stripe SDK. ACF (free or Pro) is
@@ -21,14 +22,15 @@ needed only for the Branding screen; pages still render without it.
 3. [Security](#security)
 4. [Payments (Stripe)](#payments-stripe)
 5. [Email](#email)
-6. [AI assistant (MCP)](#ai-assistant-mcp)
-7. [How it fits together](#how-it-fits-together)
-8. [Configuration in YAML](#configuration-in-yaml)
-9. [Client isolation](#client-isolation)
-10. [Directory structure](#directory-structure)
-11. [Coding standards and tests](#coding-standards-and-tests)
-12. [Data model](#data-model)
-13. [Hooks](#hooks)
+6. [Price list editor and headings](#price-list-editor-and-headings)
+7. [AI assistant (MCP)](#ai-assistant-mcp)
+8. [How it fits together](#how-it-fits-together)
+9. [Configuration in YAML](#configuration-in-yaml)
+10. [Client isolation](#client-isolation)
+11. [Directory structure](#directory-structure)
+12. [Coding standards and tests](#coding-standards-and-tests)
+13. [Data model](#data-model)
+14. [Hooks](#hooks)
 
 ---
 
@@ -101,18 +103,23 @@ Visitor ──Register form──▶ Application (pending)
   makes a second client.
 * **Portal** - clients land on Home, with a "New here?" link to the five-step **Help**
   guide. Every client screen also has a short contextual Help tab (WordPress's Help
-  button, top right). Help text lives in `config/help.yaml`.
+  button, top right). Help text lives in `config/help.yaml`. While logged in, the admin bar
+  (also on their own page, and on phones) has **Dashboard** and **Price list** links
+  (`Admin\Portal\Client_Chrome`).
 * **Embed on their own website** - the client Home screen shows a copy-and-paste
   snippet (`Clients\Embed_Code`): an iframe of their page with `?sm_embed=1`, which drops
   the page's own header and footer, is kept out of search results, and reports its height
   so the frame grows to fit (`Frontend\Embed`, `src/js/embed.js`). The resize script only
   trusts messages from this site. Without scripts the frame still works at a fixed height.
-* **PDF** - "Download PDF" on the client Home screen (and "PDF" on staff Clients) builds a
-  print-ready A4 price list on the server (`Pdf\Price_List_Pdf`) with the plugin's own
-  dependency-free PDF writer (`Pdf\Pdf_Document`, standard Helvetica fonts): logo, sections,
-  right-aligned prices with dotted leaders, contact details, page numbers and the live page
-  address. Brand colours too light for paper are swapped for readable ones; white logos are
-  placed on a dark tile. Nonce-protected; clients can only download their own.
+* **PDF** - on the client Home screen clients choose the **whole price list or one heading**
+  (e.g. just "Main Menu"), **A4 or A3**, and download; staff get "PDF" / "A3" on Clients. Built
+  on the server (`Pdf\Price_List_Pdf`) with the plugin's own dependency-free PDF writer
+  (`Pdf\Pdf_Document`, standard Helvetica fonts): logo, headings, sections, right-aligned
+  prices with dotted leaders, contact details, page numbers and the live page address. A3 is
+  the A4 layout enlarged onto an exact A3 page (`set_output_size()`), so it keeps its
+  proportions. Hidden headings (and their sections) are left out; the page's navigation and
+  jump links never appear. Brand colours too light for paper are swapped for readable ones;
+  white logos are placed on a dark tile. Nonce-protected; clients can only download their own.
 * **QR code** - every client page has one, built by the plugin's own encoder
   (`Qr\Qr_Encoder`, ISO 18004, no library; verified with a real scanner). It opens the page
   with `?src=qr` and uses error correction Q (25%) so worn prints still scan. Clients see it
@@ -228,6 +235,33 @@ On top of that:
 
 ---
 
+## Price list editor and headings
+
+The **Price list** screen (`Manifest\Meta_Box`, `templates/admin/meta-box-sections.php`,
+`src/js/manifest-admin.js`) edits one ordered list of **sections** (with items) and **headings**.
+
+* **Headings** (`Manifest\Headings`) - e.g. "Starters & Snacks", "Main Menu". A heading groups
+  every section below it, up to the next heading, so one heading can cover several sections.
+  Each has an optional note ("Served until 2 p.m. daily"), a size (S/M/L), optional own banner
+  and text colours, and two switches:
+  * **Show on page** - off hides the heading *and* its sections from the page and the PDF
+    (kept for later, e.g. breakfast after 2 p.m.).
+  * **In jump links** - adds a link to the heading in a bar under the page header
+    (`templates/client-page/jump-links.php`), separate from the navigation. Only headings that
+    are switched on and shown by a price list block on the page get a link
+    (`Headings::jump_links()`); links follow renames automatically.
+* **Adding** - "Add heading" at the top (adds at the top) and bottom (adds at the end), "Add
+  section" likewise.
+* **Ordering** - drag by the handle (≡) for sections, headings and items (items can move
+  between sections); the ↑/↓ arrows stay for keyboard and touch screens (phone browsers do not
+  support drag and drop).
+* **On the page** - the price list block renders a heading as a full-width banner (any layout,
+  every design) with an anchor from its title (`#main-menu`). In the block's section picker
+  headings appear as "Heading: …", so one page can still mix layouts.
+* Price lists without headings work exactly as before.
+
+---
+
 ## AI assistant (MCP)
 
 Clients connect an AI app (Claude, ChatGPT, Claude Code…) over the Model Context Protocol and
@@ -239,16 +273,23 @@ manage their page by asking: "here's a photo of our menu, set up my page", "Guin
   responses, protocol 2024-11-05 to 2025-11-25) that knows nothing about price lists.
 * **Endpoint** - `POST /wp-json/satori-manifest/v1/mcp/{key}` (or `/mcp` with
   `Authorization: Bearer {key}`). One link to paste; survives hosts that strip the Authorization
-  header. Rate-limited per client, 1 MB body limit, no GET/DELETE.
+  header. Replies as JSON, or as one server-sent event when the client accepts
+  `text/event-stream`; a (stateless) `Mcp-Session-Id` is sent after `initialize`. Rate-limited
+  per client (120 requests / 5 minutes), 20 invalid links per address per 15 minutes, 1 MB body
+  limit, no GET/DELETE.
 * **Keys** - `Tokens`: `smai_{user}_{40 hex}`, one per client, HMAC-hashed with the auth salt,
-  shown once. Not a WordPress password: works on this endpoint only.
+  compared in constant time, shown once. Not a WordPress password: works on this endpoint only.
+  A key in the address is written to web server access logs; apps that can send headers (e.g.
+  `claude mcp add --header`) should use `Authorization: Bearer` instead.
 * **Scope** - the key decides the client; tools get a `Client_Context` (that client's page and
   price list IDs) and write only through `Page_Store` (price list via `Sanitizer`, details via
   `Brand::set`, design via `Design_Applier`). Requests also run as the client, so WordPress's
   own rules apply. Billing, account, media and other content are unreachable.
 * **Tools** - get_page, set_up_price_list, update_items, add_items, remove_items,
-  adjust_prices (with preview), add/update/move/remove_section, update_page_details,
-  list_designs, choose_design, list_changes, undo_last_change, get_visits. Plus prompts
+  adjust_prices (with preview; a heading id means every section under it),
+  add/update/move/remove_section, add_heading, update_heading (title, note, colours, size, show
+  on page, in jump links), update_page_details, list_designs, choose_design, list_changes,
+  undo_last_change, get_visits. set_up_price_list can start headings from a menu. Plus prompts
   (set up from my menu, change my prices, add specials, check my price list) and server
   instructions telling the model to keep the business's wording and confirm big changes.
 * **Undo** - `Change_Log` stores what each change replaced (private `sm_ai_change` posts,
@@ -259,6 +300,11 @@ manage their page by asking: "here's a photo of our menu, set up my page", "Guin
   `satori_manifest_ai_tools`.
 * **Client screen** - **AI assistant**: create/replace/disconnect the private link, how to add
   it to an AI app, example requests, what it can and can't do, recent changes with undo.
+* **Connecting** - the AI app's servers call the endpoint, so it must be public HTTPS (live
+  site, or a tunnel for local testing). Verified with ChatGPT and the official MCP Python
+  client. Claude's web/desktop custom connectors currently stop after `initialize` for
+  servers like this one (Anthropic issue `anthropics/claude-ai-mcp#1241`, open); Claude Code
+  works.
 
 ---
 
@@ -279,13 +325,15 @@ Client user (role: satori_manifest_client)
 
 **Designs** - one folder each: `designs/{slug}/design.yaml` (metadata, palette, fonts),
 `content.html` (starter blocks), `style.scss` (→ `build/designs/{slug}.css`). Shipped:
-Atelier, Studio, Noir, Bloom, Mono. Switching design keeps or replaces the content
+Atelier, Studio, Noir, Bloom, Mono, Harbour, Morning, Serene, Edge. Switching design keeps or replaces the content
 (`Design_Applier`). Styling layers: `client-page.css` → design CSS → inline brand
 variables (`--sm-*`). The same CSS is rescoped into the block editor, so editing is WYSIWYG.
 
 **Price-list block** - `satori-manifest/price-list`; shows the page's own manifest by
 default; layouts single-column, two-column, card-style, minimal, leaders; "Sections to
-hide" (`excludedSectionIds`, permanent `s_xxxxxxxx` section IDs) lets one page mix layouts.
+hide" (`excludedSectionIds`, permanent `s_xxxxxxxx` section and heading IDs) lets one page mix
+layouts. Headings render as full-width banners; switched-off headings and their sections are
+skipped (`Headings::visible()`).
 
 **Portal brand** - `Branding\Portal_Brand`: logo and colours of the service itself
 (login, client dashboard, emails) from Manifest → Settings, falling back to the site logo
@@ -342,7 +390,8 @@ includes/
   core/          Core\         Yaml, Config, Env, Settings, Security, Sanitizer, Migrations, Multisite,
                                Media_Importer, Page_Cache
   manifest/      Manifest\     Post_Types, Manifest_Repository, Meta_Box, Block, Patterns,
-                               Price_List_View (block view data)
+                               Price_List_View (block view data), Headings (menu headings,
+                               visibility, jump links)
   clients/       Clients\      Client_Role, Client_Repository, Provisioner, Access_Control,
                                Menu_Access, Page_Template_Lock, First_Password,
                                Client_Factory, Client_Summary, Set_Password_Link, Embed_Code,
@@ -378,7 +427,7 @@ includes/
   cli/           Cli\          Demo, Client, Designs, Email and Billing commands
 templates/
   admin/                     one view per admin screen
-  client-page/               page.php, header.php, footer.php
+  client-page/               page.php, header.php, footer.php, jump-links.php
   registration/form.php
   contact/form.php
   email/layout.php
@@ -428,13 +477,24 @@ and what it covers.
 ]
 ```
 
+A heading is an entry in the same list (no items):
+
+```json
+{ "id": "s_65244486", "type": "heading", "title": "Main Menu",
+  "description": "Served 9:30am - 10pm", "visible": true, "in_menu": true,
+  "style": { "background": "#4b5f57", "text": "#ffffff", "size": "l" }, "items": [] }
+```
+
 An item with an empty price renders as a sub-heading. All input passes through
-`Sanitizer::sanitize_sections()`.
+`Sanitizer::sanitize_sections()` (headings through `Headings::sanitize()`: hex colours only,
+size s/m/l).
 
 | Where | What |
 |---|---|
 | `sm_application` (private post) | applications: fields, status, approved username/design, checkout token, email log |
 | `sm_payment` (private post) | payment log (invoice, amount, status, link) |
+| `sm_ai_change` (private post) | AI change log: what each change replaced (undo), last 30 per client |
+| user meta `_sm_ai_token`, `_sm_ai_access` | AI key (hash, created, last used); staff AI setting (plan/on/off) |
 | user meta `_sm_subscription`, `_sm_stripe_customer` | subscription snapshot |
 | option `satori_manifest_settings` | Manifest → Settings |
 
@@ -455,6 +515,10 @@ An item with an empty price renders as a sub-heading. All input passes through
 | `satori_manifest_email_sent` | action | after every email attempt |
 | `satori_manifest_hardening` | filter | switch a hardening measure off (`xmlrpc`, `rest_users`, `login_errors`, `version`) |
 | `satori_manifest_client_ip` | filter | visitor IP (after the Settings proxy choice) |
+| `satori_manifest_ai_enabled` | filter | switch the AI assistant on/off site-wide |
+| `satori_manifest_ai_allowed` | filter | whether one client may use the AI assistant |
+| `satori_manifest_ai_tools` | filter | add, remove or replace AI tools |
+| `satori_manifest_client_screens` | filter | admin screens clients may open (used by the AI module) |
 
 ---
 
