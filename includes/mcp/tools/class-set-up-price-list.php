@@ -55,7 +55,7 @@ final class Set_Up_Price_List extends Client_Tool {
 	 * @return string
 	 */
 	public function description(): string {
-		return 'Replaces the entire price list with the sections given, in order. Use it to set up a page from a menu or price list the user shares (photo, PDF or text). Keep the business\'s own wording, spelling and order; do not invent items or prices. To keep an existing section\'s photo, pass its id. If the page already has items, set replace_existing to true - only after the user has agreed to replace them. For small edits use the other tools instead.';
+		return 'Replaces the entire price list (sections and headings) with the sections given, in order. Use it to set up a page from a menu or price list the user shares (photo, PDF or text). Keep the business\'s own wording, spelling and order; do not invent items or prices. To keep an existing section\'s photo, pass its id. If the page already has items, set replace_existing to true - only after the user has agreed to replace them. For small edits use the other tools instead.';
 	}
 
 	/**
@@ -83,6 +83,11 @@ final class Set_Up_Price_List extends Client_Tool {
 								'maxLength' => 500,
 							),
 							'items'       => self::items_schema(),
+							'heading'     => array(
+								'type'        => 'string',
+								'maxLength'   => 120,
+								'description' => 'Optional menu heading to start just above this section, e.g. "Main Menu"; it covers this and the following sections until the next heading.',
+							),
 						),
 						array( 'title', 'items' )
 					),
@@ -130,6 +135,10 @@ final class Set_Up_Price_List extends Client_Tool {
 		$sections = array();
 
 		foreach ( (array) $args['sections'] as $input ) {
+			if ( '' !== trim( (string) ( $input['heading'] ?? '' ) ) ) {
+				$sections[] = Price_List::heading( array( 'title' => (string) $input['heading'] ) );
+			}
+
 			$id         = (string) ( $input['id'] ?? '' );
 			$base       = isset( $by_id[ $id ] ) ? array(
 				'id'   => $id,
@@ -139,10 +148,11 @@ final class Set_Up_Price_List extends Client_Tool {
 		}
 
 		$items = array_sum( array_map( static fn( array $section ): int => count( $section['items'] ), $sections ) );
-		$saved = $this->save_sections( sprintf( 'Set up the price list: %d sections, %d items', count( $sections ), $items ), $sections );
+		$count = count( (array) $args['sections'] );
+		$saved = $this->save_sections( sprintf( 'Set up the price list: %d sections, %d items', $count, $items ), $sections );
 
 		return Tool_Result::ok(
-			sprintf( 'Saved %d sections and %d items. The page is live now: %s', count( $saved ), $items, $this->store->url() ),
+			sprintf( 'Saved %d sections and %d items. The page is live now: %s', $count, $items, $this->store->url() ),
 			array( 'price_list' => Price_List::to_public( $saved ) )
 		);
 	}

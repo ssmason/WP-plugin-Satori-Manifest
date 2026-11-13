@@ -14,6 +14,7 @@ declare( strict_types=1 );
 
 namespace SatoriManifest\Mcp;
 
+use SatoriManifest\Manifest\Headings;
 use SatoriManifest\Mcp\Server\Tool_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -54,8 +55,16 @@ final class Price_List {
 	 */
 	public static function to_public( array $sections ): array {
 		return array_map(
-			static fn( array $section ): array => array(
+			static fn( array $section ): array => Headings::is_heading( $section ) ? array(
+				'id'      => (string) ( $section['id'] ?? '' ),
+				'type'    => 'heading',
+				'title'   => (string) ( $section['title'] ?? '' ),
+				'note'    => (string) ( $section['description'] ?? '' ),
+				'visible' => false !== ( $section['visible'] ?? true ),
+				'style'   => (array) ( $section['style'] ?? array() ),
+			) : array(
 				'id'          => (string) ( $section['id'] ?? '' ),
+				'type'        => 'section',
 				'title'       => (string) ( $section['title'] ?? '' ),
 				'description' => (string) ( $section['description'] ?? '' ),
 				'items'       => array_map(
@@ -154,20 +163,124 @@ final class Price_List {
 	}
 
 	/**
-	 * Index of a section by id.
+	 * Builds a stored heading from model input.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.10.0
+	 * @param  array<string,mixed> $input  { title?, note?, visible?, background?, text_colour?, size? }.
+	 * @param  array<string,mixed> $base   Existing heading to update, or empty for a new one.
+	 * @return array<string,mixed>
+	 * @throws Tool_Error When the title is empty or a colour is not a hex colour.
+	 */
+	public static function heading( array $input, array $base = array() ): array {
+		$heading = array_merge(
+			array(
+				'id'          => '',
+				'type'        => Headings::TYPE,
+				'title'       => '',
+				'description' => '',
+				'visible'     => true,
+				'style'       => array(
+					'background' => '',
+					'text'       => '',
+					'size'       => 'm',
+				),
+				'icon'        => 0,
+				'items'       => array(),
+			),
+			$base
+		);
+
+		if ( array_key_exists( 'title', $input ) ) {
+			$heading['title'] = trim( (string) $input['title'] );
+		}
+		if ( array_key_exists( 'note', $input ) ) {
+			$heading['description'] = trim( (string) $input['note'] );
+		}
+		if ( array_key_exists( 'visible', $input ) ) {
+			$heading['visible'] = (bool) $input['visible'];
+		}
+		if ( array_key_exists( 'size', $input ) ) {
+			$heading['style']['size'] = (string) $input['size'];
+		}
+
+		foreach ( array(
+			'background'  => 'background',
+			'text_colour' => 'text',
+		) as $field => $key ) {
+			if ( ! array_key_exists( $field, $input ) ) {
+				continue;
+			}
+
+			$value = trim( (string) $input[ $field ] );
+
+			if ( '' !== $value && null === sanitize_hex_color( $value ) ) {
+				throw new Tool_Error( sprintf( '%s must be a hex colour like #4B5F57, or "" for the design\'s own.', $field ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- tool message (JSON), not HTML.
+			}
+
+			$heading['style'][ $key ] = strtolower( $value );
+		}
+
+		if ( '' === $heading['title'] ) {
+			throw new Tool_Error( 'A heading needs a title.' );
+		}
+
+		return $heading;
+	}
+
+	/**
+	 * Indexes of the sections under a heading (up to the next heading).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.10.0
+	 * @param  array<int,array<string,mixed>> $sections  Sections and headings.
+	 * @param  int                            $index     The heading's index.
+	 * @return array<int,int>
+	 */
+	public static function under_heading( array $sections, int $index ): array {
+		$sections = array_values( $sections );
+		$out      = array();
+		$count    = count( $sections );
+
+		for ( $i = $index + 1; $i < $count; $i++ ) {
+			if ( Headings::is_heading( $sections[ $i ] ) ) {
+				break;
+			}
+
+			$out[] = $i;
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Index of a section (or heading) by id.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.9.0
-	 * @param  array<int,array<string,mixed>> $sections  Sections.
-	 * @param  string                         $id        Section id.
+	 * @param  array<int,array<string,mixed>> $sections        Sections and headings.
+	 * @param  string                         $id              Section id.
+	 * @param  string                         $want            'section', 'heading' or 'any'.
 	 * @return int
-	 * @throws Tool_Error When there is no such section.
+	 * @throws Tool_Error When there is no such entry, or it is the wrong kind.
 	 */
-	public static function section_index( array $sections, string $id ): int {
+	public static function section_index( array $sections, string $id, string $want = 'section' ): int {
 		foreach ( array_values( $sections ) as $index => $section ) {
-			if ( (string) ( $section['id'] ?? '' ) === $id ) {
-				return $index;
+			if ( (string) ( $section['id'] ?? '' ) !== $id ) {
+				continue;
 			}
+
+			$is_heading = Headings::is_heading( $section );
+
+			if ( 'section' === $want && $is_heading ) {
+				throw new Tool_Error( sprintf( '"%s" is a heading, not a section. Items go in sections; use update_heading to change a heading.', (string) $section['title'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- tool message (JSON), not HTML.
+			}
+
+			if ( 'heading' === $want && ! $is_heading ) {
+				throw new Tool_Error( sprintf( '"%s" is a section, not a heading.', (string) $section['title'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- tool message (JSON), not HTML.
+			}
+
+			return $index;
 		}
 
 		throw new Tool_Error(
@@ -283,7 +396,7 @@ final class Price_List {
 
 		return implode(
 			', ',
-			array_map( static fn( array $section ): string => (string) ( $section['title'] ?? '' ) . ' (' . (string) ( $section['id'] ?? '' ) . ')', $sections )
+			array_map( static fn( array $section ): string => ( Headings::is_heading( $section ) ? 'heading ' : '' ) . (string) ( $section['title'] ?? '' ) . ' (' . (string) ( $section['id'] ?? '' ) . ')', $sections )
 		);
 	}
 

@@ -170,6 +170,44 @@ abstract class Client_Tool implements Tool {
 	}
 
 	/**
+	 * Properties of a heading ("Main Menu"), shared by add_heading and update_heading.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.10.0
+	 * @return array<string,mixed>
+	 */
+	protected static function heading_properties(): array {
+		$hex = array(
+			'type'      => 'string',
+			'maxLength' => 7,
+			'pattern'   => '^(#[0-9a-fA-F]{6})?$',
+		);
+
+		return array(
+			'title'       => array(
+				'type'      => 'string',
+				'minLength' => 1,
+				'maxLength' => 120,
+			),
+			'note'        => array(
+				'type'        => 'string',
+				'maxLength'   => 200,
+				'description' => 'Small line under the heading, e.g. "Served until 2 p.m. daily".',
+			),
+			'visible'     => array(
+				'type'        => 'boolean',
+				'description' => 'false hides the heading and every section under it from the page and PDF (kept for later).',
+			),
+			'background'  => $hex + array( 'description' => 'Banner colour as hex, e.g. #4B5F57; "" for the design\'s own.' ),
+			'text_colour' => $hex + array( 'description' => 'Heading text colour as hex; "" for the design\'s own. Keep it readable on the background.' ),
+			'size'        => array(
+				'type' => 'string',
+				'enum' => \SatoriManifest\Manifest\Headings::SIZES,
+			),
+		);
+	}
+
+	/**
 	 * Schema for a 1-based position.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>

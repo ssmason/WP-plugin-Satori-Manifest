@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 3.9.0
+Stable tag: 3.10.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,11 @@ No. Ownership is checked on the server for admin screens, REST requests, media, 
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.10.0 =
+* Menu headings in the price list (e.g. "Starters & Snacks", "Main Menu"): each groups the sections below it, has an optional note, its own banner colours and size, and a "Show on page" switch that hides the whole menu from the page and PDF.
+* Drag and drop for sections, headings and items in the price list editor (arrows still work).
+* AI assistant: add_heading and update_heading tools; set-up can start headings from a menu; price changes can target everything under a heading.
 
 = 3.9.0 =
 * AI assistant (MCP): clients connect Claude, ChatGPT or another AI app with a private link and set up or update their own price list, page details and design in plain language - from a photo of their menu, one line at a time or as a previewed price rise. Every change is logged and can be undone.

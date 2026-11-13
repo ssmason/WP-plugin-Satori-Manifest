@@ -11,6 +11,9 @@
  *   serialise immediately.
  * - Section removal uses a two-step inline confirmation instead of a
  *   blocking window.confirm().
+ * - Headings ("Main Menu") sit in the same list as sections and group the
+ *   sections below them. Sections, headings and items can be dragged by
+ *   their handle; the arrow buttons stay for keyboard users.
  *
  * @package
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -36,6 +39,9 @@
 	);
 	const itemTemplate = document.getElementById(
 		'satori-manifest-item-template'
+	);
+	const headingTemplate = document.getElementById(
+		'satori-manifest-heading-template'
 	);
 
 	/**
@@ -65,6 +71,49 @@
 	const sections = () =>
 		Array.from(list.querySelectorAll(':scope > .sm-section'));
 
+	/**
+	 * Returns all sections and headings in order.
+	 *
+	 * @return {Element[]} Entries.
+	 */
+	const entries = () =>
+		Array.from(
+			list.querySelectorAll(':scope > .sm-section, :scope > .sm-heading')
+		);
+
+	/**
+	 * Reads a heading row.
+	 *
+	 * @param {Element} heading Heading row.
+	 * @param {number}  index   Position in the list.
+	 * @return {Object} Heading data.
+	 */
+	function headingData(heading, index) {
+		const own = heading.querySelector('.sm-heading__own')?.checked;
+		const visible = heading.querySelector('.sm-heading__visible')?.checked;
+
+		heading.classList.toggle('has-own-colours', Boolean(own));
+		heading.classList.toggle('is-off', !visible);
+
+		return {
+			id: heading.dataset.smId || '',
+			type: 'heading',
+			title: valueOf(heading, '.sm-heading__title-input'),
+			description: valueOf(heading, '.sm-heading__note-input'),
+			visible: Boolean(visible),
+			style: {
+				background: own
+					? valueOf(heading, '.sm-heading__background')
+					: '',
+				text: own ? valueOf(heading, '.sm-heading__text') : '',
+				size: valueOf(heading, '.sm-heading__size') || 'm',
+			},
+			icon: 0,
+			sort_order: index,
+			items: [],
+		};
+	}
+
 	// ── Serialise ───────────────────────────────────────────────────────────
 
 	/**
@@ -76,7 +125,15 @@
 	function serialise() {
 		let totalItems = 0;
 
-		const data = sections().map((section, sectionIndex) => {
+		let sectionCount = 0;
+
+		const data = entries().map((section, sectionIndex) => {
+			if (section.matches('.sm-heading')) {
+				return headingData(section, sectionIndex);
+			}
+
+			sectionCount++;
+
 			const items = itemsOf(section).map((row, itemIndex) => {
 				const price = valueOf(row, '.sm-item__price');
 				const label = valueOf(row, '.sm-item__label');
@@ -123,16 +180,16 @@
 		field.value = JSON.stringify(data);
 
 		if (stats) {
-			stats.textContent = data.length
+			stats.textContent = sectionCount
 				? sprintf(
 						/* translators: 1: number of sections, 2: number of items. */
 						_n(
 							'%1$d section · %2$d items',
 							'%1$d sections · %2$d items',
-							data.length,
+							sectionCount,
 							'satori-manifest'
 						),
-						data.length,
+						sectionCount,
 						totalItems
 					)
 				: '';
@@ -182,6 +239,26 @@
 		addItem(section);
 		section.querySelector('.sm-section__title-input')?.focus();
 		section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		serialise();
+	}
+
+	/**
+	 * Adds a heading at the top or bottom of the list and focuses it.
+	 *
+	 * @param {string} where 'top' or 'bottom'.
+	 * @return {void}
+	 */
+	function addHeading(where) {
+		const row = headingTemplate.content.firstElementChild.cloneNode(true);
+
+		if ('top' === where) {
+			list.prepend(row);
+		} else {
+			list.append(row);
+		}
+
+		row.querySelector('.sm-heading__title-input')?.focus();
+		row.scrollIntoView({ behavior: 'smooth', block: 'center' });
 		serialise();
 	}
 
@@ -307,6 +384,11 @@
 
 	const actions = {
 		'section-add': () => addSection(),
+		'heading-add': (button) => addHeading(button.dataset.smWhere),
+		'heading-remove': (button, entry) =>
+			confirmRemoveSection(button, entry),
+		'entry-up': (button, entry) => move(entry, -1),
+		'entry-down': (button, entry) => move(entry, 1),
 		'section-toggle': (button, section) =>
 			setOpen(section, section.classList.contains('is-collapsed')),
 		'section-up': (button, section) => move(section, -1),
@@ -339,13 +421,110 @@
 			event.preventDefault();
 			handler(
 				button,
-				button.closest('.sm-section'),
+				button.closest('.sm-section, .sm-heading'),
 				button.closest('.sm-item')
 			);
 		}
 	});
 
 	editor.addEventListener('input', serialiseSoon);
+	editor.addEventListener('change', serialise);
+
+	// ── Drag and drop ───────────────────────────────────────────────────────
+	// A row becomes draggable only while its handle is pressed, so text in
+	// the inputs can still be selected. Items move between any sections;
+	// sections and headings move within the list.
+
+	let dragged = null;
+
+	/**
+	 * The row a drag handle belongs to.
+	 *
+	 * @param {Element} grip Handle.
+	 * @return {Element|null} Row.
+	 */
+	const rowOf = (grip) =>
+		grip.closest('.sm-item') || grip.closest('.sm-section, .sm-heading');
+
+	editor.addEventListener('pointerdown', (event) => {
+		const grip = event.target.closest('[data-sm-grip]');
+		const row = grip ? rowOf(grip) : null;
+
+		if (row) {
+			row.draggable = true;
+		}
+	});
+
+	editor.addEventListener('pointerup', () => {
+		if (!dragged) {
+			editor
+				.querySelectorAll('[draggable="true"]')
+				.forEach((row) => (row.draggable = false));
+		}
+	});
+
+	editor.addEventListener('dragstart', (event) => {
+		if (!event.target.matches?.('[draggable="true"]')) {
+			return;
+		}
+
+		dragged = event.target;
+		dragged.classList.add('is-dragging');
+		event.dataTransfer.effectAllowed = 'move';
+		event.dataTransfer.setData('text/plain', '');
+	});
+
+	editor.addEventListener('dragover', (event) => {
+		if (!dragged) {
+			return;
+		}
+
+		let container = list;
+
+		if (dragged.matches('.sm-item')) {
+			const section = event.target.closest('.sm-section');
+			container = section?.querySelector('.sm-items');
+
+			if (!container) {
+				return;
+			}
+
+			setOpen(section, true);
+		}
+
+		event.preventDefault();
+
+		const rows = Array.from(container.children).filter(
+			(row) => row !== dragged && !row.matches('template')
+		);
+		const after = rows.find((row) => {
+			const box = row.getBoundingClientRect();
+			return event.clientY < box.top + box.height / 2;
+		});
+
+		if (after) {
+			container.insertBefore(dragged, after);
+		} else {
+			container.appendChild(dragged);
+		}
+	});
+
+	editor.addEventListener('drop', (event) => {
+		if (dragged) {
+			event.preventDefault();
+		}
+	});
+
+	editor.addEventListener('dragend', () => {
+		if (!dragged) {
+			return;
+		}
+
+		dragged.classList.remove('is-dragging');
+		dragged.draggable = false;
+		dragged = null;
+		serialise();
+	});
 
 	// Enter in an item's price field adds the next item (fast data entry);
 	// Enter anywhere else must not submit the whole post form.

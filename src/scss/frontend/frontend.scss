@@ -74,6 +74,53 @@ $b: ".satori-manifest-price-list";
 		}
 	}
 
+	// ─── Menu heading ("Main Menu") ──────────────────────────────────────────
+	// Groups the sections below it. Full width in every layout; its own
+	// colours (set in the price list editor) come in as CSS variables.
+
+	&__heading {
+		grid-column: 1 / -1;
+		margin: $sm-fe-space-lg 0 $sm-fe-space-md;
+		padding: 1.4em 1em;
+		border-radius: $sm-fe-radius;
+		background: var(--sm-heading-bg, transparent);
+		color: var(--sm-heading-text, inherit);
+		text-align: center;
+
+		&:first-child {
+			margin-top: 0;
+		}
+
+		&:not(.has-own-colours) {
+			padding-inline: 0;
+			border-bottom: 2px solid currentcolor;
+		}
+	}
+
+	& &__heading-title {
+		margin: 0;
+		color: inherit;
+		font-family: var(--sm-title-font, var(--sm-font-heading, inherit)) !important; // stylelint-disable-line declaration-no-important
+		font-size: 2em !important; // stylelint-disable-line declaration-no-important
+		font-weight: 700;
+		line-height: 1.15;
+	}
+
+	&__heading.is-size-s &__heading-title {
+		font-size: 1.5em !important; // stylelint-disable-line declaration-no-important
+	}
+
+	&__heading.is-size-l &__heading-title {
+		font-size: clamp(2em, 7cqi, 3.25em) !important; // stylelint-disable-line declaration-no-important
+	}
+
+	&__heading-note {
+		margin: 0.5em 0 0;
+		color: inherit;
+		font-size: 0.95em;
+		opacity: 0.85;
+	}
+
 	// Optional section icon/image, left of the title.
 	&__section-icon {
 		flex: none;

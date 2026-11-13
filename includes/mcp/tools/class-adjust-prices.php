@@ -83,7 +83,7 @@ final class Adjust_Prices extends Client_Tool {
 					'type'        => 'array',
 					'maxItems'    => Price_List::MAX_SECTIONS,
 					'items'       => self::section_id_schema(),
-					'description' => 'Only these sections. Leave out for the whole list.',
+					'description' => 'Only these sections. A heading id means every section under that heading. Leave out for the whole list.',
 				),
 				'round_to'    => array(
 					'type'        => 'number',
@@ -116,8 +116,15 @@ final class Adjust_Prices extends Client_Tool {
 		$sections = array_values( $this->store->sections() );
 		$only     = array_map( 'strval', (array) ( $args['section_ids'] ?? array() ) );
 
+		// A heading id stands for every section under it ("the cocktail menu").
 		foreach ( $only as $id ) {
-			Price_List::section_index( $sections, $id );
+			$index = Price_List::section_index( $sections, $id, 'any' );
+
+			if ( \SatoriManifest\Manifest\Headings::is_heading( $sections[ $index ] ) ) {
+				foreach ( Price_List::under_heading( $sections, $index ) as $under ) {
+					$only[] = (string) $sections[ $under ]['id'];
+				}
+			}
 		}
 
 		$changes = array();

@@ -19,6 +19,7 @@ namespace SatoriManifest\Pdf;
 
 use SatoriManifest\Branding\Brand;
 use SatoriManifest\Clients\Client_Repository;
+use SatoriManifest\Manifest\Headings;
 use SatoriManifest\Manifest\Manifest_Repository;
 use SatoriManifest\Qr\Page_Qr;
 use SatoriManifest\Qr\Qr_Renderer;
@@ -189,9 +190,14 @@ class Price_List_Pdf {
 		$this->header();
 
 		$manifest_id = Client_Repository::manifest_for_page( $page_id );
-		$sections    = $manifest_id ? Manifest_Repository::get_sections( $manifest_id ) : array();
+		$sections    = $manifest_id ? Headings::visible( Manifest_Repository::get_sections( $manifest_id ) ) : array();
 
 		foreach ( $sections as $section ) {
+			if ( Headings::is_heading( $section ) ) {
+				$this->heading( (array) $section );
+				continue;
+			}
+
 			$this->section( (array) $section );
 		}
 
@@ -266,6 +272,45 @@ class Price_List_Pdf {
 		$this->pdf->link( $x, $top - 6, $size, $size, Page_Qr::url( $this->page_id ) );
 
 		return $size;
+	}
+
+	/**
+	 * A menu heading ("Main Menu"): large title, optional note and a rule.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.10.0
+	 * @param  array<string,mixed> $heading  Heading entry.
+	 * @return void
+	 */
+	private function heading( array $heading ): void {
+		$title = $this->clean( (string) ( $heading['title'] ?? '' ) );
+		$note  = $this->clean( (string) ( $heading['description'] ?? '' ) );
+		$size  = array(
+			's' => 15.0,
+			'm' => 19.0,
+			'l' => 24.0,
+		)[ Headings::size( $heading ) ];
+
+		if ( '' === $title && '' === $note ) {
+			return;
+		}
+
+		// Keep the heading with the first section under it.
+		$this->ensure( 110 );
+		$this->y += 22;
+
+		if ( '' !== $title ) {
+			$this->y += $size;
+			$this->pdf->text( self::MARGIN, $this->y, $title, $size, true, $this->colours['text'] );
+		}
+
+		if ( '' !== $note ) {
+			$this->paragraph( $note, 9.5, 13, $this->colours['muted'] );
+		}
+
+		$this->y += 8;
+		$this->pdf->line( self::MARGIN, $this->y, self::MARGIN + $this->content_width(), $this->y, 1.5, $this->colours['accent'] );
+		$this->y += 4;
 	}
 
 	/**

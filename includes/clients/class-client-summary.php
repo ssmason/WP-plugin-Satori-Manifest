@@ -46,7 +46,7 @@ class Client_Summary {
 		$page_id     = Client_Repository::page_id( $user_id );
 		$manifest_id = Client_Repository::manifest_id( $user_id );
 		$menu_id     = Client_Repository::menu_id( $user_id );
-		$sections    = $manifest_id ? Manifest_Repository::get_sections( $manifest_id ) : array();
+		$sections    = $manifest_id ? \SatoriManifest\Manifest\Headings::sections_only( Manifest_Repository::get_sections( $manifest_id ) ) : array();
 		$item_count  = 0;
 
 		foreach ( $sections as $section ) {

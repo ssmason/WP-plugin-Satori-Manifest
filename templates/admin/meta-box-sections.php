@@ -41,7 +41,7 @@ $satori_manifest_render_item = static function ( array $item ) use ( $satori_man
 	$symbol = (string) $satori_manifest_currency['symbol'];
 	?>
 	<div class="sm-item<?php echo '' === $price && ! empty( $item['label'] ) ? ' is-subheading' : ''; ?>">
-		<span class="sm-item__grip dashicons dashicons-menu" aria-hidden="true"></span>
+		<span class="sm-item__grip dashicons dashicons-menu" data-sm-grip title="<?php esc_attr_e( 'Drag to move', 'satori-manifest' ); ?>" aria-hidden="true"></span>
 		<label class="sm-item__field sm-item__field--label">
 			<span class="screen-reader-text"><?php esc_html_e( 'Item name', 'satori-manifest' ); ?></span>
 			<input type="text" class="sm-item__label" value="<?php echo esc_attr( (string) ( $item['label'] ?? '' ) ); ?>" placeholder="<?php esc_attr_e( 'Item name', 'satori-manifest' ); ?>" />
@@ -86,6 +86,7 @@ $satori_manifest_render_section = static function ( array $section, bool $expand
 	?>
 	<section class="sm-section<?php echo $expanded ? '' : ' is-collapsed'; ?>" data-sm-id="<?php echo esc_attr( (string) ( $section['id'] ?? '' ) ); ?>">
 		<header class="sm-section__head">
+			<span class="sm-grip dashicons dashicons-menu" data-sm-grip title="<?php esc_attr_e( 'Drag to move', 'satori-manifest' ); ?>" aria-hidden="true"></span>
 			<button type="button" class="sm-section__toggle sm-icon-button" data-sm-action="section-toggle" aria-expanded="<?php echo $expanded ? 'true' : 'false'; ?>" aria-label="<?php esc_attr_e( 'Show or hide items', 'satori-manifest' ); ?>">
 				<span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
 			</button>
@@ -150,6 +151,76 @@ $satori_manifest_render_section = static function ( array $section, bool $expand
 	</section>
 	<?php
 };
+
+/**
+ * Renders one menu heading row ("Main Menu"): groups the sections below it.
+ *
+ * @param array<string,mixed> $heading  Heading data (empty for the template).
+ * @return void
+ */
+$satori_manifest_render_heading = static function ( array $heading ): void {
+	$style      = isset( $heading['style'] ) && is_array( $heading['style'] ) ? $heading['style'] : array();
+	$background = (string) sanitize_hex_color( (string) ( $style['background'] ?? '' ) );
+	$text       = (string) sanitize_hex_color( (string) ( $style['text'] ?? '' ) );
+	$own        = '' !== $background || '' !== $text;
+	$size       = (string) ( $style['size'] ?? 'm' );
+	$visible    = ! isset( $heading['visible'] ) || false !== $heading['visible'];
+	$sizes      = array(
+		's' => __( 'Small', 'satori-manifest' ),
+		'm' => __( 'Medium', 'satori-manifest' ),
+		'l' => __( 'Large', 'satori-manifest' ),
+	);
+	?>
+	<div class="sm-heading<?php echo $visible ? '' : ' is-off'; ?><?php echo $own ? ' has-own-colours' : ''; ?>" data-sm-id="<?php echo esc_attr( (string) ( $heading['id'] ?? '' ) ); ?>" data-sm-heading>
+		<span class="sm-grip dashicons dashicons-menu" data-sm-grip title="<?php esc_attr_e( 'Drag to move', 'satori-manifest' ); ?>" aria-hidden="true"></span>
+		<div class="sm-heading__fields">
+			<span class="sm-heading__tag"><?php esc_html_e( 'Heading', 'satori-manifest' ); ?></span>
+			<label class="sm-heading__title">
+				<span class="screen-reader-text"><?php esc_html_e( 'Heading', 'satori-manifest' ); ?></span>
+				<input type="text" class="sm-heading__title-input" value="<?php echo esc_attr( (string) ( $heading['title'] ?? '' ) ); ?>" placeholder="<?php esc_attr_e( 'Heading, e.g. Main Menu', 'satori-manifest' ); ?>" />
+			</label>
+			<label class="sm-heading__note">
+				<span class="screen-reader-text"><?php esc_html_e( 'Note under the heading', 'satori-manifest' ); ?></span>
+				<input type="text" class="sm-heading__note-input" value="<?php echo esc_attr( (string) ( $heading['description'] ?? '' ) ); ?>" placeholder="<?php esc_attr_e( 'Optional note, e.g. Served until 2 p.m. daily', 'satori-manifest' ); ?>" />
+			</label>
+			<div class="sm-heading__style">
+				<label class="sm-heading__option">
+					<input type="checkbox" class="sm-heading__visible" <?php checked( $visible ); ?> />
+					<?php esc_html_e( 'Show on page', 'satori-manifest' ); ?>
+				</label>
+				<label class="sm-heading__option">
+					<?php esc_html_e( 'Size', 'satori-manifest' ); ?>
+					<select class="sm-heading__size">
+						<?php foreach ( $sizes as $satori_manifest_key => $satori_manifest_label ) : ?>
+							<option value="<?php echo esc_attr( $satori_manifest_key ); ?>" <?php selected( $size, $satori_manifest_key ); ?>><?php echo esc_html( $satori_manifest_label ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</label>
+				<label class="sm-heading__option">
+					<input type="checkbox" class="sm-heading__own" <?php checked( $own ); ?> />
+					<?php esc_html_e( 'Own colours', 'satori-manifest' ); ?>
+				</label>
+				<label class="sm-heading__option sm-heading__colour">
+					<?php esc_html_e( 'Background', 'satori-manifest' ); ?>
+					<input type="color" class="sm-heading__background" value="<?php echo esc_attr( '' !== $background ? $background : '#4b5f57' ); ?>" />
+				</label>
+				<label class="sm-heading__option sm-heading__colour">
+					<?php esc_html_e( 'Text', 'satori-manifest' ); ?>
+					<input type="color" class="sm-heading__text" value="<?php echo esc_attr( '' !== $text ? $text : '#ffffff' ); ?>" />
+				</label>
+			</div>
+		</div>
+		<span class="sm-heading__actions">
+			<button type="button" class="sm-icon-button" data-sm-action="entry-up" aria-label="<?php esc_attr_e( 'Move heading up', 'satori-manifest' ); ?>"><span class="dashicons dashicons-arrow-up-alt2" aria-hidden="true"></span></button>
+			<button type="button" class="sm-icon-button" data-sm-action="entry-down" aria-label="<?php esc_attr_e( 'Move heading down', 'satori-manifest' ); ?>"><span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span></button>
+			<button type="button" class="sm-icon-button sm-icon-button--danger" data-sm-action="heading-remove" aria-label="<?php esc_attr_e( 'Remove heading', 'satori-manifest' ); ?>">
+				<span class="dashicons dashicons-trash" aria-hidden="true"></span>
+				<span class="sm-confirm-label"><?php esc_html_e( 'Click again to remove', 'satori-manifest' ); ?></span>
+			</button>
+		</span>
+	</div>
+	<?php
+};
 ?>
 <div class="sm-manifest-editor" data-sm-manifest-editor>
 
@@ -171,6 +242,10 @@ $satori_manifest_render_section = static function ( array $section, bool $expand
 		<div class="sm-manifest-toolbar__actions">
 			<button type="button" class="button button-link" data-sm-action="expand-all"><?php esc_html_e( 'Expand all', 'satori-manifest' ); ?></button>
 			<button type="button" class="button button-link" data-sm-action="collapse-all"><?php esc_html_e( 'Collapse all', 'satori-manifest' ); ?></button>
+			<button type="button" class="button" data-sm-action="heading-add" data-sm-where="top">
+				<span class="dashicons dashicons-heading" aria-hidden="true"></span>
+				<?php esc_html_e( 'Add heading', 'satori-manifest' ); ?>
+			</button>
 			<button type="button" class="button button-primary" data-sm-action="section-add">
 				<span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
 				<?php esc_html_e( 'Add section', 'satori-manifest' ); ?>
@@ -180,11 +255,32 @@ $satori_manifest_render_section = static function ( array $section, bool $expand
 
 	<div class="sm-sections" id="satori-manifest-sections-list">
 		<?php
-		foreach ( $satori_manifest_sections as $satori_manifest_index => $satori_manifest_section ) {
+		$satori_manifest_first = true;
+		foreach ( $satori_manifest_sections as $satori_manifest_section ) {
+			if ( \SatoriManifest\Manifest\Headings::is_heading( $satori_manifest_section ) ) {
+				$satori_manifest_render_heading( (array) $satori_manifest_section );
+				continue;
+			}
+
 			// Open the first section; keep long lists tidy.
-			$satori_manifest_render_section( (array) $satori_manifest_section, 0 === $satori_manifest_index );
+			$satori_manifest_render_section( (array) $satori_manifest_section, $satori_manifest_first );
+			$satori_manifest_first = false;
 		}
 		?>
+	</div>
+
+	<div class="sm-manifest-toolbar sm-manifest-toolbar--bottom">
+		<p class="sm-hint"><?php esc_html_e( 'Drag sections and headings by their handle to reorder. A heading groups every section below it, up to the next heading.', 'satori-manifest' ); ?></p>
+		<div class="sm-manifest-toolbar__actions">
+			<button type="button" class="button" data-sm-action="heading-add" data-sm-where="bottom">
+				<span class="dashicons dashicons-heading" aria-hidden="true"></span>
+				<?php esc_html_e( 'Add heading', 'satori-manifest' ); ?>
+			</button>
+			<button type="button" class="button" data-sm-action="section-add">
+				<span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
+				<?php esc_html_e( 'Add section', 'satori-manifest' ); ?>
+			</button>
+		</div>
 	</div>
 
 	<div class="sm-manifest-empty" data-sm-empty>
@@ -197,6 +293,10 @@ $satori_manifest_render_section = static function ( array $section, bool $expand
 
 <template id="satori-manifest-section-template">
 	<?php $satori_manifest_render_section( array(), true ); ?>
+</template>
+
+<template id="satori-manifest-heading-template">
+	<?php $satori_manifest_render_heading( array() ); ?>
 </template>
 
 <template id="satori-manifest-item-template">

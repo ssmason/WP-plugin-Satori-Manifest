@@ -16,6 +16,8 @@ declare( strict_types=1 );
 
 namespace SatoriManifest\Core;
 
+use SatoriManifest\Manifest\Headings;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -61,6 +63,11 @@ class Sanitizer {
 				$id = self::new_section_id();
 			}
 			$seen[ $id ] = true;
+
+			if ( Headings::is_heading( $section ) ) {
+				$out[] = Headings::sanitize( $section, $id, count( $out ) );
+				continue;
+			}
 
 			$raw_items = isset( $section['items'] ) && is_array( $section['items'] )
 				? $section['items']

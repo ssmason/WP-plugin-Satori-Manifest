@@ -51,7 +51,7 @@ final class Remove_Section extends Client_Tool {
 	 * @return string
 	 */
 	public function description(): string {
-		return 'Deletes a whole section and its items. Confirm with the user first. It can be brought back with undo_last_change.';
+		return 'Deletes a whole section and its items, or a heading (the sections under a heading stay). Confirm with the user first. It can be brought back with undo_last_change. To hide a heading for now, use update_heading with visible: false instead.';
 	}
 
 	/**
@@ -80,11 +80,12 @@ final class Remove_Section extends Client_Tool {
 	 */
 	public function call( array $args ): Tool_Result {
 		$sections = array_values( $this->store->sections() );
-		$index    = Price_List::section_index( $sections, (string) $args['section_id'] );
+		$index    = Price_List::section_index( $sections, (string) $args['section_id'], 'any' );
 		$title    = (string) $sections[ $index ]['title'];
+		$kind     = \SatoriManifest\Manifest\Headings::is_heading( $sections[ $index ] ) ? 'heading' : 'section';
 
 		array_splice( $sections, $index, 1 );
-		$this->save_sections( sprintf( 'Removed the section "%s"', $title ), $sections );
+		$this->save_sections( sprintf( 'Removed the %s "%s"', $kind, $title ), $sections );
 
 		return Tool_Result::ok( sprintf( 'Removed "%s". Say "undo" to bring it back.', $title ) );
 	}

@@ -238,7 +238,7 @@ class Price_List_View {
 
 			$sections = array_values(
 				array_filter(
-					Manifest_Repository::get_sections( $id ),
+					Headings::visible( Manifest_Repository::get_sections( $id ) ),
 					static fn( $section ): bool => ! in_array( (string) ( $section['id'] ?? '' ), $hidden, true )
 				)
 			);

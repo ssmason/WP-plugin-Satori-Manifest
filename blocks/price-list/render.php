@@ -28,6 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use SatoriManifest\Branding\Brand;
+use SatoriManifest\Manifest\Headings;
 use SatoriManifest\Manifest\Price_List_View;
 
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
@@ -54,6 +55,29 @@ $manifests = $view['manifests'];
 		<div class="satori-manifest-price-list__manifest">
 			<?php foreach ( $sections as $section ) : ?>
 				<?php
+				if ( Headings::is_heading( $section ) ) {
+					$heading_title = (string) ( $section['title'] ?? '' );
+					$heading_note  = (string) ( $section['description'] ?? '' );
+
+					if ( '' === $heading_title && '' === $heading_note ) {
+						continue;
+					}
+
+					$heading_anchor = Price_List_View::anchor( $heading_title, $section_anchors );
+					$heading_style  = Headings::style_vars( $section );
+					?>
+					<header class="satori-manifest-price-list__heading is-size-<?php echo esc_attr( Headings::size( $section ) ); ?><?php echo '' !== $heading_style ? ' has-own-colours' : ''; ?>"<?php echo '' !== $heading_anchor ? ' id="' . esc_attr( $heading_anchor ) . '"' : ''; ?><?php echo '' !== $heading_style ? ' style="' . esc_attr( $heading_style ) . '"' : ''; ?>>
+						<?php if ( '' !== $heading_title ) : ?>
+							<h2 class="satori-manifest-price-list__heading-title"><?php echo esc_html( $heading_title ); ?></h2>
+						<?php endif; ?>
+						<?php if ( '' !== $heading_note ) : ?>
+							<p class="satori-manifest-price-list__heading-note"><?php echo esc_html( $heading_note ); ?></p>
+						<?php endif; ?>
+					</header>
+					<?php
+					continue;
+				}
+
 				$section_title = isset( $section['title'] ) ? (string) $section['title'] : '';
 				$section_desc  = isset( $section['description'] ) ? (string) $section['description'] : '';
 				$section_icon  = isset( $section['icon'] ) ? absint( $section['icon'] ) : 0;

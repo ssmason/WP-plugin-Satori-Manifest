@@ -525,3 +525,157 @@ $sm-item-columns: 18px minmax(140px, 1.3fr) minmax(140px, 1.6fr) 110px 80px 120p
 	font-size: 22px;
 	font-weight: 600;
 }
+
+// ─── Drag and drop ──────────────────────────────────────────────────────────
+
+.sm-grip,
+.sm-item__grip {
+	flex: none;
+	color: #a7aab8;
+	cursor: grab;
+
+	&:hover {
+		color: $sm-color-text;
+	}
+}
+
+.sm-section.is-dragging,
+.sm-heading.is-dragging,
+.sm-item.is-dragging {
+	opacity: 0.45;
+	outline: 2px dashed $sm-color-primary;
+	outline-offset: 2px;
+}
+
+// ─── Headings ("Main Menu") ─────────────────────────────────────────────────
+// Group the sections below them; styled like a banner so they stand out
+// from the section cards.
+
+.sm-heading {
+	display: flex;
+	align-items: flex-start;
+	gap: $sm-space-sm;
+	margin-top: $sm-space-md;
+	padding: 12px $sm-space-md 12px 14px;
+	border: 2px solid #1d2327;
+	border-radius: $sm-radius-lg;
+	background: #1d2327;
+	color: #fff;
+	box-shadow: $sm-shadow;
+
+	&:first-child {
+		margin-top: 0;
+	}
+
+	&.is-moved {
+		box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.35), $sm-shadow;
+	}
+
+	// Switched off: still editable, clearly not on the page.
+	&.is-off {
+		border-style: dashed;
+		background: #50575e;
+		opacity: 0.75;
+	}
+
+	.sm-grip {
+		margin-top: 8px;
+		color: rgba(255, 255, 255, 0.6);
+
+		&:hover {
+			color: #fff;
+		}
+	}
+
+	&__fields {
+		display: grid;
+		flex: 1;
+		grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
+		align-items: center;
+		gap: 8px $sm-space-sm;
+		min-width: 0;
+	}
+
+	&__tag {
+		padding: 2px 8px;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.16);
+		font-size: 11px;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+	}
+
+	&__title-input {
+		width: 100%;
+		font-size: 16px;
+		font-weight: 700;
+	}
+
+	&__note-input {
+		width: 100%;
+	}
+
+	&__style {
+		display: flex;
+		flex-wrap: wrap;
+		grid-column: 2 / -1;
+		align-items: center;
+		gap: 6px $sm-space-md;
+		font-size: 12px;
+	}
+
+	&__option {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+
+		input[type="checkbox"] {
+			margin: 0;
+		}
+
+		input[type="color"] {
+			width: 34px;
+			height: 24px;
+			padding: 0;
+			border: 1px solid rgba(255, 255, 255, 0.4);
+			background: none;
+		}
+	}
+
+	&:not(.has-own-colours) &__colour {
+		display: none;
+	}
+
+	&__actions {
+		display: inline-flex;
+		flex: none;
+		align-items: center;
+		gap: 2px;
+
+		.sm-icon-button {
+			color: rgba(255, 255, 255, 0.75);
+		}
+	}
+
+	@media (max-width: 782px) {
+
+		&__fields {
+			grid-template-columns: 1fr;
+		}
+
+		&__style {
+			grid-column: 1;
+		}
+	}
+}
+
+.sm-manifest-toolbar--bottom {
+	position: static;
+	margin: $sm-space-md 0 0;
+
+	.sm-hint {
+		flex: 1;
+		margin: 0;
+	}
+}

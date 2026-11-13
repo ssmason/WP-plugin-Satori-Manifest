@@ -95,7 +95,8 @@ class Meta_Box {
 	public static function render_legend(): void {
 		$tips = array(
 			array( 'dashicons-category', __( 'Sections group your items, e.g. "Cuts", "Colour", "Treatments".', 'satori-manifest' ) ),
-			array( 'dashicons-sort', __( 'Use the arrows to reorder sections and items.', 'satori-manifest' ) ),
+			array( 'dashicons-sort', __( 'Drag the handle (or use the arrows) to reorder sections, headings and items.', 'satori-manifest' ) ),
+			array( 'dashicons-editor-textcolor', __( 'Headings like "Main Menu" group the sections below them. Untick "Show on page" to hide a whole menu for now.', 'satori-manifest' ) ),
 			array( 'dashicons-heading', __( 'Leave a price empty to turn an item into a sub-heading.', 'satori-manifest' ) ),
 			array( 'dashicons-tag', __( 'Badges like "Popular" or "New" highlight an item.', 'satori-manifest' ) ),
 			array( 'dashicons-saved', __( 'Click Update to publish your changes.', 'satori-manifest' ) ),

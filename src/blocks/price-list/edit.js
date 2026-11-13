@@ -113,6 +113,43 @@ function Manifest({ sections, attributes }) {
 	return (
 		<div className="satori-manifest-price-list__manifest">
 			{sections.map((section, si) => {
+				if ('heading' === section.type) {
+					if (false === section.visible) {
+						return null;
+					}
+
+					const style = section.style || {};
+
+					return (
+						<header
+							key={`${section.id}-${si}`}
+							className={`satori-manifest-price-list__heading is-size-${
+								style.size || 'm'
+							}${
+								style.background || style.text
+									? ' has-own-colours'
+									: ''
+							}`}
+							style={{
+								'--sm-heading-bg':
+									style.background || undefined,
+								'--sm-heading-text': style.text || undefined,
+							}}
+						>
+							{section.title && (
+								<h2 className="satori-manifest-price-list__heading-title">
+									{section.title}
+								</h2>
+							)}
+							{section.description && (
+								<p className="satori-manifest-price-list__heading-note">
+									{section.description}
+								</p>
+							)}
+						</header>
+					);
+				}
+
 				const items = Array.isArray(section.items) ? section.items : [];
 
 				if (!section.title && 0 === items.length) {

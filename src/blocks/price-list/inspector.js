@@ -353,8 +353,16 @@ export default function Inspector({
 						<CheckboxControl
 							key={section.id}
 							label={
-								section.title ||
-								__('(untitled section)', 'satori-manifest')
+								'heading' === section.type
+									? `${__('Heading:', 'satori-manifest')} ${
+											section.title ||
+											__('(untitled)', 'satori-manifest')
+										}`
+									: section.title ||
+										__(
+											'(untitled section)',
+											'satori-manifest'
+										)
 							}
 							checked={excludedSectionIds.includes(section.id)}
 							onChange={(checked) =>

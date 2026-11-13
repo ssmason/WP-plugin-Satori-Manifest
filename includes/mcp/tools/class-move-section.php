@@ -51,7 +51,7 @@ final class Move_Section extends Client_Tool {
 	 * @return string
 	 */
 	public function description(): string {
-		return 'Moves a section to another position in the price list (1 = top).';
+		return 'Moves a section or a heading to another position in the price list (1 = top). Headings and sections share one list; a heading covers the sections below it up to the next heading.';
 	}
 
 	/**
@@ -86,9 +86,10 @@ final class Move_Section extends Client_Tool {
 	 */
 	public function call( array $args ): Tool_Result {
 		$sections = array_values( $this->store->sections() );
-		$index    = Price_List::section_index( $sections, (string) $args['section_id'] );
+		$index    = Price_List::section_index( $sections, (string) $args['section_id'], 'any' );
 		$title    = (string) $sections[ $index ]['title'];
-		$saved    = $this->save_sections( sprintf( 'Moved the section "%s"', $title ), Price_List::move( $sections, $index, (int) $args['position'] ) );
+		$kind     = \SatoriManifest\Manifest\Headings::is_heading( $sections[ $index ] ) ? 'heading' : 'section';
+		$saved    = $this->save_sections( sprintf( 'Moved the %s "%s"', $kind, $title ), Price_List::move( $sections, $index, (int) $args['position'] ) );
 
 		return Tool_Result::ok(
 			sprintf( 'Moved "%s". Order now: %s', $title, implode( ', ', array_column( $saved, 'title' ) ) )
