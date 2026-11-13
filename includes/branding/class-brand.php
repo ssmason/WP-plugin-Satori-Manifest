@@ -126,6 +126,8 @@ class Brand {
 				'sticky'    => '1' === self::meta( $page_id, 'sm_header_sticky' ),
 				'cta_label' => self::meta( $page_id, 'sm_header_cta_label' ),
 				'cta_url'   => self::meta( $page_id, 'sm_header_cta_url' ),
+				'bg'        => (string) sanitize_hex_color( self::meta( $page_id, 'sm_header_background' ) ),
+				'text'      => (string) sanitize_hex_color( self::meta( $page_id, 'sm_header_text' ) ),
 			),
 			'footer'   => array(
 				'address'     => self::meta( $page_id, 'sm_footer_address' ),

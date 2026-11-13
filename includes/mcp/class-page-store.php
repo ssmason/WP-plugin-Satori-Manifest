@@ -40,7 +40,7 @@ final class Page_Store {
 	/**
 	 * Page details the assistant may edit: name => [ meta key, kind ].
 	 *
-	 * Kinds: text, textarea, email, url, position.
+	 * Kinds: text, textarea, email, url, position, colour (hex).
 	 */
 	public const DETAILS = array(
 		'name'              => array( 'sm_brand_name', 'text' ),
@@ -58,6 +58,8 @@ final class Page_Store {
 		'tiktok'            => array( 'sm_social_tiktok', 'url' ),
 		'button_label'      => array( 'sm_header_cta_label', 'text' ),
 		'button_link'       => array( 'sm_header_cta_url', 'url' ),
+		'header_background' => array( 'sm_header_background', 'colour' ),
+		'header_text'       => array( 'sm_header_text', 'colour' ),
 	);
 
 	/**
@@ -257,6 +259,7 @@ final class Page_Store {
 			'email'    => sanitize_email( $value ),
 			'url'      => esc_url_raw( self::with_scheme( trim( $value ) ) ),
 			'position' => 'after' === $value ? 'after' : 'before',
+			'colour'   => (string) sanitize_hex_color( trim( $value ) ),
 			default    => sanitize_text_field( $value ),
 		};
 	}

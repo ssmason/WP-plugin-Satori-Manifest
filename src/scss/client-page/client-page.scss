@@ -339,6 +339,28 @@ a.sm-button,
 	scroll-margin-top: 6rem;
 }
 
+// ─── Own header colours (Branding → Header) ──────────────────────────────────
+// Beat every design's header colours (doubled class for specificity); each
+// variable falls back to the design's value when only one colour is set.
+
+.sm-header.has-own-colours.has-own-colours {
+	--sm-header-bg: var(--sm-header-own-bg, var(--sm-background));
+
+	background: var(--sm-header-bg);
+	color: var(--sm-header-own-text, inherit);
+
+	.sm-brand__name,
+	.sm-nav a,
+	.sm-nav-toggle,
+	.sm-jump__link {
+		color: var(--sm-header-own-text, inherit);
+	}
+
+	.sm-brand__tagline {
+		color: color-mix(in srgb, var(--sm-header-own-text, currentcolor) 75%, transparent);
+	}
+}
+
 // ─── Jump links ──────────────────────────────────────────────────────────────
 // Links to the price list's headings ("Main Menu"), in their own row under the
 // header (inside it, so a sticky header keeps them), separate from the

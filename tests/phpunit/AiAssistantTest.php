@@ -328,6 +328,30 @@ class AiAssistantTest extends Test_Case {
 	}
 
 	/**
+	 * Header colours: set by the assistant, read by the page header, bad values refused.
+	 */
+	public function test_header_colours(): void {
+		$client  = $this->make_client( 'Green Header' );
+		$store   = new Page_Store( Client_Context::for_user( $client ) );
+		$details = $this->tool( $store, 'update_page_details' );
+		$page_id = Client_Repository::page_id( $client );
+
+		$details->call(
+			array(
+				'header_background' => '#044A14',
+				'header_text'       => '#f5ecda',
+			)
+		);
+
+		$header = \SatoriManifest\Branding\Brand::for_page( $page_id )['header'];
+		$this->assertSame( '#044A14', $header['bg'] );
+		$this->assertSame( '#f5ecda', $header['text'] );
+
+		$errors = Schema_Validator::errors( array( 'header_background' => 'green' ), $details->input_schema() );
+		$this->assertNotEmpty( $errors );
+	}
+
+	/**
 	 * Repeated bad links from one address are turned away.
 	 */
 	public function test_bad_links_are_throttled(): void {

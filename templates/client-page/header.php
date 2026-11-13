@@ -45,8 +45,24 @@ $satori_manifest_classes = array(
 	'' !== $satori_manifest_nav ? 'has-nav' : '',
 	! empty( $satori_manifest_jump_links ) ? 'has-jump' : '',
 );
+
+// Own header colours (Branding → Header) override the design's; values are sanitised hex colours.
+$satori_manifest_header_style = '';
+
+foreach ( array(
+	'bg'   => '--sm-header-own-bg',
+	'text' => '--sm-header-own-text',
+) as $satori_manifest_key => $satori_manifest_property ) {
+	if ( ! empty( $satori_manifest_header[ $satori_manifest_key ] ) ) {
+		$satori_manifest_header_style .= $satori_manifest_property . ':' . $satori_manifest_header[ $satori_manifest_key ] . ';';
+	}
+}
+
+if ( '' !== $satori_manifest_header_style ) {
+	$satori_manifest_classes[] = 'has-own-colours';
+}
 ?>
-<header class="<?php echo esc_attr( implode( ' ', array_filter( $satori_manifest_classes ) ) ); ?>">
+<header class="<?php echo esc_attr( implode( ' ', array_filter( $satori_manifest_classes ) ) ); ?>"<?php echo '' !== $satori_manifest_header_style ? ' style="' . esc_attr( $satori_manifest_header_style ) . '"' : ''; ?>>
 	<div class="sm-header__inner">
 		<div class="sm-brand">
 			<?php if ( $satori_manifest_brand['logo_id'] ) : ?>

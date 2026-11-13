@@ -4,7 +4,7 @@
  *
  * Covers the subset tools use: type (single or list), properties, required,
  * additionalProperties: false, minProperties, items, enum,
- * minLength/maxLength, minimum/maximum, minItems/maxItems. Unknown keywords are ignored.
+ * minLength/maxLength, pattern, minimum/maximum, minItems/maxItems. Unknown keywords are ignored.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -87,6 +87,9 @@ final class Schema_Validator {
 			}
 			if ( isset( $schema['maxLength'] ) && $length > (int) $schema['maxLength'] ) {
 				$errors[] = sprintf( '%s must be at most %d characters.', $path, (int) $schema['maxLength'] );
+			}
+			if ( isset( $schema['pattern'] ) && 1 !== preg_match( '~' . str_replace( '~', '\\~', (string) $schema['pattern'] ) . '~u', $value ) ) {
+				$errors[] = sprintf( '%s is not in the expected format.', $path );
 			}
 		}
 

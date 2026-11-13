@@ -134,6 +134,9 @@ Visitor ──Register form──▶ Application (pending)
   in Settings; clients on their Home screen.
 * **Page CSS helpers** - in client-page.scss: `sm-flush-top` / `sm-flush-bottom` (full-width
   photo against the header / footer) and `sm-display` (title that scales on phones).
+* **Header colours** - optional "Header background" / "Header text" under Branding → Header
+  override the design's header (name, tagline, menu, phone menu, jump links); empty = the
+  design's own. Also `update_page_details` (`header_background`, `header_text`) for the AI.
 * **Login** - `wp-login.php` is branded with the portal logo and colours and links to
   the Register page.
 

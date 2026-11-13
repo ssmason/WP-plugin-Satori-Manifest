@@ -35,6 +35,18 @@ fields:
     default_value: 0
     wrapper: { width: 50 }
 
+  - name: sm_header_background
+    label: Header background
+    type: color_picker
+    instructions: Optional. Leave empty to use the design's colours.
+    wrapper: { width: 50 }
+
+  - name: sm_header_text
+    label: Header text
+    type: color_picker
+    instructions: Name, tagline, menu and jump links. Keep it readable on the background.
+    wrapper: { width: 50 }
+
   - name: sm_header_cta_label
     label: Button text
     type: text

@@ -47,6 +47,8 @@ final class Update_Page_Details extends Client_Tool {
 		'tiktok'            => 'TikTok profile address.',
 		'button_label'      => 'Optional header button text, e.g. "Book now".',
 		'button_link'       => 'Where the header button goes.',
+		'header_background' => 'Header background as hex, e.g. #044a14; "" for the design\'s own.',
+		'header_text'       => 'Header text colour as hex (name, menu, jump links); "" for the design\'s own. Keep it readable.',
 	);
 
 	/**
@@ -73,7 +75,7 @@ final class Update_Page_Details extends Client_Tool {
 	 * @return string
 	 */
 	public function description(): string {
-		return 'Changes the business name, tagline, currency, address, opening hours, phone, email, footer note, social links or header button. Only the fields given change; an empty string clears a field.';
+		return 'Changes the business name, tagline, currency, address, opening hours, phone, email, footer note, social links, header button or header colours. Only the fields given change; an empty string clears a field.';
 	}
 
 	/**
@@ -93,6 +95,10 @@ final class Update_Page_Details extends Client_Tool {
 		}
 
 		$properties['currency_position']['enum'] = array( 'before', 'after' );
+
+		foreach ( array( 'header_background', 'header_text' ) as $colour ) {
+			$properties[ $colour ]['pattern'] = '^(#[0-9a-fA-F]{6})?$';
+		}
 
 		$schema                  = self::object( $properties );
 		$schema['minProperties'] = 1;

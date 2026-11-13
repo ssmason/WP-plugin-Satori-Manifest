@@ -60,6 +60,7 @@ On Stripe's own pages (Checkout and the customer portal). Card details never rea
 
 = 3.10.0 =
 * Menu headings in the price list (e.g. "Starters & Snacks", "Main Menu"): each groups the sections below it, has an optional note, its own banner colours and size, and a "Show on page" switch that hides the whole menu from the page and PDF.
+* Header colours: optional header background and text colour under Branding → Header (override the design; also settable by the AI assistant).
 * Jump links: tick "In jump links" on a heading to add a link to it in a bar under the page header (separate from the navigation; one scrollable row on phones; only headings that are on and shown on the page).
 * PDF of the whole price list or one heading's group (e.g. just the Main Menu), in A4 or A3, chosen on the client Home screen.
 * Clients' admin bar: "Dashboard" and "Price list" links, also on phones; "View page" only inside wp-admin.
