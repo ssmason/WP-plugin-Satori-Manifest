@@ -123,13 +123,33 @@ $satori_manifest_cards = array(
 						<?php Icons::render( 'eye', 16 ); ?>
 						<?php esc_html_e( 'View page', 'satori-manifest' ); ?>
 					</a>
-					<a class="button sm-qr-card__pdf" href="<?php echo esc_url( Pdf_Download::url( (int) $satori_manifest_s['page_id'] ) ); ?>">
-						<?php esc_html_e( 'PDF (A4)', 'satori-manifest' ); ?>
-					</a>
-					<a class="button sm-qr-card__pdf" href="<?php echo esc_url( Pdf_Download::url( (int) $satori_manifest_s['page_id'], 'a3' ) ); ?>">
-						<?php esc_html_e( 'PDF (A3)', 'satori-manifest' ); ?>
-					</a>
 				</div>
+				<?php $satori_manifest_pdf_headings = \SatoriManifest\Pdf\Price_List_Pdf::printable_headings( (int) $satori_manifest_s['page_id'] ); ?>
+				<form class="sm-qr-card__pdf-form" method="get" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+					<input type="hidden" name="action" value="<?php echo esc_attr( Pdf_Download::ACTION ); ?>" />
+					<input type="hidden" name="page_id" value="<?php echo esc_attr( (string) $satori_manifest_s['page_id'] ); ?>" />
+					<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( Pdf_Download::ACTION . '_' . $satori_manifest_s['page_id'] ) ); ?>" />
+					<span class="sm-qr-card__pdf-label"><?php esc_html_e( 'Print-ready PDF', 'satori-manifest' ); ?></span>
+					<?php if ( $satori_manifest_pdf_headings ) : ?>
+						<label>
+							<span class="screen-reader-text"><?php esc_html_e( 'What to print', 'satori-manifest' ); ?></span>
+							<select name="heading">
+								<option value=""><?php esc_html_e( 'Whole price list', 'satori-manifest' ); ?></option>
+								<?php foreach ( $satori_manifest_pdf_headings as $satori_manifest_heading_id => $satori_manifest_heading_title ) : ?>
+									<option value="<?php echo esc_attr( $satori_manifest_heading_id ); ?>"><?php echo esc_html( $satori_manifest_heading_title ); ?></option>
+								<?php endforeach; ?>
+							</select>
+						</label>
+					<?php endif; ?>
+					<label>
+						<span class="screen-reader-text"><?php esc_html_e( 'Paper size', 'satori-manifest' ); ?></span>
+						<select name="paper">
+							<option value="a4">A4</option>
+							<option value="a3">A3</option>
+						</select>
+					</label>
+					<button type="submit" class="button sm-qr-card__pdf"><?php esc_html_e( 'Download PDF', 'satori-manifest' ); ?></button>
+				</form>
 				<p class="sm-qr-card__downloads">
 					<?php esc_html_e( 'Download your QR code:', 'satori-manifest' ); ?>
 					<a href="<?php echo esc_url( Qr_Download::url( (int) $satori_manifest_s['page_id'], 'png' ) ); ?>"><?php esc_html_e( 'PNG for printing', 'satori-manifest' ); ?></a>

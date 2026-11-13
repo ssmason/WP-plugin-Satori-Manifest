@@ -103,12 +103,39 @@
 		white-space: nowrap;
 	}
 
-	// "View page" and "Download PDF", side by side under the address.
+	// "View page" across the card, under the address.
 	&__actions {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: 1fr;
 		grid-column: 1 / -1;
 		gap: $sm-space-sm;
+	}
+
+	// PDF: what to print (whole list or one heading), paper size, download.
+	&__pdf-form {
+		display: flex;
+		flex-wrap: wrap;
+		grid-column: 1 / -1;
+		align-items: center;
+		gap: $sm-space-sm;
+
+		label {
+			flex: 1 1 auto;
+		}
+
+		select {
+			width: 100%;
+			max-width: none;
+		}
+	}
+
+	&__pdf-label {
+		flex-basis: 100%;
+		color: rgba(255, 255, 255, 0.7);
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
 	}
 
 	&__view,

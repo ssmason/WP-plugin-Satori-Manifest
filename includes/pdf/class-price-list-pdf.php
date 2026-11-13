@@ -105,20 +105,30 @@ class Price_List_Pdf {
 	private array $colours;
 
 	/**
+	 * Heading to print on its own ('' = the whole price list).
+	 *
+	 * @since 3.10.0
+	 * @var   string
+	 */
+	private string $heading = '';
+
+	/**
 	 * Builds the PDF for a client page.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.2.0
-	 * @param  int    $page_id  Client page ID.
-	 * @param  string $paper    Key of PAPER_SIZES ('a4' or 'a3').
+	 * @param  int    $page_id     Client page ID.
+	 * @param  string $paper       Key of PAPER_SIZES ('a4' or 'a3').
+	 * @param  string $heading_id  Only this heading and its sections; '' for the whole list.
 	 * @return string  PDF bytes, or '' when the page is not a client page.
 	 */
-	public static function render( int $page_id, string $paper = 'a4' ): string {
+	public static function render( int $page_id, string $paper = 'a4', string $heading_id = '' ): string {
 		if ( ! Client_Repository::is_client_page( $page_id ) ) {
 			return '';
 		}
 
-		$document = new self( $page_id );
+		$document          = new self( $page_id );
+		$document->heading = $heading_id;
 		$document->pdf->set_output_size( ...self::PAPER_SIZES[ self::paper( $paper ) ] );
 
 		return $document->build( $page_id );
@@ -130,15 +140,75 @@ class Price_List_Pdf {
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.2.0
-	 * @param  int    $page_id  Client page ID.
-	 * @param  string $paper    Key of PAPER_SIZES.
+	 * @param  int    $page_id     Client page ID.
+	 * @param  string $paper       Key of PAPER_SIZES.
+	 * @param  string $heading_id  Heading printed on its own, or ''.
 	 * @return string
 	 */
-	public static function filename( int $page_id, string $paper = 'a4' ): string {
-		$slug  = sanitize_title( (string) Brand::for_page( $page_id )['name'] );
-		$paper = self::paper( $paper );
+	public static function filename( int $page_id, string $paper = 'a4', string $heading_id = '' ): string {
+		$slug    = sanitize_title( (string) Brand::for_page( $page_id )['name'] );
+		$paper   = self::paper( $paper );
+		$heading = '' !== $heading_id ? sanitize_title( self::printable_headings( $page_id )[ $heading_id ] ?? '' ) : '';
 
-		return ( '' !== $slug ? $slug : 'price-list' ) . '-prices' . ( 'a4' !== $paper ? '-' . $paper : '' ) . '.pdf';
+		return ( '' !== $slug ? $slug : 'price-list' ) . ( '' !== $heading ? '-' . $heading : '' ) . '-prices' . ( 'a4' !== $paper ? '-' . $paper : '' ) . '.pdf';
+	}
+
+	/**
+	 * One heading and the sections under it, or everything when it is not found.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.10.0
+	 * @param  array<int,array<string,mixed>> $entries     Visible sections and headings.
+	 * @param  string                         $heading_id  Heading id or ''.
+	 * @return array<int,array<string,mixed>>
+	 */
+	public static function pick( array $entries, string $heading_id ): array {
+		if ( '' === $heading_id ) {
+			return $entries;
+		}
+
+		$out = array();
+
+		foreach ( array_values( $entries ) as $entry ) {
+			if ( Headings::is_heading( $entry ) ) {
+				if ( array() !== $out ) {
+					break;
+				}
+
+				if ( (string) ( $entry['id'] ?? '' ) === $heading_id ) {
+					$out[] = $entry;
+				}
+
+				continue;
+			}
+
+			if ( array() !== $out ) {
+				$out[] = $entry;
+			}
+		}
+
+		return array() !== $out ? $out : $entries;
+	}
+
+	/**
+	 * Headings that can be printed on their own: switched on, with a title.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.10.0
+	 * @param  int $page_id  Client page ID.
+	 * @return array<string,string>  id => title.
+	 */
+	public static function printable_headings( int $page_id ): array {
+		$manifest_id = Client_Repository::manifest_for_page( $page_id );
+		$out         = array();
+
+		foreach ( $manifest_id ? Headings::visible( Manifest_Repository::get_sections( $manifest_id ) ) : array() as $entry ) {
+			if ( Headings::is_heading( $entry ) && '' !== (string) ( $entry['title'] ?? '' ) ) {
+				$out[ (string) $entry['id'] ] = (string) $entry['title'];
+			}
+		}
+
+		return $out;
 	}
 
 	/**
@@ -190,7 +260,7 @@ class Price_List_Pdf {
 		$this->header();
 
 		$manifest_id = Client_Repository::manifest_for_page( $page_id );
-		$sections    = $manifest_id ? Headings::visible( Manifest_Repository::get_sections( $manifest_id ) ) : array();
+		$sections    = $manifest_id ? self::pick( Headings::visible( Manifest_Repository::get_sections( $manifest_id ) ), $this->heading ) : array();
 
 		foreach ( $sections as $section ) {
 			if ( Headings::is_heading( $section ) ) {

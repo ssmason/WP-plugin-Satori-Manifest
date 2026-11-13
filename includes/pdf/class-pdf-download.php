@@ -16,6 +16,7 @@ declare( strict_types=1 );
 namespace SatoriManifest\Pdf;
 
 use SatoriManifest\Clients\Client_Repository;
+use SatoriManifest\Core\Sanitizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -56,11 +57,12 @@ class Pdf_Download {
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.2.0
-	 * @param  int    $page_id  Client page ID.
-	 * @param  string $paper    'a4' (default) or 'a3'.
+	 * @param  int    $page_id     Client page ID.
+	 * @param  string $paper       'a4' (default) or 'a3'.
+	 * @param  string $heading_id  Print only this heading's group ('' = whole list).
 	 * @return string
 	 */
-	public static function url( int $page_id, string $paper = 'a4' ): string {
+	public static function url( int $page_id, string $paper = 'a4', string $heading_id = '' ): string {
 		$args = array(
 			'action'  => self::ACTION,
 			'page_id' => $page_id,
@@ -68,6 +70,10 @@ class Pdf_Download {
 
 		if ( 'a4' !== Price_List_Pdf::paper( $paper ) ) {
 			$args['paper'] = Price_List_Pdf::paper( $paper );
+		}
+
+		if ( '' !== Sanitizer::section_id( $heading_id ) ) {
+			$args['heading'] = $heading_id;
 		}
 
 		return wp_nonce_url(
@@ -94,12 +100,13 @@ class Pdf_Download {
 			wp_die( esc_html__( 'Sorry, you cannot download this price list.', 'satori-manifest' ), 403 );
 		}
 
-		$paper = Price_List_Pdf::paper( isset( $_GET['paper'] ) ? sanitize_key( wp_unslash( $_GET['paper'] ) ) : 'a4' );
-		$pdf   = Price_List_Pdf::render( $page_id, $paper );
+		$paper   = Price_List_Pdf::paper( isset( $_GET['paper'] ) ? sanitize_key( wp_unslash( $_GET['paper'] ) ) : 'a4' );
+		$heading = isset( $_GET['heading'] ) ? Sanitizer::section_id( sanitize_key( wp_unslash( $_GET['heading'] ) ) ) : '';
+		$pdf     = Price_List_Pdf::render( $page_id, $paper, $heading );
 
 		nocache_headers();
 		header( 'Content-Type: application/pdf' );
-		header( 'Content-Disposition: attachment; filename="' . Price_List_Pdf::filename( $page_id, $paper ) . '"' );
+		header( 'Content-Disposition: attachment; filename="' . Price_List_Pdf::filename( $page_id, $paper, $heading ) . '"' );
 		header( 'Content-Length: ' . strlen( $pdf ) );
 		header( 'X-Content-Type-Options: nosniff' );
 

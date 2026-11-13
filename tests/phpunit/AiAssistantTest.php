@@ -328,6 +328,19 @@ class AiAssistantTest extends Test_Case {
 	}
 
 	/**
+	 * Repeated bad links from one address are turned away.
+	 */
+	public function test_bad_links_are_throttled(): void {
+		$body = '{"jsonrpc":"2.0","id":1,"method":"ping"}';
+
+		for ( $i = 0; $i < 20; $i++ ) {
+			$this->assertSame( 401, $this->post( 'smai_1_' . str_repeat( 'a', 40 ), $body )->get_status() );
+		}
+
+		$this->assertSame( 429, $this->post( 'smai_1_' . str_repeat( 'a', 40 ), $body )->get_status() );
+	}
+
+	/**
 	 * Posts an MCP message with a key in the address.
 	 *
 	 * @param  string $key   Connection key.

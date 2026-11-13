@@ -70,6 +70,7 @@ $sm-item-columns: 18px minmax(140px, 1.3fr) minmax(140px, 1.6fr) 110px 80px 120p
 
 	&__actions {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		gap: $sm-space-sm;
 
@@ -677,5 +678,23 @@ $sm-item-columns: 18px minmax(140px, 1.3fr) minmax(140px, 1.6fr) 110px 80px 120p
 	.sm-hint {
 		flex: 1;
 		margin: 0;
+	}
+}
+
+// Phones: give section titles the room; the item count is in the toolbar total.
+@media (max-width: 600px) {
+
+	// The wrapped toolbar is too tall to stay pinned on a phone.
+	.sm-manifest-toolbar {
+		position: static;
+	}
+
+	.sm-section__count {
+		display: none;
+	}
+
+	.sm-section__head {
+		gap: 4px;
+		padding-inline: 10px 8px;
 	}
 }

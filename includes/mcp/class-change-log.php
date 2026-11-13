@@ -81,6 +81,7 @@ final class Change_Log {
 				'can_export'      => false,
 				'supports'        => array( 'title' ),
 				'capability_type' => 'post',
+				'capabilities'    => array( 'create_posts' => 'do_not_allow' ),
 				'map_meta_cap'    => true,
 			)
 		);

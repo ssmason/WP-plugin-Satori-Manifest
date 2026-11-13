@@ -49,6 +49,16 @@ final class Endpoint {
 	public const MAX_BODY = 1048576;
 
 	/**
+	 * Invalid connection links allowed from one address per window.
+	 */
+	private const MAX_FAILURES = 20;
+
+	/**
+	 * Seconds the failure count is kept.
+	 */
+	private const FAILURE_WINDOW = 900;
+
+	/**
 	 * Registers the routes. Hooked to 'rest_api_init'.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
@@ -99,9 +109,22 @@ final class Endpoint {
 			return $response;
 		}
 
+		// Too many bad links from one address: stop answering for a while (keys
+		// cannot be guessed, but this keeps scanners from hammering the site).
+		$failures = 'sm_ai_fail_' . \SatoriManifest\Hardening\Client_Ip::hash( 'mcp' );
+
+		if ( (int) get_transient( $failures ) >= self::MAX_FAILURES ) {
+			$response = self::fail( 429, 'Too many invalid connection links from this address. Please wait and try again.' );
+			$response->header( 'Retry-After', (string) self::FAILURE_WINDOW );
+
+			return $response;
+		}
+
 		$user_id = Tokens::verify( self::key( $request ) );
 
 		if ( ! $user_id ) {
+			set_transient( $failures, (int) get_transient( $failures ) + 1, self::FAILURE_WINDOW );
+
 			$response = self::fail( 401, 'This connection link is not valid. Create a new one in your dashboard under AI assistant.' );
 			$response->header( 'WWW-Authenticate', 'Bearer realm="' . esc_attr( (string) wp_parse_url( home_url(), PHP_URL_HOST ) ) . '"' );
 

@@ -131,6 +131,14 @@ class HeadingsTest extends Test_Case {
 
 		$pdf_on = Price_List_Pdf::render( $page_id );
 
+		// One heading on its own: the heading and the sections under it only.
+		$heading_id = $store->sections()[1]['id'];
+		$picked     = Price_List_Pdf::pick( $store->sections(), $heading_id );
+		$this->assertSame( array( 'Main Menu', 'Mains', 'Burgers' ), array_column( $picked, 'title' ) );
+		$this->assertSame( array( $heading_id => 'Main Menu' ), Price_List_Pdf::printable_headings( $page_id ) );
+		$this->assertSame( 'heading-bar-main-menu-prices-a3.pdf', Price_List_Pdf::filename( $page_id, 'a3', $heading_id ) );
+		$this->assertLessThan( strlen( $pdf_on ), strlen( Price_List_Pdf::render( $page_id, 'a4', $heading_id ) ) );
+
 		$entries               = $store->sections();
 		$entries[1]['visible'] = false;
 		$store->save_sections( $entries );

@@ -47,6 +47,8 @@ class Client_Chrome {
 		add_filter( 'parent_file', array( self::class, 'highlight_menu' ) );
 		add_action( 'admin_bar_menu', array( self::class, 'trim_admin_bar' ), 999 );
 		add_action( 'wp_before_admin_bar_render', array( self::class, 'remove_late_admin_bar_nodes' ) );
+		add_action( 'wp_enqueue_scripts', array( self::class, 'admin_bar_on_phones' ) );
+		add_action( 'admin_enqueue_scripts', array( self::class, 'admin_bar_on_phones' ) );
 		add_action( 'in_admin_header', array( self::class, 'silence_notices' ), 999 );
 		add_filter( 'admin_footer_text', array( self::class, 'footer_text' ) );
 		add_filter( 'update_footer', array( self::class, 'footer_version' ), 20 );
@@ -119,7 +121,9 @@ class Client_Chrome {
 	}
 
 	/**
-	 * Trims the admin bar for clients and adds a "View my page" link.
+	 * Trims the admin bar for clients and adds their own links: Dashboard and
+	 * Price list everywhere, plus "View page" inside wp-admin (on the page
+	 * itself it would only link to where they already are).
 	 *
 	 * Hooked late to 'admin_bar_menu'.
 	 *
@@ -140,14 +144,26 @@ class Client_Chrome {
 		$bar->add_node(
 			array(
 				'id'    => 'sm-home',
-				'title' => '<span class="ab-icon dashicons dashicons-store" aria-hidden="true"></span>' . esc_html__( 'My price list', 'satori-manifest' ),
+				'title' => '<span class="ab-icon dashicons dashicons-store" aria-hidden="true"></span>' . esc_html__( 'Dashboard', 'satori-manifest' ),
 				'href'  => Screen_Guard::home_url(),
 			)
 		);
 
+		$manifest_id = Client_Repository::manifest_id( get_current_user_id() );
+
+		if ( $manifest_id ) {
+			$bar->add_node(
+				array(
+					'id'    => 'sm-price-list',
+					'title' => '<span class="ab-icon dashicons dashicons-list-view" aria-hidden="true"></span>' . esc_html__( 'Price list', 'satori-manifest' ),
+					'href'  => admin_url( 'post.php?post=' . $manifest_id . '&action=edit' ),
+				)
+			);
+		}
+
 		$page_id = Client_Repository::page_id( get_current_user_id() );
 
-		if ( $page_id ) {
+		if ( $page_id && is_admin() ) {
 			$bar->add_node(
 				array(
 					'id'    => 'sm-view-page',
@@ -174,7 +190,35 @@ class Client_Chrome {
 
 		if ( Client_Role::is_client() && $wp_admin_bar instanceof \WP_Admin_Bar ) {
 			$wp_admin_bar->remove_node( 'command-palette' );
+			$wp_admin_bar->remove_node( 'search' );
 		}
+	}
+
+	/**
+	 * Keeps the client's own admin bar links on phones.
+	 *
+	 * Below 783px WordPress shows only its own icons in the bar, which would
+	 * hide Dashboard and Price list. Hooked to 'wp_enqueue_scripts' and
+	 * 'admin_enqueue_scripts'.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.10.0
+	 * @return void
+	 */
+	public static function admin_bar_on_phones(): void {
+		if ( ! Client_Role::is_client() || ! is_admin_bar_showing() ) {
+			return;
+		}
+
+		wp_add_inline_style(
+			'admin-bar',
+			'@media screen and (max-width:782px){'
+			. '#wpadminbar li#wp-admin-bar-sm-home,#wpadminbar li#wp-admin-bar-sm-price-list,#wpadminbar li#wp-admin-bar-sm-view-page{display:block}'
+			. '#wpadminbar li[id^="wp-admin-bar-sm-"]>.ab-item{display:flex;align-items:center;gap:4px;height:46px;padding:0 10px;font-size:14px;line-height:46px}'
+			. '#wpadminbar li[id^="wp-admin-bar-sm-"] .ab-icon{width:auto;margin:0;padding:0}'
+			. '#wpadminbar li[id^="wp-admin-bar-sm-"] .ab-icon::before{font-size:22px;top:0}'
+			. '}'
+		);
 	}
 
 	/**
