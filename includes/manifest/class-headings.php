@@ -126,17 +126,23 @@ final class Headings {
 	 */
 	public static function jump_links( int $page_id ): array {
 		$manifest_id = \SatoriManifest\Clients\Client_Repository::manifest_for_page( $page_id );
-		$excluded    = self::excluded_on_page( (string) get_post_field( 'post_content', $page_id ) );
+		$sets        = Block_Placement::page_sets( $page_id );
 
-		if ( ! $manifest_id || null === $excluded ) {
+		if ( ! $manifest_id || array() === $sets ) {
 			return array();
 		}
+
+		$entries = self::visible( Manifest_Repository::get_sections( $manifest_id ) );
+
+		// Ids hidden by every block once new entries are placed (Block_Placement): a heading shown by any one block gets a link.
+		$hidden = array_map( static fn( array $set ): array => Block_Placement::hidden( $entries, $set, $sets ), $sets );
+		$hidden = count( $hidden ) > 1 ? array_intersect( ...$hidden ) : $hidden[0];
 
 		$links = array();
 		$seen  = array();
 
-		foreach ( self::visible( Manifest_Repository::get_sections( $manifest_id ) ) as $entry ) {
-			if ( ! self::is_heading( $entry ) || empty( $entry['in_menu'] ) || in_array( (string) $entry['id'], $excluded, true ) ) {
+		foreach ( $entries as $entry ) {
+			if ( ! self::is_heading( $entry ) || empty( $entry['in_menu'] ) || in_array( (string) $entry['id'], $hidden, true ) ) {
 				continue;
 			}
 
@@ -152,37 +158,6 @@ final class Headings {
 		}
 
 		return $links;
-	}
-
-	/**
-	 * Ids hidden by every price list block on a page (null when there is none).
-	 *
-	 * A heading counts as shown when any one block shows it.
-	 *
-	 * @author Stephen Mason <steve@satori-digital.com>
-	 * @since  3.10.0
-	 * @param  string $content  Page content.
-	 * @return array<int,string>|null
-	 */
-	private static function excluded_on_page( string $content ): ?array {
-		$sets = array();
-		$walk = static function ( array $blocks ) use ( &$walk, &$sets ): void {
-			foreach ( $blocks as $block ) {
-				if ( 'satori-manifest/price-list' === ( $block['blockName'] ?? '' ) ) {
-					$sets[] = array_map( 'strval', (array) ( $block['attrs']['excludedSectionIds'] ?? array() ) );
-				}
-
-				$walk( (array) ( $block['innerBlocks'] ?? array() ) );
-			}
-		};
-
-		$walk( parse_blocks( $content ) );
-
-		if ( array() === $sets ) {
-			return null;
-		}
-
-		return count( $sets ) > 1 ? array_values( array_intersect( ...$sets ) ) : $sets[0];
 	}
 
 	/**

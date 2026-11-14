@@ -76,7 +76,7 @@ class Price_List_View {
 	 */
 	public static function prepare( array $attributes, int $post_id ): ?array {
 		$client_id = Client_Repository::client_for_page( $post_id );
-		$manifests = self::manifests( $attributes, $client_id );
+		$manifests = self::manifests( $attributes, $client_id, $post_id );
 
 		// No manifest to show: a styled demo in editor/REST previews, nothing on the front end.
 		if ( ! $manifests ) {
@@ -206,9 +206,10 @@ class Price_List_View {
 	 * @since  3.7.0
 	 * @param  array<string,mixed> $attributes  Block attributes.
 	 * @param  int                 $client_id   Client owning the page (0 when none).
+	 * @param  int                 $post_id     Post the block is on (to place new entries; see Block_Placement).
 	 * @return array<int,array<int,array<string,mixed>>>
 	 */
-	private static function manifests( array $attributes, int $client_id ): array {
+	private static function manifests( array $attributes, int $client_id, int $post_id = 0 ): array {
 		$ids = isset( $attributes['manifestIds'] ) && is_array( $attributes['manifestIds'] )
 			? array_values( array_filter( array_map( 'absint', $attributes['manifestIds'] ) ) )
 			: array();
@@ -236,10 +237,12 @@ class Price_List_View {
 				continue;
 			}
 
+			$entries  = Headings::visible( Manifest_Repository::get_sections( $id ) );
+			$skip     = $post_id ? Block_Placement::hidden( $entries, $hidden, Block_Placement::page_sets( $post_id ) ) : $hidden;
 			$sections = array_values(
 				array_filter(
-					Headings::visible( Manifest_Repository::get_sections( $id ) ),
-					static fn( $section ): bool => ! in_array( (string) ( $section['id'] ?? '' ), $hidden, true )
+					$entries,
+					static fn( $section ): bool => ! in_array( (string) ( $section['id'] ?? '' ), $skip, true )
 				)
 			);
 

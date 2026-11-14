@@ -20,7 +20,13 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 
 import Inspector from './inspector';
-import { DEMO_SECTIONS, editorData, parseSections, formatPrice } from './utils';
+import {
+	DEMO_SECTIONS,
+	editorData,
+	parseSections,
+	formatPrice,
+	placementHidden,
+} from './utils';
 
 /**
  * Fields requested from the REST API for each manifest record.
@@ -316,14 +322,38 @@ export default function Edit({ attributes, setAttributes }) {
 		parseSections(manifest.meta?._satori_manifest_sections)
 	);
 
+	// What every price list block on the page hides (as JSON, so the selector stays stable).
+	const pageSetsJson = useSelect((select) => {
+		const editor = select('core/block-editor');
+		const blocks = editor.getBlocksByName
+			? editor.getBlocksByName('satori-manifest/price-list')
+			: [];
+
+		return JSON.stringify(
+			blocks.map(
+				(clientId) =>
+					editor.getBlockAttributes(clientId)?.excludedSectionIds ||
+					[]
+			)
+		);
+	}, []);
+
 	/**
-	 * Removes this block's hidden sections from one manifest's sections.
+	 * Removes this block's hidden sections from one manifest's sections;
+	 * new entries show only next to their neighbour (as on the page).
 	 *
 	 * @param {Array} sections Sections of one manifest.
 	 * @return {Array} Sections to display.
 	 */
-	const pick = (sections) =>
-		sections.filter((section) => !excludedSectionIds.includes(section.id));
+	const pick = (sections) => {
+		const hidden = placementHidden(
+			sections,
+			excludedSectionIds,
+			JSON.parse(pageSetsJson)
+		);
+
+		return sections.filter((section) => !hidden.includes(section.id));
+	};
 
 	const inspector = (
 		<Inspector

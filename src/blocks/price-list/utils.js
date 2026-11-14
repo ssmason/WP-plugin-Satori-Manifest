@@ -128,3 +128,47 @@ export function formatPrice(
 		? `${number}${currency.symbol}`
 		: `${currency.symbol}${number}`;
 }
+
+/**
+ * Ids one block hides once new entries are placed by their neighbour.
+ *
+ * Mirrors Manifest\Block_Placement (PHP): on a page with several price list
+ * blocks, an entry that no block mentions shows only in the block(s) that
+ * show the nearest placed entry above it (or below it, at the top).
+ *
+ * @param {Array} sections Sections and headings, in order.
+ * @param {Array} own      Ids this block hides.
+ * @param {Array} sets     Ids each price list block on the page hides.
+ * @return {Array} Ids to hide.
+ */
+export function placementHidden(sections, own, sets) {
+	if (sets.length < 2) {
+		return own;
+	}
+
+	const known = new Set(sets.flat());
+	const ids = sections.map((section) => section.id || '');
+	const hidden = [...own];
+
+	ids.forEach((id, index) => {
+		if (!id || known.has(id)) {
+			return;
+		}
+
+		let anchor = null;
+
+		for (let i = index - 1; i >= 0 && null === anchor; i--) {
+			anchor = known.has(ids[i]) ? ids[i] : null;
+		}
+
+		for (let i = index + 1; i < ids.length && null === anchor; i++) {
+			anchor = known.has(ids[i]) ? ids[i] : null;
+		}
+
+		if (null !== anchor && own.includes(anchor)) {
+			hidden.push(id);
+		}
+	});
+
+	return hidden;
+}
