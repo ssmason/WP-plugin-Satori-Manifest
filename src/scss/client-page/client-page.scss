@@ -471,6 +471,16 @@ a.sm-button,
 		padding-inline: 0;
 	}
 
+	// Groups sit straight on each other; a group holding a price list gets a
+	// line above and below in the page background colour to separate them.
+	> .wp-block-group {
+		margin-block: 0;
+	}
+
+	> .wp-block-group:has(.wp-block-satori-manifest-price-list) {
+		border-block: var(--sm-manifest-border, 1px) solid var(--sm-background);
+	}
+
 	h1,
 	h2,
 	h3,
