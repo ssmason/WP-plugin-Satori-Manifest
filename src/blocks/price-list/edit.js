@@ -116,186 +116,147 @@ function Manifest({ sections, attributes }) {
 	} = attributes;
 	const { currency } = editorData();
 
-	/**
-	 * One heading (a banner) or one section.
-	 *
-	 * @param {Object} section Entry.
-	 * @param {number} si      Position.
-	 * @return {JSX.Element|null} Markup.
-	 */
-	const renderEntry = (section, si) => {
-		if ('heading' === section.type) {
-			if (false === section.visible) {
-				return null;
-			}
-
-			const style = section.style || {};
-
-			return (
-				<header
-					key={`${section.id}-${si}`}
-					className={`satori-manifest-price-list__heading is-size-${
-						style.size || 'm'
-					}${
-						style.background || style.text ? ' has-own-colours' : ''
-					}`}
-					style={{
-						'--sm-heading-bg': style.background || undefined,
-						'--sm-heading-text': style.text || undefined,
-					}}
-				>
-					{section.title && (
-						<h2 className="satori-manifest-price-list__heading-title">
-							{section.title}
-						</h2>
-					)}
-					{section.description && (
-						<p className="satori-manifest-price-list__heading-note">
-							{section.description}
-						</p>
-					)}
-				</header>
-			);
-		}
-
-		const items = Array.isArray(section.items) ? section.items : [];
-
-		if (!section.title && 0 === items.length) {
-			return null;
-		}
-
-		return (
-			<section
-				key={`${section.title}-${si}`}
-				className="satori-manifest-price-list__section"
-			>
-				{section.title && (
-					<h3 className="satori-manifest-price-list__section-title">
-						{section.title}
-					</h3>
-				)}
-
-				{showSectionDescriptions && section.description && (
-					<p className="satori-manifest-price-list__section-desc">
-						{section.description}
-					</p>
-				)}
-
-				{items.length > 0 && (
-					<ul className="satori-manifest-price-list__items">
-						{items.map((item, ii) => {
-							if (!item.label) {
-								return null;
-							}
-
-							const price = String(item.price ?? '').trim();
-							const isSubheader = '' === price;
-							const prefix =
-								pricePrefix || item.price_prefix || '';
-
-							return (
-								<li
-									key={`${item.label}-${ii}`}
-									className={`satori-manifest-price-list__item${
-										isSubheader
-											? ' is-subsection-header'
-											: ''
-									}`}
-								>
-									<div className="satori-manifest-price-list__item-label">
-										<span className="satori-manifest-price-list__item-name">
-											{item.label}
-											{showBadges && item.badge && (
-												<span className="satori-manifest-price-list__item-badge">
-													{item.badge}
-												</span>
-											)}
-										</span>
-										{showDescriptions &&
-											item.description && (
-												<span className="satori-manifest-price-list__item-desc">
-													{item.description}
-												</span>
-											)}
-									</div>
-
-									{showPrices && !isSubheader && (
-										<>
-											<span
-												className="satori-manifest-price-list__item-leader"
-												aria-hidden="true"
-											/>
-											<span className="satori-manifest-price-list__item-price">
-												{prefix && (
-													<span className="satori-manifest-price-list__item-prefix">
-														{prefix}
-													</span>
-												)}
-												{formatPrice(price, currency)}
-											</span>
-										</>
-									)}
-								</li>
-							);
-						})}
-					</ul>
-				)}
-			</section>
-		);
-	};
-
-	// Banners and menu boxes one after another, as render.php prints them.
-	const segments = [];
-	let menu = [];
-
-	sections.forEach((section, si) => {
-		if ('heading' === section.type) {
-			if (menu.length) {
-				segments.push({ menu });
-				menu = [];
-			}
-
-			segments.push({ heading: [section, si] });
-			return;
-		}
-
-		menu.push([section, si]);
-	});
-
-	if (menu.length) {
-		segments.push({ menu });
-	}
-
 	return (
-		<>
-			{segments.map((segment, index) =>
-				segment.heading ? (
-					renderEntry(...segment.heading)
-				) : (
-					<div
-						key={`menu-${index}`}
-						className={wrapperClasses(attributes)}
-					>
-						<div className="satori-manifest-price-list__manifest">
-							{segment.menu.map(([section, si]) =>
-								renderEntry(section, si)
+		<div className="satori-manifest-price-list__manifest">
+			{sections.map((section, si) => {
+				if ('heading' === section.type) {
+					if (false === section.visible) {
+						return null;
+					}
+
+					const style = section.style || {};
+
+					return (
+						<header
+							key={`${section.id}-${si}`}
+							className={`satori-manifest-price-list__heading is-size-${
+								style.size || 'm'
+							}${
+								style.background || style.text
+									? ' has-own-colours'
+									: ''
+							}`}
+							style={{
+								'--sm-heading-bg':
+									style.background || undefined,
+								'--sm-heading-text': style.text || undefined,
+							}}
+						>
+							{section.title && (
+								<h2 className="satori-manifest-price-list__heading-title">
+									{section.title}
+								</h2>
 							)}
-						</div>
-					</div>
-				)
-			)}
+							{section.description && (
+								<p className="satori-manifest-price-list__heading-note">
+									{section.description}
+								</p>
+							)}
+						</header>
+					);
+				}
+
+				const items = Array.isArray(section.items) ? section.items : [];
+
+				if (!section.title && 0 === items.length) {
+					return null;
+				}
+
+				return (
+					<section
+						key={`${section.title}-${si}`}
+						className="satori-manifest-price-list__section"
+					>
+						{section.title && (
+							<h3 className="satori-manifest-price-list__section-title">
+								{section.title}
+							</h3>
+						)}
+
+						{showSectionDescriptions && section.description && (
+							<p className="satori-manifest-price-list__section-desc">
+								{section.description}
+							</p>
+						)}
+
+						{items.length > 0 && (
+							<ul className="satori-manifest-price-list__items">
+								{items.map((item, ii) => {
+									if (!item.label) {
+										return null;
+									}
+
+									const price = String(
+										item.price ?? ''
+									).trim();
+									const isSubheader = '' === price;
+									const prefix =
+										pricePrefix || item.price_prefix || '';
+
+									return (
+										<li
+											key={`${item.label}-${ii}`}
+											className={`satori-manifest-price-list__item${
+												isSubheader
+													? ' is-subsection-header'
+													: ''
+											}`}
+										>
+											<div className="satori-manifest-price-list__item-label">
+												<span className="satori-manifest-price-list__item-name">
+													{item.label}
+													{showBadges &&
+														item.badge && (
+															<span className="satori-manifest-price-list__item-badge">
+																{item.badge}
+															</span>
+														)}
+												</span>
+												{showDescriptions &&
+													item.description && (
+														<span className="satori-manifest-price-list__item-desc">
+															{item.description}
+														</span>
+													)}
+											</div>
+
+											{showPrices && !isSubheader && (
+												<>
+													<span
+														className="satori-manifest-price-list__item-leader"
+														aria-hidden="true"
+													/>
+													<span className="satori-manifest-price-list__item-price">
+														{prefix && (
+															<span className="satori-manifest-price-list__item-prefix">
+																{prefix}
+															</span>
+														)}
+														{formatPrice(
+															price,
+															currency
+														)}
+													</span>
+												</>
+											)}
+										</li>
+									);
+								})}
+							</ul>
+						)}
+					</section>
+				);
+			})}
 
 			{0 === sections.length && (
-				<div className={wrapperClasses(attributes)}>
-					<p className="satori-manifest-price-list__empty">
-						{__(
-							'This price list has no sections yet. Add some under Price list.',
-							'satori-manifest'
-						)}
-					</p>
-				</div>
+				<p className="satori-manifest-price-list__empty">
+					{__(
+						'This price list has no sections yet. Add some under Price list.',
+						'satori-manifest'
+					)}
+				</p>
 			)}
-		</>
+		</div>
 	);
 }
 
@@ -317,9 +278,8 @@ export default function Edit({ attributes, setAttributes }) {
 			: [defaultManifestId].filter(Boolean);
 	const isAuto = !manifestIds?.length && ids.length > 0;
 
-	// The root holds banners and menu boxes; each menu box gets the layout and colour classes.
 	const blockProps = useBlockProps({
-		className: 'satori-manifest-price-list-stack',
+		className: wrapperClasses(attributes),
 		style: wrapperStyle(attributes),
 	});
 
