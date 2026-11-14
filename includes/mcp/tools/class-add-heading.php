@@ -52,7 +52,7 @@ final class Add_Heading extends Client_Tool {
 	 * @return string
 	 */
 	public function description(): string {
-		return 'Adds a menu heading such as "Main Menu" or "Starters & Snacks" to the price list. A heading sits in the same list as the sections and groups every section below it, up to the next heading. Put it just above the first section it should cover (position = that section\'s position). It can have a note, its own banner colours and a size, and can be switched off to hide its whole group.';
+		return 'Adds a menu heading such as "Main Menu" or "Starters & Snacks" to the price list. A heading sits in the same list as the sections and groups every section below it, up to the next heading. Put it just above the first section it should cover (position = that section\'s position). It can have a note, its own banner colours and a size, and can be switched off to hide its whole group. On the page it becomes a banner of its own with its menu below it, placed automatically. For a new menu (e.g. Christmas Menu), add the heading, then its sections straight after it, before the next heading - otherwise it takes over the sections below it.';
 	}
 
 	/**
