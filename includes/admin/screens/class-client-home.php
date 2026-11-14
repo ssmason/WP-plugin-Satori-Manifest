@@ -19,8 +19,7 @@ use SatoriManifest\Admin\Portal\Screen_Guard;
 use SatoriManifest\Clients\Client_Role;
 use SatoriManifest\Clients\Client_Summary;
 use SatoriManifest\Clients\Embed_Code;
-use SatoriManifest\Qr\Page_Qr;
-use SatoriManifest\Qr\Qr_Renderer;
+use SatoriManifest\Qr\Qr_Sign;
 use SatoriManifest\Stats\Monthly_Summary;
 use SatoriManifest\Stats\Page_Views;
 
@@ -66,7 +65,7 @@ class Client_Home {
 		$satori_manifest_summary = Client_Summary::for_user( Admin_Menu::current_client_id() );
 		$satori_manifest_embed   = Embed_Code::for_page( (int) $satori_manifest_summary['page_id'] );
 		$satori_manifest_page_id = (int) $satori_manifest_summary['page_id'];
-		$satori_manifest_qr_svg  = $satori_manifest_page_id ? Qr_Renderer::svg( Page_Qr::matrix( $satori_manifest_page_id ), '#0b1620', __( 'Your QR code', 'satori-manifest' ) ) : '';
+		$satori_manifest_qr_svg  = $satori_manifest_page_id ? Qr_Sign::svg( $satori_manifest_page_id ) : '';
 		$satori_manifest_stats   = $satori_manifest_page_id ? Page_Views::last_days( $satori_manifest_page_id, 30 ) : array(
 			'views' => 0,
 			'scans' => 0,

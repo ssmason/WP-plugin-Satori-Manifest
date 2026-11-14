@@ -49,6 +49,7 @@ function entries() {
 		'build/js/client-page': './src/js/client-page.js',
 		'build/js/admin-settings': './src/js/admin-settings.js',
 		'build/js/client-home': './src/js/client-home.js',
+		'build/js/qr-builder': './src/js/qr-builder.js',
 		'build/js/design-screen': './src/js/design-screen.js',
 		'build/js/embed': './src/js/embed.js',
 	};

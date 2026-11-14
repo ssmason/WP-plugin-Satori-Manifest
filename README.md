@@ -120,6 +120,13 @@ Visitor ──Register form──▶ Application (pending)
   proportions. Hidden headings (and their sections) are left out; the page's navigation and
   jump links never appear. Brand colours too light for paper are swapped for readable ones;
   white logos are placed on a dark tile. Nonce-protected; clients can only download their own.
+* **QR builder** - clients design a printable sign around their code (`Admin\Screens\Qr_Builder_Screen`,
+  `Qr\Qr_Sign`, `Qr\Qr_Sign_Pdf`): **large** (top text, subtitle, their colour; one per A4 page,
+  about 16 × 19.5 cm) or **small** (short text with the last word in red; four per A4 page, about
+  6.5 × 8 cm). Live preview while typing; settings in page meta `_sm_qr_sign`. One shape definition
+  feeds the SVG preview and a vector PDF (`Pdf_Document::path()` / `rounded_rect()`), so it prints as
+  previewed. The sign shows on the Home card with "Download PDF" (`Qr_Download::url( $page, 'sign' )`)
+  and is linked from Branding.
 * **QR code** - every client page has one, built by the plugin's own encoder
   (`Qr\Qr_Encoder`, ISO 18004, no library; verified with a real scanner). It opens the page
   with `?src=qr` and uses error correction Q (25%) so worn prints still scan. Clients see it
@@ -420,11 +427,11 @@ includes/
   pdf/           Pdf\          Pdf_Document, Font_Metrics, Print_Colour, Pdf_Image,
                                Price_List_Pdf, Pdf_Download
   hardening/     Hardening\    Login_Throttle, Site_Hardening, Client_Ip, Turnstile
-  qr/            Qr\           Qr_Encoder, Qr_Renderer, Page_Qr, Qr_Download
+  qr/            Qr\           Qr_Encoder, Qr_Renderer, Page_Qr, Qr_Download, Qr_Sign, Qr_Sign_Pdf
   stats/         Stats\        Page_Views, View_Counter, Monthly_Summary
   help/          Help\         Help_Content, Help_Tabs
   admin/         Admin\        Admin_Menu, Assets
-    screens/     Admin\Screens\ one class per screen (Client_Home, Branding, Design, Clients,
+    screens/     Admin\Screens\ one class per screen (Client_Home, Branding, Design, Qr_Builder, Clients,
                                Applications, Payments, Billing, Settings, Help)
     portal/      Admin\Portal\  Screen_Guard, Client_Chrome, Editor_Lockdown
   cli/           Cli\          Demo, Client, Designs, Email and Billing commands

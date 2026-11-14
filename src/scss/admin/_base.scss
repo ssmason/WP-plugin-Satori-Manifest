@@ -33,6 +33,19 @@
 	gap: $sm-space-md;
 	margin: $sm-space-lg 0;
 
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: $sm-space-sm;
+
+		.dashicons {
+			font-size: 16px;
+			width: 16px;
+			height: 16px;
+			vertical-align: text-bottom;
+		}
+	}
+
 	&__title {
 		margin: 0;
 		padding: 0;

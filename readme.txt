@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 3.10.0
+Stable tag: 3.11.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,9 @@ No. Ownership is checked on the server for admin screens, REST requests, media, 
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.11.0 =
+* QR builder: clients design a printable QR sign - large (top text, subtitle, own colour; one per A4 page) or small (short text, last word in red; four per A4 page) - with a live preview, and download it as a vector PDF. The sign shows on the Home dashboard with its PDF; linked from Branding too.
 
 = 3.10.0 =
 * Menu headings in the price list (e.g. "Starters & Snacks", "Main Menu"): each groups the sections below it, has an optional note, its own banner colours and size, and a "Show on page" switch that hides the whole menu from the page and PDF.

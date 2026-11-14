@@ -52,6 +52,7 @@ use SatoriManifest\Admin\Screens\Client_Home;
 use SatoriManifest\Admin\Screens\Clients_Screen;
 use SatoriManifest\Admin\Screens\Design_Screen;
 use SatoriManifest\Admin\Screens\Payments_Screen;
+use SatoriManifest\Admin\Screens\Qr_Builder_Screen;
 use SatoriManifest\Admin\Screens\Settings_Screen;
 use SatoriManifest\Billing\Billing_Portal;
 use SatoriManifest\Billing\Checkout;
@@ -282,6 +283,7 @@ class Plugin {
 		add_action( 'load-index.php', array( Client_Home::class, 'redirect_dashboard' ) );
 		add_action( 'admin_post_' . Applications_Screen::ACTION, array( Applications_Screen::class, 'handle' ) );
 		add_action( 'admin_post_' . Design_Screen::ACTION, array( Design_Screen::class, 'handle' ) );
+		add_action( 'admin_post_' . Qr_Builder_Screen::ACTION, array( Qr_Builder_Screen::class, 'handle' ) );
 		add_action( 'admin_post_' . Clients_Screen::ACTION, array( Clients_Screen::class, 'handle' ) );
 		Branding_Screen::register();
 		Settings_Screen::register();

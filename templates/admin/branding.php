@@ -32,9 +32,14 @@ $satori_manifest_current  = $satori_manifest_tabs[ $satori_manifest_tab ] ?? nul
 			<h1 class="sm-page-header__title"><?php esc_html_e( 'Make it yours', 'satori-manifest' ); ?></h1>
 			<p class="sm-page-header__lead"><?php esc_html_e( 'Your logo, colours, header and footer. Changes appear on your page as soon as you save.', 'satori-manifest' ); ?></p>
 		</div>
-		<?php if ( $satori_manifest_page_url ) : ?>
-			<a class="button" href="<?php echo esc_url( $satori_manifest_page_url ); ?>" target="_blank" rel="noopener"><?php Icons::render( 'eye', 16 ); ?> <?php esc_html_e( 'View page', 'satori-manifest' ); ?></a>
-		<?php endif; ?>
+		<div class="sm-page-header__actions">
+			<?php if ( $satori_manifest_client_id ) : ?>
+				<a class="button" href="<?php echo esc_url( Admin_Menu::url( Admin_Menu::QR_SLUG, $satori_manifest_client_id ) ); ?>"><span class="dashicons dashicons-screenoptions" aria-hidden="true"></span> <?php esc_html_e( 'QR sign builder', 'satori-manifest' ); ?></a>
+			<?php endif; ?>
+			<?php if ( $satori_manifest_page_url ) : ?>
+				<a class="button" href="<?php echo esc_url( $satori_manifest_page_url ); ?>" target="_blank" rel="noopener"><?php Icons::render( 'eye', 16 ); ?> <?php esc_html_e( 'View page', 'satori-manifest' ); ?></a>
+			<?php endif; ?>
+		</div>
 	</header>
 
 	<?php if ( ! Field_Loader::acf_available() ) : ?>

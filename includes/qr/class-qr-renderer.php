@@ -69,6 +69,26 @@ class Qr_Renderer {
 	}
 
 	/**
+	 * SVG path data for the dark modules, one unit per module, no quiet zone.
+	 *
+	 * For drawing a code inside a larger SVG (e.g. a printed sign).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.11.0
+	 * @param  array<int,array<int,bool>> $matrix  QR matrix.
+	 * @return string
+	 */
+	public static function path( array $matrix ): string {
+		$path = '';
+
+		foreach ( self::runs( $matrix ) as $run ) {
+			$path .= sprintf( 'M%d %dh%dv1h-%dz', $run[0], $run[1], $run[2], $run[2] );
+		}
+
+		return $path;
+	}
+
+	/**
 	 * Returns PNG image data for the matrix.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
@@ -113,20 +133,23 @@ class Qr_Renderer {
 	 * @param  float                      $x       Left edge of the quiet zone.
 	 * @param  float                      $y       Top edge of the quiet zone.
 	 * @param  float                      $size    Total width (and height) in points.
-	 * @param  array<int,float>           $rgb     Dark colour as 0–1 floats.
+	 * @param  array<int,float>           $rgb         Dark colour as 0–1 floats.
+	 * @param  bool                       $background  Paint the quiet zone white (off when the code sits on a light card).
 	 * @return void
 	 */
-	public static function pdf( Pdf_Document $pdf, array $matrix, float $x, float $y, float $size, array $rgb ): void {
+	public static function pdf( Pdf_Document $pdf, array $matrix, float $x, float $y, float $size, array $rgb, bool $background = true ): void {
 		$module = $size / ( count( $matrix ) + 2 * self::QUIET_ZONE );
 
-		$pdf->rect( $x, $y, $size, $size, array( 1, 1, 1 ) );
+		if ( $background ) {
+			$pdf->rect( $x, $y, $size, $size, array( 1, 1, 1 ) );
+		}
 
 		foreach ( self::runs( $matrix ) as $run ) {
 			$pdf->rect(
 				$x + ( $run[0] + self::QUIET_ZONE ) * $module,
 				$y + ( $run[1] + self::QUIET_ZONE ) * $module,
 				$run[2] * $module,
-				$module,
+				$module + 0.06, // A hair taller so rows overlap: no white seams in PDF viewers.
 				$rgb
 			);
 		}

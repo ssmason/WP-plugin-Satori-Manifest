@@ -95,6 +95,7 @@ class Help_Tabs {
 			Admin_Menu::hook( Admin_Menu::HOME_SLUG )     => 'home',
 			Admin_Menu::hook( Admin_Menu::DESIGN_SLUG )   => 'design',
 			Admin_Menu::hook( Admin_Menu::BRANDING_SLUG ) => 'branding',
+			Admin_Menu::hook( Admin_Menu::QR_SLUG )       => 'qr',
 			Admin_Menu::hook( Admin_Menu::BILLING_SLUG )  => 'billing',
 		);
 

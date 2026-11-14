@@ -66,7 +66,7 @@ class Qr_Download {
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.3.0
 	 * @param  int    $page_id  Client page ID.
-	 * @param  string $format   "png" or "svg".
+	 * @param  string $format   "png", "svg" (the code) or "sign" (the printable sign as PDF).
 	 * @return string
 	 */
 	public static function url( int $page_id, string $format = 'png' ): string {
@@ -75,7 +75,7 @@ class Qr_Download {
 				array(
 					'action'  => self::ACTION,
 					'page_id' => $page_id,
-					'format'  => 'svg' === $format ? 'svg' : 'png',
+					'format'  => in_array( $format, array( 'svg', 'sign' ), true ) ? $format : 'png',
 				),
 				admin_url( 'admin-post.php' )
 			),
@@ -93,10 +93,24 @@ class Qr_Download {
 	public static function handle(): void {
 		$page_id = isset( $_GET['page_id'] ) ? absint( $_GET['page_id'] ) : 0;
 		$nonce   = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
-		$format  = isset( $_GET['format'] ) && 'svg' === sanitize_key( wp_unslash( $_GET['format'] ) ) ? 'svg' : 'png';
+		$format  = isset( $_GET['format'] ) ? sanitize_key( wp_unslash( $_GET['format'] ) ) : 'png';
+		$format  = in_array( $format, array( 'svg', 'sign' ), true ) ? $format : 'png';
 
 		if ( ! wp_verify_nonce( $nonce, self::ACTION . '_' . $page_id ) || ! Client_Repository::is_client_page( $page_id ) || ! current_user_can( 'edit_post', $page_id ) ) {
 			wp_die( esc_html__( 'Sorry, you cannot download this QR code.', 'satori-manifest' ), 403 );
+		}
+
+		if ( 'sign' === $format ) {
+			$pdf = Qr_Sign_Pdf::render( $page_id );
+
+			nocache_headers();
+			header( 'Content-Type: application/pdf' );
+			header( 'Content-Disposition: attachment; filename="' . Qr_Sign_Pdf::filename( $page_id ) . '"' );
+			header( 'Content-Length: ' . strlen( $pdf ) );
+			header( 'X-Content-Type-Options: nosniff' );
+
+			echo $pdf; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- binary PDF built from escaped, encoded text.
+			exit;
 		}
 
 		$matrix = Page_Qr::matrix( $page_id );

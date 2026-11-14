@@ -63,6 +63,24 @@
 			width: 100%;
 			height: 100%;
 		}
+
+		// The designed sign (QR builder): portrait, with its own frame.
+		&--sign {
+			width: 110px;
+			height: auto;
+			padding: 0;
+			background: none;
+			transition: transform 0.15s ease;
+
+			svg {
+				height: auto;
+			}
+
+			&:hover,
+			&:focus-visible {
+				transform: translateY(-2px);
+			}
+		}
 	}
 
 	&__stats {

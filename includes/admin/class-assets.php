@@ -119,6 +119,10 @@ class Assets {
 			wp_set_script_translations( 'satori-manifest-client-home', 'satori-manifest', SATORI_MANIFEST_PATH . 'languages' );
 		}
 
+		if ( Admin_Menu::hook( Admin_Menu::QR_SLUG ) === $hook_suffix ) {
+			self::enqueue_script( 'satori-manifest-qr-builder', 'build/js/qr-builder.js' );
+		}
+
 		if ( Admin_Menu::hook( Admin_Menu::DESIGN_SLUG ) === $hook_suffix ) {
 			self::enqueue_script( 'satori-manifest-design-screen', 'build/js/design-screen.js' );
 		}

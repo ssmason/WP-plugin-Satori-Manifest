@@ -27,6 +27,7 @@ use SatoriManifest\Admin\Screens\Clients_Screen;
 use SatoriManifest\Admin\Screens\Design_Screen;
 use SatoriManifest\Admin\Screens\Help_Screen;
 use SatoriManifest\Admin\Screens\Payments_Screen;
+use SatoriManifest\Admin\Screens\Qr_Builder_Screen;
 use SatoriManifest\Admin\Screens\Settings_Screen;
 use SatoriManifest\Clients\Client_Repository;
 use SatoriManifest\Clients\Client_Role;
@@ -79,6 +80,14 @@ class Admin_Menu {
 	 * @var   string
 	 */
 	public const BRANDING_SLUG = 'satori-manifest-branding';
+
+	/**
+	 * Client QR builder screen slug (printable QR signs).
+	 *
+	 * @since 3.11.0
+	 * @var   string
+	 */
+	public const QR_SLUG = 'satori-manifest-qr';
 
 	/**
 	 * Client billing screen slug.
@@ -168,7 +177,7 @@ class Admin_Menu {
 	public static function client_hooks(): array {
 		$hooks = array_map(
 			array( self::class, 'hook' ),
-			array( self::HOME_SLUG, self::DESIGN_SLUG, self::BRANDING_SLUG, self::BILLING_SLUG, self::HELP_SLUG )
+			array( self::HOME_SLUG, self::DESIGN_SLUG, self::BRANDING_SLUG, self::QR_SLUG, self::BILLING_SLUG, self::HELP_SLUG )
 		);
 
 		/**
@@ -285,6 +294,18 @@ class Admin_Menu {
 			'dashicons-admin-customizer',
 			6
 		);
+
+		if ( $page_id ) {
+			self::$hooks[ self::QR_SLUG ] = (string) add_menu_page(
+				__( 'QR builder', 'satori-manifest' ),
+				__( 'QR builder', 'satori-manifest' ),
+				'edit_pages',
+				self::QR_SLUG,
+				array( Qr_Builder_Screen::class, 'render' ),
+				'dashicons-screenoptions',
+				6.5
+			);
+		}
 
 		if ( Billing_Screen::is_available( $user_id ) ) {
 			self::$hooks[ self::BILLING_SLUG ] = (string) add_menu_page(

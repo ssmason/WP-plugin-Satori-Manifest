@@ -285,6 +285,91 @@ class Pdf_Document {
 	}
 
 	/**
+	 * Draws a path: filled, stroked or both.
+	 *
+	 * Commands use top-left coordinates like the rest of this class:
+	 * array( 'M', x, y ), array( 'L', x, y ), array( 'C', x1, y1, x2, y2, x, y ), array( 'Z' ).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.11.0
+	 * @param  array<int,array<int,string|float>> $commands  Path commands.
+	 * @param  array<int,float>|null              $fill      Fill colour, or null.
+	 * @param  array<int,float>|null              $stroke    Stroke colour, or null.
+	 * @param  float                              $width     Stroke width (round caps and joins).
+	 * @return void
+	 */
+	public function path( array $commands, ?array $fill, ?array $stroke = null, float $width = 1.0 ): void {
+		$ops = array();
+
+		foreach ( $commands as $command ) {
+			$name = (string) array_shift( $command );
+			$xy   = array();
+
+			foreach ( array_chunk( array_map( 'floatval', $command ), 2 ) as $point ) {
+				$xy[] = sprintf( '%.2F %.2F', $point[0], $this->height - ( $point[1] ?? 0.0 ) );
+			}
+
+			$ops[] = match ( $name ) {
+				'M'     => $xy[0] . ' m',
+				'L'     => $xy[0] . ' l',
+				'C'     => implode( ' ', $xy ) . ' c',
+				default => 'h',
+			};
+		}
+
+		if ( null === $fill && null === $stroke ) {
+			return;
+		}
+
+		$paint = null !== $fill && null !== $stroke ? 'B' : ( null !== $fill ? 'f' : 'S' );
+
+		$this->op(
+			sprintf(
+				'%s%s%.2F w 1 J 1 j %s %s 0 J 0 j',
+				null !== $fill ? self::rgb( $fill ) . ' rg ' : '',
+				null !== $stroke ? self::rgb( $stroke ) . ' RG ' : '',
+				$width,
+				implode( ' ', $ops ),
+				$paint
+			)
+		);
+	}
+
+	/**
+	 * Draws a filled rectangle with rounded corners.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.11.0
+	 * @param  float            $x       Left.
+	 * @param  float            $y       Top.
+	 * @param  float            $w       Width.
+	 * @param  float            $h       Height.
+	 * @param  float            $radius  Corner radius.
+	 * @param  array<int,float> $rgb     Fill colour.
+	 * @return void
+	 */
+	public function rounded_rect( float $x, float $y, float $w, float $h, float $radius, array $rgb ): void {
+		$r = min( $radius, $w / 2, $h / 2 );
+		$k = $r * 0.5523;
+
+		$this->path(
+			array(
+				array( 'M', $x + $r, $y ),
+				array( 'L', $x + $w - $r, $y ),
+				array( 'C', $x + $w - $r + $k, $y, $x + $w, $y + $r - $k, $x + $w, $y + $r ),
+				array( 'L', $x + $w, $y + $h - $r ),
+				array( 'C', $x + $w, $y + $h - $r + $k, $x + $w - $r + $k, $y + $h, $x + $w - $r, $y + $h ),
+				array( 'L', $x + $r, $y + $h ),
+				array( 'C', $x + $r - $k, $y + $h, $x, $y + $h - $r + $k, $x, $y + $h - $r ),
+				array( 'L', $x, $y + $r ),
+				array( 'C', $x, $y + $r - $k, $x + $r - $k, $y, $x + $r, $y ),
+				array( 'Z' ),
+			),
+			$rgb
+		);
+	}
+
+	/**
 	 * Draws a filled rectangle.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>

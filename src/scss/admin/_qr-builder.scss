@@ -1,0 +1,133 @@
+// QR builder: form beside a live preview of the printable sign; the sign
+// preview also shows on the client Home card.
+//
+// @package SatoriManifest
+// @author  Stephen Mason <steve@satori-digital.com>
+// @since   3.11.0
+
+@use "variables" as *;
+
+.sm-qr-builder {
+	// Fields for the other size, and the inactive preview.
+	[hidden] {
+		display: none !important; // stylelint-disable-line declaration-no-important
+	}
+
+	&__layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
+		align-items: start;
+		gap: $sm-space-lg;
+		margin-top: $sm-space-lg;
+
+		@media (max-width: 960px) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	&__form {
+		display: grid;
+		gap: $sm-space-lg;
+	}
+
+	&__label {
+		display: block;
+		margin: 0 0 6px;
+		font-size: 13px;
+		font-weight: 600;
+	}
+
+	&__sizes {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		gap: $sm-space-sm;
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+
+	&__size {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		padding: 12px 14px;
+		border: 1px solid $sm-color-border;
+		border-radius: $sm-radius-lg;
+		cursor: pointer;
+
+		input {
+			margin-top: 2px;
+		}
+
+		span {
+			display: grid;
+			gap: 2px;
+		}
+
+		small {
+			color: $sm-color-text-light;
+		}
+
+		&:has(input:checked) {
+			border-color: $sm-color-primary;
+			background: $sm-color-primary-lt;
+		}
+	}
+
+	&__field {
+		display: grid;
+		gap: 4px;
+
+		input[type="text"] {
+			width: 100%;
+			max-width: 32rem;
+		}
+
+		small {
+			color: $sm-color-text-light;
+		}
+
+		&--colour input {
+			width: 64px;
+			height: 36px;
+			padding: 2px;
+		}
+	}
+
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: $sm-space-sm;
+	}
+
+	&__preview {
+		position: sticky;
+		top: 48px;
+		display: grid;
+		gap: $sm-space-md;
+		justify-items: center;
+
+		@media (max-width: 960px) {
+			position: static;
+		}
+	}
+
+	&__sign {
+		width: 100%;
+
+		svg {
+			display: block;
+			width: 100%;
+			height: auto;
+			filter: drop-shadow(0 14px 22px rgba(11, 22, 32, 0.22));
+		}
+
+		&--small {
+			max-width: 210px;
+		}
+
+		&--large {
+			max-width: 300px;
+		}
+	}
+}
