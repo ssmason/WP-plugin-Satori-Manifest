@@ -98,7 +98,6 @@ $breakpoint-nav: 760px;
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
-	overflow-x: clip; // Full-width banners (100vw) never cause a sideways scroll.
 }
 
 // "a.sm-button" outranks the base "a { color: inherit }" rule.
@@ -568,12 +567,12 @@ a.sm-button,
 		font-size: 1.25rem;
 	}
 
-	.satori-manifest-price-list {
+	.satori-manifest-price-list-stack {
 		margin-block: 0 2rem;
 	}
 
 	// The block's "no background" option zeroes its padding; keep the page gutter.
-	> .satori-manifest-price-list.has-no-background {
+	> .satori-manifest-price-list-stack:not(.alignfull) > .satori-manifest-price-list.has-no-background {
 		padding-inline: var(--sm-gutter) !important; // stylelint-disable-line declaration-no-important
 	}
 }
