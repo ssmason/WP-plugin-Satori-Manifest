@@ -116,8 +116,58 @@ final class Headings {
 	}
 
 	/**
+	 * A heading of a client page's price list, if it exists and is switched on.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.11.0
+	 * @param  int    $page_id     Client page ID.
+	 * @param  string $heading_id  Heading id.
+	 * @return array<string,mixed>|null
+	 */
+	public static function find( int $page_id, string $heading_id ): ?array {
+		$manifest_id = \SatoriManifest\Clients\Client_Repository::manifest_for_page( $page_id );
+
+		if ( ! $manifest_id || '' === $heading_id ) {
+			return null;
+		}
+
+		foreach ( self::visible( Manifest_Repository::get_sections( $manifest_id ) ) as $entry ) {
+			if ( self::is_heading( $entry ) && (string) ( $entry['id'] ?? '' ) === $heading_id ) {
+				return $entry;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Heading ids that have a Price list heading block on a page.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.11.0
+	 * @param  int $page_id  Client page ID.
+	 * @return array<int,string>
+	 */
+	public static function on_page( int $page_id ): array {
+		$ids  = array();
+		$walk = static function ( array $blocks ) use ( &$walk, &$ids ): void {
+			foreach ( $blocks as $block ) {
+				if ( 'satori-manifest/price-list-heading' === ( $block['blockName'] ?? '' ) ) {
+					$ids[] = (string) ( $block['attrs']['headingId'] ?? '' );
+				}
+
+				$walk( (array) ( $block['innerBlocks'] ?? array() ) );
+			}
+		};
+
+		$walk( parse_blocks( (string) get_post_field( 'post_content', $page_id ) ) );
+
+		return array_values( array_filter( $ids ) );
+	}
+
+	/**
 	 * Jump links for a client page: headings ticked "In jump links" that are
-	 * switched on and shown by at least one price list block on the page.
+	 * switched on and have their heading block on the page.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.10.0
@@ -126,26 +176,21 @@ final class Headings {
 	 */
 	public static function jump_links( int $page_id ): array {
 		$manifest_id = \SatoriManifest\Clients\Client_Repository::manifest_for_page( $page_id );
-		$sets        = Block_Placement::page_sets( $page_id );
+		$on_page     = array_flip( self::on_page( $page_id ) );
 
-		if ( ! $manifest_id || array() === $sets ) {
+		if ( ! $manifest_id || array() === $on_page ) {
 			return array();
 		}
 
-		$entries = self::visible( Manifest_Repository::get_sections( $manifest_id ) );
-
-		// Ids hidden by every block once new entries are placed (Block_Placement): a heading shown by any one block gets a link.
-		$hidden = array_map( static fn( array $set ): array => Block_Placement::hidden( $entries, $set, $sets ), $sets );
-		$hidden = count( $hidden ) > 1 ? array_intersect( ...$hidden ) : $hidden[0];
-
 		$links = array();
-		$seen  = array();
 
-		foreach ( $entries as $entry ) {
-			if ( ! self::is_heading( $entry ) || empty( $entry['in_menu'] ) || in_array( (string) $entry['id'], $hidden, true ) ) {
+		foreach ( self::visible( Manifest_Repository::get_sections( $manifest_id ) ) as $entry ) {
+			if ( ! self::is_heading( $entry ) || empty( $entry['in_menu'] ) || ! isset( $on_page[ (string) $entry['id'] ] ) ) {
 				continue;
 			}
 
+			// Each heading block names its anchor from its own title alone.
+			$seen   = array();
 			$title  = (string) ( $entry['title'] ?? '' );
 			$anchor = Price_List_View::anchor( $title, $seen );
 

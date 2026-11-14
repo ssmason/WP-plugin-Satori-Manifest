@@ -112,7 +112,8 @@ class HeadingsTest extends Test_Case {
 	}
 
 	/**
-	 * The page shows the heading as a banner; switched off, the group disappears from page and PDF.
+	 * Saving adds the heading's own groups; the banner sits outside the menu; switched
+	 * off, both disappear from page and PDF.
 	 */
 	public function test_page_and_pdf(): void {
 		$client  = $this->make_client( 'Heading Bar' );
@@ -122,12 +123,16 @@ class HeadingsTest extends Test_Case {
 		$store->save_sections( $this->entries() );
 
 		$this->go_to( get_permalink( $page_id ) );
-		$html = render_block( parse_blocks( '<!-- wp:satori-manifest/price-list /-->' )[0] );
+		$html = do_blocks( (string) get_post_field( 'post_content', $page_id ) );
 
-		$this->assertStringContainsString( 'satori-manifest-price-list__heading', $html );
-		$this->assertStringContainsString( 'Main Menu', $html );
+		$this->assertSame( 1, substr_count( $html, 'satori-manifest-price-list__heading-title">Main Menu' ) );
 		$this->assertStringContainsString( 'id="main-menu"', $html );
-		$this->assertStringContainsString( 'Sirloin', $html );
+		$this->assertSame( 1, substr_count( $html, 'Sirloin' ) );
+		$this->assertStringContainsString( 'Full Irish', $html );
+
+		// The banner is never inside a menu box.
+		$menu_html = render_block( parse_blocks( '<!-- wp:satori-manifest/price-list /-->' )[0] );
+		$this->assertStringNotContainsString( '__heading', $menu_html );
 
 		$pdf_on = Price_List_Pdf::render( $page_id );
 
@@ -143,7 +148,7 @@ class HeadingsTest extends Test_Case {
 		$entries[1]['visible'] = false;
 		$store->save_sections( $entries );
 
-		$html = render_block( parse_blocks( '<!-- wp:satori-manifest/price-list /-->' )[0] );
+		$html = do_blocks( (string) get_post_field( 'post_content', $page_id ) );
 		$this->assertStringNotContainsString( 'Main Menu', $html );
 		$this->assertStringNotContainsString( 'Sirloin', $html );
 		$this->assertStringContainsString( 'Full Irish', $html );
@@ -152,7 +157,7 @@ class HeadingsTest extends Test_Case {
 	}
 
 	/**
-	 * Jump links: ticked headings that are on and shown by a block on the page.
+	 * Jump links: ticked headings that are on and have their heading block on the page.
 	 */
 	public function test_jump_links(): void {
 		$client  = $this->make_client( 'Jump Bar' );
@@ -162,14 +167,7 @@ class HeadingsTest extends Test_Case {
 
 		$entries[1]['in_menu'] = true;
 		$saved                 = $store->save_sections( $entries );
-		$heading_id            = $saved[1]['id'];
 
-		wp_update_post(
-			array(
-				'ID'           => $page_id,
-				'post_content' => '<!-- wp:satori-manifest/price-list /-->',
-			)
-		);
 		$this->assertSame(
 			array(
 				array(
@@ -180,22 +178,7 @@ class HeadingsTest extends Test_Case {
 			Headings::jump_links( $page_id )
 		);
 
-		// Hidden by the only block on the page: no link to nowhere.
-		wp_update_post(
-			array(
-				'ID'           => $page_id,
-				'post_content' => '<!-- wp:satori-manifest/price-list {"excludedSectionIds":["' . $heading_id . '"]} /-->',
-			)
-		);
-		$this->assertSame( array(), Headings::jump_links( $page_id ) );
-
-		// Switched off: no link either.
-		wp_update_post(
-			array(
-				'ID'           => $page_id,
-				'post_content' => '<!-- wp:satori-manifest/price-list /-->',
-			)
-		);
+		// Switched off: no link to nowhere.
 		$saved[1]['visible'] = false;
 		$store->save_sections( $saved );
 		$this->assertSame( array(), Headings::jump_links( $page_id ) );

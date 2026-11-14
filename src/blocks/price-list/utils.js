@@ -172,3 +172,47 @@ export function placementHidden(sections, own, sets) {
 
 	return hidden;
 }
+
+/**
+ * The sections one price list block shows (headings never: the Price list
+ * heading block draws them above the menu). Mirrors Block_Placement::shown().
+ *
+ * @param {Array}  sections Sections and headings, in order.
+ * @param {Object} block    This block: { hidden: [], heading: '' }.
+ * @param {Array}  blocks   Every price list block on the page, same shape.
+ * @return {Array} Sections to display.
+ */
+export function shownSections(sections, block, blocks) {
+	const owner = {};
+	let current = '';
+
+	sections.forEach((section) => {
+		if ('heading' === section.type) {
+			current = section.id;
+		} else {
+			owner[section.id] = current;
+		}
+	});
+
+	const normal = blocks.filter((b) => !b.heading);
+	const sets = normal.map((b) => b.hidden);
+	const placed = new Set(sets.length > 1 ? sets.flat() : []);
+	const managed = new Set(blocks.map((b) => b.heading).filter(Boolean));
+	const hidden = block.heading
+		? block.hidden
+		: placementHidden(sections, block.hidden, sets);
+
+	return sections.filter((section) => {
+		if ('heading' === section.type || hidden.includes(section.id)) {
+			return false;
+		}
+
+		const heading = owner[section.id] || '';
+
+		if (block.heading) {
+			return heading === block.heading && !placed.has(section.id);
+		}
+
+		return !(heading && managed.has(heading) && !placed.has(section.id));
+	});
+}

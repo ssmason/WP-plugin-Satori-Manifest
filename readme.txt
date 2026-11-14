@@ -59,6 +59,7 @@ On Stripe's own pages (Checkout and the customer portal). Card details never rea
 == Changelog ==
 
 = 3.11.0 =
+* Headings on the page: each price list heading gets its own group with a Price list heading block (the banner) and, for new headings, its own menu group below it - added, moved and removed automatically when the price list is saved, in price list order. Switched-off headings and their menus disappear from the page. Menus never draw headings.
 * QR builder: clients design a printable QR sign - large (top text, subtitle, own colour; one per A4 page) or small (short text, last word in red; four per A4 page) - with a live preview, and download it as a vector PDF. The sign shows on the Home dashboard with its PDF; linked from Branding too.
 
 = 3.10.0 =

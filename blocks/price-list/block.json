@@ -40,6 +40,10 @@
 			},
 			"default": []
 		},
+		"headingId": {
+			"type": "string",
+			"default": ""
+		},
 		"layout": {
 			"type": "string",
 			"description": "Display layout preset.",

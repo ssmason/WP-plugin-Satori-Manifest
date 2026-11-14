@@ -98,6 +98,7 @@ use SatoriManifest\Qr\Qr_Download;
 use SatoriManifest\Stats\Monthly_Summary;
 use SatoriManifest\Stats\View_Counter;
 use SatoriManifest\Manifest\Block;
+use SatoriManifest\Manifest\Page_Sync;
 use SatoriManifest\Manifest\Meta_Box;
 use SatoriManifest\Manifest\Patterns;
 use SatoriManifest\Manifest\Post_Types;
@@ -186,6 +187,7 @@ class Plugin {
 		add_action( 'init', array( Post_Types::class, 'register' ) );
 		add_action( 'init', array( Migrations::class, 'maybe_run' ), 20 );
 		add_action( 'init', array( Block::class, 'register' ) );
+		Page_Sync::register(); // Heading and menu groups follow the price list.
 		add_action( 'init', array( Patterns::class, 'register' ) );
 		add_action( 'add_meta_boxes', array( Meta_Box::class, 'register' ) );
 		add_action( 'save_post_' . Post_Types::CPT_MANIFEST, array( Meta_Box::class, 'save' ) );

@@ -60,6 +60,7 @@ class Block {
 	 */
 	public static function register(): void {
 		register_block_type( SATORI_MANIFEST_PATH . 'blocks/price-list/block.json' );
+		register_block_type( SATORI_MANIFEST_PATH . 'blocks/price-list-heading/block.json' );
 		register_block_type( SATORI_MANIFEST_PATH . 'blocks/registration-form/block.json' );
 	}
 }

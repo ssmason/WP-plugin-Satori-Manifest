@@ -25,7 +25,7 @@ import {
 	editorData,
 	parseSections,
 	formatPrice,
-	placementHidden,
+	shownSections,
 } from './utils';
 
 /**
@@ -269,7 +269,7 @@ function Manifest({ sections, attributes }) {
  * @return {JSX.Element} The editor UI for this block.
  */
 export default function Edit({ attributes, setAttributes }) {
-	const { manifestIds, excludedSectionIds = [] } = attributes;
+	const { manifestIds, excludedSectionIds = [], headingId = '' } = attributes;
 	const { defaultManifestId } = editorData();
 
 	const ids =
@@ -330,30 +330,29 @@ export default function Edit({ attributes, setAttributes }) {
 			: [];
 
 		return JSON.stringify(
-			blocks.map(
-				(clientId) =>
-					editor.getBlockAttributes(clientId)?.excludedSectionIds ||
-					[]
-			)
+			blocks.map((clientId) => {
+				const attrs = editor.getBlockAttributes(clientId) || {};
+
+				return {
+					hidden: attrs.excludedSectionIds || [],
+					heading: attrs.headingId || '',
+				};
+			})
 		);
 	}, []);
 
 	/**
-	 * Removes this block's hidden sections from one manifest's sections;
-	 * new entries show only next to their neighbour (as on the page).
+	 * The sections this block shows, as on the page (see shownSections()).
 	 *
 	 * @param {Array} sections Sections of one manifest.
 	 * @return {Array} Sections to display.
 	 */
-	const pick = (sections) => {
-		const hidden = placementHidden(
+	const pick = (sections) =>
+		shownSections(
 			sections,
-			excludedSectionIds,
+			{ hidden: excludedSectionIds, heading: headingId },
 			JSON.parse(pageSetsJson)
 		);
-
-		return sections.filter((section) => !hidden.includes(section.id));
-	};
 
 	const inspector = (
 		<Inspector

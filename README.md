@@ -262,6 +262,14 @@ The **Price list** screen (`Manifest\Meta_Box`, `templates/admin/meta-box-sectio
     (`Headings::jump_links()`); links follow renames automatically.
 * **Adding** - "Add heading" at the top (adds at the top) and bottom (adds at the end), "Add
   section" likewise.
+* **On the page** (`Manifest\Page_Sync`, `Manifest\Block_Placement`) - saving the price list
+  (editor or AI) keeps the page in step: every heading gets a **heading group** (a group holding
+  the `satori-manifest/price-list-heading` block, i.e. the banner) and, unless the page already
+  shows its sections, a **menu group** below it (a price list block with `headingId`, styled like
+  its neighbouring menu group), placed in price list order. They move and go with the heading.
+  Only these automatic groups (classes `sm-auto-heading` / `sm-auto-menu`) are touched; one the
+  client has added content to stays put. Switched-off headings render nothing (empty automatic
+  groups are dropped). Price list blocks never draw headings.
 * **Ordering** - drag by the handle (≡) for sections, headings and items (items can move
   between sections); the ↑/↓ arrows stay for keyboard and touch screens (phone browsers do not
   support drag and drop).

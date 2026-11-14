@@ -36,7 +36,12 @@ const STYLE_ENTRIES = [
  *
  * @type {string[]}
  */
-const BLOCKS = ['price-list', 'registration-form', 'contact-form'];
+const BLOCKS = [
+	'price-list',
+	'price-list-heading',
+	'registration-form',
+	'contact-form',
+];
 
 /**
  * Builds the entry map, discovering designs from the designs/ folder.
@@ -94,6 +99,7 @@ const BLOCK_DEPENDENCIES = [
 	'wp-data',
 	'wp-element',
 	'wp-i18n',
+	'wp-server-side-render',
 ];
 
 /**
@@ -196,6 +202,7 @@ module.exports = {
 		'@wordpress/i18n': ['wp', 'i18n'],
 		'@wordpress/data': ['wp', 'data'],
 		'@wordpress/icons': ['wp', 'icons'],
+		'@wordpress/server-side-render': ['wp', 'serverSideRender'],
 	},
 	resolve: {
 		extensions: ['.js', '.jsx'],

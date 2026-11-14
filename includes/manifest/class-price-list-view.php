@@ -9,6 +9,8 @@
  *
  * Manifest resolution:
  *   - manifestIds set        → those manifests.
+ *   - headingId set          → only the sections under that heading (a heading's
+ *                              own menu, created by Page_Sync).
  *   - excludedSectionIds set → those sections (by permanent id) are hidden, so
  *                              several blocks can show different slices with
  *                              different layouts; new sections show by default.
@@ -27,7 +29,6 @@ namespace SatoriManifest\Manifest;
 
 use SatoriManifest\Branding\Brand;
 use SatoriManifest\Clients\Client_Repository;
-use SatoriManifest\Core\Sanitizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -219,10 +220,6 @@ class Price_List_View {
 			$ids = $own ? array( $own ) : array();
 		}
 
-		$hidden = isset( $attributes['excludedSectionIds'] ) && is_array( $attributes['excludedSectionIds'] )
-			? array_values( array_filter( array_map( static fn( $id ): string => Sanitizer::section_id( (string) $id ), $attributes['excludedSectionIds'] ) ) )
-			: array();
-
 		$manifests = array();
 
 		foreach ( $ids as $id ) {
@@ -237,13 +234,11 @@ class Price_List_View {
 				continue;
 			}
 
-			$entries  = Headings::visible( Manifest_Repository::get_sections( $id ) );
-			$skip     = $post_id ? Block_Placement::hidden( $entries, $hidden, Block_Placement::page_sets( $post_id ) ) : $hidden;
-			$sections = array_values(
-				array_filter(
-					$entries,
-					static fn( $section ): bool => ! in_array( (string) ( $section['id'] ?? '' ), $skip, true )
-				)
+			// Headings are drawn by their own block above the menu, never in here (see Block_Placement).
+			$sections = Block_Placement::shown(
+				Headings::visible( Manifest_Repository::get_sections( $id ) ),
+				Block_Placement::describe( $attributes ),
+				$post_id ? Block_Placement::page_blocks( $post_id ) : array()
 			);
 
 			if ( $sections ) {
