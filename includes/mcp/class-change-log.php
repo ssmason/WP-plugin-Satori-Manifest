@@ -40,6 +40,12 @@ final class Change_Log {
 	public const META_UNDONE = '_sm_ai_undone';
 
 	/**
+	 * What the change replaced (JSON). Post meta, not post content: content is run
+	 * through the HTML filter for clients, which would mangle captured page markup.
+	 */
+	public const META_SNAPSHOT = '_sm_ai_snapshot';
+
+	/**
 	 * The price list.
 	 */
 	public const PART_PRICE_LIST = 'price_list';
@@ -113,12 +119,12 @@ final class Change_Log {
 				'post_parent'  => $store->context()->page_id,
 				'post_title'   => mb_substr( sanitize_text_field( $summary ), 0, 200 ),
 				'post_excerpt' => sanitize_key( $tool ),
-				'post_content' => wp_slash( (string) wp_json_encode( $before ) ),
 			),
 			true
 		);
 
 		if ( ! is_wp_error( $id ) ) {
+			update_post_meta( $id, self::META_SNAPSHOT, wp_slash( (string) wp_json_encode( $before ) ) );
 			self::prune( $store->context()->user_id );
 		}
 
@@ -161,7 +167,8 @@ final class Change_Log {
 				continue;
 			}
 
-			$before = json_decode( (string) $post->post_content, true );
+			$saved  = (string) get_post_meta( $post->ID, self::META_SNAPSHOT, true );
+			$before = json_decode( '' !== $saved ? $saved : (string) $post->post_content, true );
 
 			self::restore( $store, is_array( $before ) ? $before : array() );
 			update_post_meta( $post->ID, self::META_UNDONE, time() );

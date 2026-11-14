@@ -59,6 +59,7 @@ On Stripe's own pages (Checkout and the customer portal). Card details never rea
 == Changelog ==
 
 = 3.11.0 =
+* AI assistant: page blocks - get_page_layout, add_block, update_block, remove_block and list_images let clients add their own content (text, headings, lists, their images, buttons, separators, spacers, quotes, or any allowed editor block as markup) inside the page's groups. Price lists and heading banners stay with the price list. Undo now restores page content reliably (snapshots kept in post meta).
 * Headings on the page: each price list heading gets its own group with a Price list heading block (the banner) and, for new headings, its own menu group below it - added, moved and removed automatically when the price list is saved, in price list order. Switched-off headings and their menus disappear from the page. Menus never draw headings.
 * QR builder: clients design a printable QR sign - large (top text, subtitle, own colour; one per A4 page) or small (short text, last word in red; four per A4 page) - with a live preview, and download it as a vector PDF. The sign shows on the Home dashboard with its PDF; linked from Branding too.
 

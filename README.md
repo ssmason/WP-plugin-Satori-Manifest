@@ -310,6 +310,12 @@ manage their page by asking: "here's a photo of our menu, set up my page", "Guin
   undo_last_change, get_visits. set_up_price_list can start headings from a menu. Plus prompts
   (set up from my menu, change my prices, add specials, check my price list) and server
   instructions telling the model to keep the business's wording and confirm big changes.
+* **Page blocks** - `Page_Blocks` + tools `get_page_layout`, `add_block`, `update_block`,
+  `remove_block`, `list_images`: the assistant adds, changes and removes the client's own blocks
+  inside the page's groups (ids `g2`, `g2.1` from the layout). Common blocks are built from simple
+  fields so they match the editor's markup; others can be given as block markup, limited to the
+  blocks the client may use (`Editor_Lockdown`). Price list and heading blocks are never touched,
+  saving runs as the client (no scripts), images must be the client's own.
 * **Undo** - `Change_Log` stores what each change replaced (private `sm_ai_change` posts,
   last 30 per client). Undo steps back one change at a time; also on the client's screen.
 * **Who gets it** - `config/ai-assistant.yaml`: `plans` that include it (paid up), plus a

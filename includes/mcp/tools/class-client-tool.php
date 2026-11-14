@@ -212,6 +212,80 @@ abstract class Client_Tool implements Tool {
 	}
 
 	/**
+	 * A page block to build (add_block, update_block).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.11.0
+	 * @return array<string,mixed>
+	 */
+	protected static function block_schema(): array {
+		$text = array(
+			'type'        => 'string',
+			'maxLength'   => 2000,
+			'description' => 'Plain text; <strong>, <em>, <br> and <a href> are kept.',
+		);
+
+		$schema = self::object(
+			array(
+				'type'     => array(
+					'type'        => 'string',
+					'enum'        => array_merge( \SatoriManifest\Mcp\Page_Blocks::SIMPLE, array( 'markup' ) ),
+					'description' => 'paragraph {text, align}, heading {text, level 2-4, align}, list {items, ordered}, image {image_id, alt, caption}, button {text, url}, separator, spacer {height}, quote {text, citation}; or markup {markup} for any other editor block.',
+				),
+				'text'     => $text,
+				'align'    => array(
+					'type' => 'string',
+					'enum' => array( 'left', 'center', 'right' ),
+				),
+				'level'    => array(
+					'type'    => 'integer',
+					'minimum' => 2,
+					'maximum' => 4,
+				),
+				'items'    => array(
+					'type'     => 'array',
+					'maxItems' => 50,
+					'items'    => array(
+						'type'      => 'string',
+						'maxLength' => 500,
+					),
+				),
+				'ordered'  => array( 'type' => 'boolean' ),
+				'image_id' => array(
+					'type'    => 'integer',
+					'minimum' => 1,
+				),
+				'alt'      => array(
+					'type'      => 'string',
+					'maxLength' => 200,
+				),
+				'caption'  => $text,
+				'url'      => array(
+					'type'      => 'string',
+					'maxLength' => 500,
+				),
+				'height'   => array(
+					'type'    => 'integer',
+					'minimum' => 8,
+					'maximum' => 240,
+				),
+				'citation' => array(
+					'type'      => 'string',
+					'maxLength' => 200,
+				),
+				'markup'   => array(
+					'type'        => 'string',
+					'maxLength'   => 20000,
+					'description' => 'Serialized blocks with block comments, e.g. <!-- wp:paragraph --><p>Text</p><!-- /wp:paragraph -->.',
+				),
+			),
+			array( 'type' )
+		);
+
+		return $schema;
+	}
+
+	/**
 	 * Schema for a 1-based position.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>

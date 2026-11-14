@@ -45,6 +45,11 @@ final class Toolbox {
 		Tools\Remove_Section::class,
 		Tools\Add_Heading::class,
 		Tools\Update_Heading::class,
+		Tools\Get_Page_Layout::class,
+		Tools\List_Images::class,
+		Tools\Add_Block::class,
+		Tools\Update_Block::class,
+		Tools\Remove_Block::class,
 		Tools\Update_Page_Details::class,
 		Tools\List_Designs::class,
 		Tools\Choose_Design::class,
@@ -125,7 +130,8 @@ final class Toolbox {
 				'- Prices are plain numbers (5.5, not "€5,50"); the currency is a page detail. An item with no price shows as a sub-heading. Put allergens, sizes or notes in the item description.',
 				'- Ask before replacing an existing list, removing a section or loading a design\'s layout. For price rises across many items, run adjust_prices with preview first and show the result.',
 				'- After a change, say in one line what changed and give the page link. Mention that "undo" puts the last change back.',
-				'- These tools cannot change billing, the account, photos or anything outside this page; for those, point the user to their dashboard.',
+				'- Page content: the client can also add their own blocks (text, headings, images, buttons…) inside the page\'s groups. Call get_page_layout first, then add_block / update_block / remove_block. Images must be the client\'s own (list_images); they upload new ones in the dashboard. Price lists and heading banners on the page come from the price list - change those with the price list tools.',
+				'- These tools cannot change billing, the account, upload photos or anything outside this page; for those, point the user to their dashboard.',
 			)
 		);
 	}
