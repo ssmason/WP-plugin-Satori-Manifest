@@ -441,7 +441,7 @@ a.sm-button,
 }
 
 .sm-main {
-	--sm-main-pad: clamp(2.5rem, 7vw, 5rem);
+	--sm-main-pad: 0; // No space above and below the page content: it meets the header and footer.
 
 	flex: 1;
 	padding-block: var(--sm-main-pad);
