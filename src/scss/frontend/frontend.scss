@@ -129,13 +129,14 @@ $b: ".satori-manifest-price-list";
 		object-fit: contain;
 	}
 
-	// Section intro ("Served until 2pm daily…"): bold and a size down from the items, in every design.
+	// Section intro ("Served until 2pm daily…"): bold, a size down from the items and in
+	// the page's accent colour (Branding → Colours), so each design and client differs.
 	&__section-desc {
 		margin: 0 0 $sm-fe-space-md;
+		color: var(--sm-accent, currentcolor);
 		font-size: 0.8em;
 		font-weight: 700;
 		line-height: 1.5;
-		opacity: 0.75;
 	}
 
 	// ─── Items ───────────────────────────────────────────────────────────────
