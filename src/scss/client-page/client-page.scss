@@ -98,6 +98,7 @@ $breakpoint-nav: 760px;
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
+	overflow-x: clip; // Full-width banners (100vw) never cause a sideways scroll.
 }
 
 // "a.sm-button" outranks the base "a { color: inherit }" rule.

@@ -95,6 +95,16 @@ $b: ".satori-manifest-price-list";
 			padding-inline: 0;
 			border-bottom: 2px solid currentcolor;
 		}
+
+		// A banner (own colours) runs edge to edge of the page, outside the menu's
+		// width and padding: a strip before the sections below it.
+		&.has-own-colours {
+			width: 100vw;
+			max-width: 100vw;
+			margin-inline: calc(50% - 50vw);
+			padding-inline: var(--sm-gutter, 1.25rem);
+			border-radius: 0;
+		}
 	}
 
 	& &__heading-title {
