@@ -96,6 +96,7 @@ class Help_Tabs {
 			Admin_Menu::hook( Admin_Menu::DESIGN_SLUG )   => 'design',
 			Admin_Menu::hook( Admin_Menu::BRANDING_SLUG ) => 'branding',
 			Admin_Menu::hook( Admin_Menu::QR_SLUG )       => 'qr',
+			\SatoriManifest\Support\Admin\Client_Tickets_Screen::hook() => 'support',
 			Admin_Menu::hook( Admin_Menu::BILLING_SLUG )  => 'billing',
 		);
 

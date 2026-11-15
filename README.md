@@ -144,6 +144,13 @@ Visitor ──Register form──▶ Application (pending)
 * **Header colours** - optional "Header background" / "Header text" under Branding → Header
   override the design's header (name, tagline, menu, phone menu, jump links); empty = the
   design's own. Also `update_page_details` (`header_background`, `header_text`) for the AI.
+* **Support tickets** (`includes/support/`) - clients raise tickets under **Support** (and from the
+  "Need a hand?" panel on Home) and see replies there; staff answer under **Manifest → Support
+  tickets** (count of opened tickets in the menu). Statuses: Opened (amber), In progress (blue),
+  Closed (green); a staff reply moves Opened to In progress, a client reply reopens a closed one.
+  New tickets and client replies email the addresses in `config/support.yaml` (`notify`, else the
+  staff addresses) as a prompt; staff replies are emailed to the client. Private post types
+  `sm_ticket` / `sm_ticket_msg`; removed with the client.
 * **Login** - `wp-login.php` is branded with the portal logo and colours and links to
   the Register page.
 
@@ -432,6 +439,7 @@ includes/
   contact/       Contact\      Contact_Form (block + dashboard panel), Contact_Handler
   fields/        Fields\       Field_Loader (YAML → ACF)
   frontend/      Frontend\     Client_Page, Embed, Editor, Design_Preview, Example_Bar
+  support/       Support\      Support, Tickets, Ticket_Notifier; admin/ Client_Tickets_Screen, Staff_Tickets_Screen
   mcp/           Mcp\          AI assistant module (see "AI assistant (MCP)"): Mcp, Access, Tokens,
                                Endpoint, Toolbox, Page_Store, Price_List, Prices, Change_Log
     server/      Mcp\Server\  generic MCP/JSON-RPC: Server, Tool, Tool_Result, Prompt, Schema_Validator

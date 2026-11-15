@@ -1,0 +1,14 @@
+# Sent to the support address when a client adds to a ticket.
+# Placeholders: ticket, subject, message, client_name, client_email, link.
+
+subject: "Re: support ticket #{{ticket}}: {{subject}}"
+preheader: "{{client_name}} replied."
+heading: New reply from {{client_name}}
+body: |
+  {{message}}
+details: |
+  Ticket: #{{ticket}}
+  From: {{client_name}} ({{client_email}})
+button_label: Open the ticket
+button_url: "{{link}}"
+footer: Reply in your dashboard (Manifest → Support tickets).

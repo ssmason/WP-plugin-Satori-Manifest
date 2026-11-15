@@ -49,6 +49,9 @@ tabs:
   branding:
     title: Branding
     text: Leave a colour or font empty to use the design's default. The header button can link to bookings, a phone number or email. Press Save on each tab.
+  support:
+    title: Support
+    text: Raise a ticket with a short subject and your question. We reply here and email you when we do. Opened means we have not answered yet, In progress means we are on it, Closed means it is done - reply to a closed ticket to open it again.
   qr:
     title: QR builder
     text: Pick a large sign (your text, subtitle and colour; one per A4 page) or a small sign (short text, last word in red; four per A4 page for tables). Save, then press Download PDF and print at actual size (100%). Your sign also shows on your Home screen. The code never changes, so signs you have already printed keep working.

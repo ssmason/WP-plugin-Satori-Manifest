@@ -284,36 +284,18 @@ $satori_manifest_cards = array(
 			<button type="submit" class="button"><?php esc_html_e( 'Save', 'satori-manifest' ); ?></button>
 		</form>
 
-		<?php
-		$satori_manifest_contact_result   = \SatoriManifest\Contact\Contact_Form::result();
-		$satori_manifest_contact_messages = \SatoriManifest\Contact\Contact_Form::messages();
-		$satori_manifest_contact_support  = Portal_Brand::support_email();
-		?>
-		<section class="sm-panel sm-contact-panel" id="sm-contact">
-			<h2 class="sm-panel__title"><?php esc_html_e( 'Need a hand?', 'satori-manifest' ); ?></h2>
-			<p class="sm-panel__intro">
+		<?php if ( \SatoriManifest\Clients\Client_Role::is_client() ) : ?>
+			<section class="sm-panel sm-contact-panel" id="sm-contact">
+				<h2 class="sm-panel__title"><?php esc_html_e( 'Need a hand?', 'satori-manifest' ); ?></h2>
+				<p class="sm-panel__intro">
+					<?php esc_html_e( 'Raise a support ticket. We reply in your dashboard and email you when we do.', 'satori-manifest' ); ?>
+					<a href="<?php echo esc_url( \SatoriManifest\Support\Admin\Client_Tickets_Screen::url() ); ?>"><?php esc_html_e( 'Your tickets', 'satori-manifest' ); ?></a>
+				</p>
 				<?php
-				printf(
-					/* translators: %s: support email address (link). */
-					esc_html__( 'Send us a message and we will reply by email, or write to %s.', 'satori-manifest' ),
-					'<a href="mailto:' . esc_attr( $satori_manifest_contact_support ) . '">' . esc_html( $satori_manifest_contact_support ) . '</a>'
-				);
+				$satori_manifest_form_action = \SatoriManifest\Support\Admin\Client_Tickets_Screen::ACTION;
+				require SATORI_MANIFEST_PATH . 'templates/support/new-ticket.php';
 				?>
-			</p>
-			<?php if ( isset( $satori_manifest_contact_messages[ $satori_manifest_contact_result ] ) ) : ?>
-				<div class="sm-notice sm-notice--<?php echo esc_attr( 'success' === $satori_manifest_contact_messages[ $satori_manifest_contact_result ]['type'] ? 'success' : 'warning' ); ?>" role="status">
-					<?php echo esc_html( $satori_manifest_contact_messages[ $satori_manifest_contact_result ]['text'] ); ?>
-				</div>
-			<?php endif; ?>
-			<form class="sm-contact-panel__form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-				<input type="hidden" name="action" value="<?php echo esc_attr( \SatoriManifest\Contact\Contact_Form::ACTION ); ?>" />
-				<?php Security::output_form_nonce( \SatoriManifest\Contact\Contact_Form::ACTION, false ); ?>
-				<input type="hidden" name="_sm_started" value="<?php echo esc_attr( (string) time() ); ?>" />
-				<input type="hidden" name="_sm_return" value="<?php echo esc_url( Admin_Menu::url( Admin_Menu::HOME_SLUG ) ); ?>" />
-				<label class="screen-reader-text" for="sm-contact-panel-message"><?php esc_html_e( 'Your message', 'satori-manifest' ); ?></label>
-				<textarea id="sm-contact-panel-message" name="message" rows="3" required maxlength="5000" placeholder="<?php esc_attr_e( 'Your question or request…', 'satori-manifest' ); ?>"></textarea>
-				<button type="submit" class="button button-primary"><?php esc_html_e( 'Send message', 'satori-manifest' ); ?></button>
-			</form>
-		</section>
+			</section>
+		<?php endif; ?>
 	<?php endif; ?>
 </div>

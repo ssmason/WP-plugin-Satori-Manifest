@@ -1,0 +1,10 @@
+# Support tickets (client dashboard → Support).
+#
+# notify   Addresses told about new tickets and client replies (a prompt only:
+#          replies are written in wp-admin under Manifest → Support tickets).
+#          Empty = the staff addresses from Manifest → Settings.
+#
+# Override by copying to {theme}/satori-manifest/support.yaml.
+
+notify:
+  - hello@qrable.net

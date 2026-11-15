@@ -1,0 +1,15 @@
+# Sent to the support address (config/support.yaml) when a client raises a ticket.
+# Placeholders: ticket, subject, message, client_name, client_email, page_url, link.
+
+subject: "Support ticket #{{ticket}}: {{subject}}"
+preheader: "{{client_name}} raised a support ticket."
+heading: New support ticket
+body: |
+  {{message}}
+details: |
+  Ticket: #{{ticket}}
+  From: {{client_name}} ({{client_email}})
+  Page: {{page_url}}
+button_label: Open the ticket
+button_url: "{{link}}"
+footer: Reply in your dashboard (Manifest → Support tickets); the client is emailed your answer.

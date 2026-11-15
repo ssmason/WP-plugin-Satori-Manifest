@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 3.11.0
+Stable tag: 3.12.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,9 @@ No. Ownership is checked on the server for admin screens, REST requests, media, 
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.12.0 =
+* Support tickets: clients raise tickets (Support screen, and the "Need a hand?" panel on Home) and follow the replies; staff answer under Manifest → Support tickets. Statuses Opened / In progress / Closed in colour. New tickets and client replies email the support address (config/support.yaml); staff replies email the client.
 
 = 3.11.0 =
 * AI assistant: page blocks - get_page_layout, add_block, update_block, remove_block and list_images let clients add their own content (text, headings, lists, their images, buttons, separators, spacers, quotes, or any allowed editor block as markup) inside the page's groups. Price lists and heading banners stay with the price list. Undo now restores page content reliably (snapshots kept in post meta).

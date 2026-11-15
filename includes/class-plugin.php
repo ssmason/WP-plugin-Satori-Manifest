@@ -90,6 +90,7 @@ use SatoriManifest\Help\Help_Tabs;
 use SatoriManifest\Login\Login_Screen;
 use SatoriManifest\Mail\Core_Emails;
 use SatoriManifest\Mcp\Mcp;
+use SatoriManifest\Support\Support;
 use SatoriManifest\Mail\WP_Mail_Relay;
 use SatoriManifest\Contact\Contact_Form;
 use SatoriManifest\Contact\Contact_Handler;
@@ -170,6 +171,7 @@ class Plugin {
 
 		// AI assistant (MCP): a self-contained module, see includes/mcp/class-mcp.php.
 		Mcp::register();
+		Support::register(); // Support tickets (client Support screen, Manifest → Support tickets).
 
 		if ( is_multisite() ) {
 			add_action( 'wpmu_new_blog', array( Multisite::class, 'new_site_setup' ) );

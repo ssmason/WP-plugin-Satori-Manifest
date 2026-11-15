@@ -1,0 +1,14 @@
+# Sent to the client when staff reply to their support ticket.
+# Placeholders: ticket, subject, message, status, link, site_name.
+
+subject: "Re: your support ticket #{{ticket}}: {{subject}}"
+preheader: "We've replied to your support ticket."
+heading: We've replied
+body: |
+  {{message}}
+details: |
+  Ticket: #{{ticket}}
+  Status: {{status}}
+button_label: View your ticket
+button_url: "{{link}}"
+footer: To answer, open the ticket in your dashboard under Support. Sent by {{site_name}}.

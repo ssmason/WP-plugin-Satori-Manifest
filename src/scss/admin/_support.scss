@@ -1,0 +1,186 @@
+// Support tickets: client Support screen, staff Manifest → Support tickets,
+// and the new-ticket form on the client Home screen.
+//
+// @package SatoriManifest
+// @author  Stephen Mason <steve@satori-digital.com>
+// @since   3.12.0
+
+@use "variables" as *;
+
+// Status pills: opened needs attention (amber), in progress (blue), closed (green).
+.sm-ticket-status {
+	display: inline-block;
+	padding: 2px 10px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.6;
+	white-space: nowrap;
+
+	&.is-open {
+		background: #fef3c7;
+		color: #92400e;
+	}
+
+	&.is-in-progress {
+		background: #dbeafe;
+		color: #1e40af;
+	}
+
+	&.is-closed {
+		background: #dcfce7;
+		color: #166534;
+	}
+}
+
+.sm-support__layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	align-items: start;
+	gap: $sm-space-lg;
+
+	@media (max-width: 960px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.sm-ticket-form {
+	display: grid;
+	gap: $sm-space-md;
+
+	&__field {
+		display: grid;
+		gap: 4px;
+		font-weight: 600;
+
+		input,
+		textarea {
+			width: 100%;
+			font-weight: 400;
+		}
+	}
+
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: $sm-space-sm;
+
+		label {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+		}
+	}
+}
+
+.sm-ticket-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: $sm-space-sm;
+		padding: 10px 0;
+		border-bottom: 1px solid $sm-color-border;
+	}
+
+	a {
+		display: grid;
+		gap: 2px;
+		text-decoration: none;
+	}
+
+	&__date {
+		color: $sm-color-text-light;
+		font-size: 12px;
+	}
+}
+
+.sm-ticket {
+	&__head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: $sm-space-sm;
+	}
+
+	&__number {
+		color: $sm-color-text-light;
+		font-weight: 400;
+	}
+
+	&__client {
+		margin-top: 0;
+		color: $sm-color-text-light;
+	}
+}
+
+.sm-ticket-thread {
+	display: grid;
+	gap: $sm-space-sm;
+	margin: $sm-space-md 0 $sm-space-lg;
+	padding: 0;
+	list-style: none;
+}
+
+.sm-ticket-message {
+	max-width: 46rem;
+	padding: 12px 14px;
+	border: 1px solid $sm-color-border;
+	border-radius: $sm-radius-lg;
+	background: #fff;
+
+	&.is-staff {
+		border-color: #bfdbfe;
+		background: #eff6ff;
+	}
+
+	&__meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin: 0 0 6px;
+		color: $sm-color-text-light;
+		font-size: 12px;
+
+		strong {
+			color: $sm-color-text;
+		}
+	}
+
+	&__body {
+		line-height: 1.6;
+		overflow-wrap: anywhere;
+	}
+}
+
+.sm-ticket-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px $sm-space-md;
+	margin: 0 0 $sm-space-md;
+
+	a {
+		text-decoration: none;
+
+		&.is-current {
+			color: $sm-color-text;
+			font-weight: 600;
+		}
+	}
+}
+
+.sm-ticket-empty {
+	margin: 0;
+	padding: $sm-space-lg;
+}
+
+.sm-ticket-table td,
+.sm-ticket-table th {
+	vertical-align: middle;
+}
