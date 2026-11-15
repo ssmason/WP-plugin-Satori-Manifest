@@ -2,7 +2,7 @@
 Contributors: ssmason
 Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
-Tested up to: 7.1
+Tested up to: 6.9
 Requires PHP: 8.1
 Stable tag: 3.12.0
 License: GPL-2.0-or-later
@@ -16,10 +16,11 @@ Satori Manifest turns one WordPress site into a hosted price-list service. Each 
 
 **For clients**
 
-* A price list editor: sections with an optional icon, items with description, badge, "from" prefix and price; leave a price empty for a sub-heading.
-* Five designs (Atelier, Studio, Noir, Bloom, Mono) and branding: logo, colours, fonts, background image, header and footer.
+* A price list editor: headings that group sections, sections with an optional icon and photo, items with description, badge, "from" prefix and price; leave a price empty for a sub-heading.
+* Nine designs (Atelier, Studio, Bloom, Mono, and the full-page Noir, Harbour, Morning, Serene and Edge) and branding: logo, colours, fonts, background image, header and footer.
 * A QR code (opens the page with `?src=qr`), a print-ready PDF of the price list and a snippet to embed the list on their own website.
 * Visit and QR scan counts, with an optional monthly summary email.
+* Support tickets with staff, and an optional AI assistant (ChatGPT, Claude) that edits only their own price list and page, with undo.
 
 **For staff**
 
@@ -34,6 +35,15 @@ Satori Manifest turns one WordPress site into a hosted price-list service. Each 
 * Configuration is YAML (fields, fonts, designs, plans, emails, layouts, help); a theme can override any file under `{theme}/satori-manifest/`.
 * Its own QR encoder and PDF writer.
 * Security extras: login throttling, XML-RPC off, private REST user lists and generic login errors.
+
+== External services ==
+
+The plugin only contacts these services when they are configured or used:
+
+* **Stripe** (api.stripe.com) - when `STRIPE_SECRET_KEY` is set: creates Checkout sessions and customer portal links and reads subscription details. Sent: plan, price, customer email and Stripe ids. [Terms](https://stripe.com/legal/ssa), [Privacy](https://stripe.com/privacy).
+* **Brevo** (api.brevo.com) - when `BREVO_API_KEY` is set: delivers the plugin's emails. Sent: recipient, subject and message. [Terms](https://www.brevo.com/legal/termsofuse/), [Privacy](https://www.brevo.com/legal/privacypolicy/).
+* **Cloudflare Turnstile** (challenges.cloudflare.com) - when Turnstile keys are set: spam check on the registration and contact forms. Sent: the visitor's challenge token and IP address. [Terms](https://www.cloudflare.com/website-terms/), [Privacy](https://www.cloudflare.com/privacypolicy/).
+* **Google Fonts** (fonts.googleapis.com) - loads the fonts chosen in a client's branding and on the login screen. Sent: the visitor's IP address and browser details. [Terms](https://developers.google.com/terms), [Privacy](https://policies.google.com/privacy).
 
 == Installation ==
 
@@ -52,6 +62,10 @@ No. Client pages use the plugin's own template and styles; the theme only styles
 
 No. Ownership is checked on the server for admin screens, REST requests, media, menus and the price list block.
 
+= What does uninstalling remove? =
+
+Plugin settings, the AI assistant's change history, the scheduled task, the client role and the price lists (manifest posts). Client users, pages, menus, media, applications, payments and support tickets are kept: they are customer and business records.
+
 = Where are payments handled? =
 
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
@@ -63,6 +77,7 @@ On Stripe's own pages (Checkout and the customer portal). Card details never rea
 * QR builder: border colour, colour for the code's corner squares, and an optional line under TAP or SCAN (e.g. company name) with its own colour and font; the sign grows taller to fit. Live preview is now drawn by the server, exactly as it prints.
 * Section image: each price list section can have a photo under its title, the full width of its column (16:9, capped in height). The AI assistant can set or remove it (update_section image_id, client's own images only). Not in the PDF.
 * Design screen on phones: two designs per row with smaller previews and text.
+* Plugin standards: readme lists the external services (Stripe, Brevo, Turnstile, Google Fonts), what uninstall removes, nine designs, Tested up to 6.9. Uninstall now also removes settings, the AI change history, the daily task and internal options.
 
 = 3.11.0 =
 * AI assistant: page blocks - get_page_layout, add_block, update_block, remove_block and list_images let clients add their own content (text, headings, lists, their images, buttons, separators, spacers, quotes, or any allowed editor block as markup) inside the page's groups. Price lists and heading banners stay with the price list. Undo now restores page content reliably (snapshots kept in post meta).

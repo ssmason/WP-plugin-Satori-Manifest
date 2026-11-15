@@ -138,8 +138,34 @@ class Multisite {
 		// pages and menus are deliberately kept - they are customer data.
 		Client_Role::remove();
 
-		// Delete plugin options.
-		delete_option( 'satori_manifest_version' );
-		delete_option( 'satori_manifest_patterns_seeded' );
+		// AI assistant change history (undo snapshots): internal, no customer value.
+		$changes = get_posts(
+			array(
+				'post_type'      => 'sm_ai_change',
+				'posts_per_page' => -1, // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_posts_per_page -- full list required for complete uninstall.
+				'post_status'    => 'any',
+				'fields'         => 'ids',
+			)
+		);
+
+		foreach ( $changes as $post_id ) {
+			wp_delete_post( (int) $post_id, true );
+		}
+
+		wp_clear_scheduled_hook( 'satori_manifest_daily' );
+
+		// Delete plugin options. Applications, payments and support tickets are
+		// kept with the client users and pages - they are business records.
+		foreach ( array(
+			'satori_manifest_version',
+			'satori_manifest_patterns_seeded',
+			'satori_manifest_settings',
+			'satori_manifest_stripe_events',
+			'satori_manifest_caps_version',
+			'satori_manifest_data_version',
+			'satori_manifest_summary_sent',
+		) as $option ) {
+			delete_option( $option );
+		}
 	}
 }
