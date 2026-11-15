@@ -54,7 +54,7 @@ tabs:
     text: Raise a ticket with a short subject and your question. We reply here and email you when we do. Opened means we have not answered yet, In progress means we are on it, Closed means it is done - reply to a closed ticket to open it again.
   qr:
     title: QR builder
-    text: Pick a large sign (your text, subtitle and colour; one per A4 page) or a small sign (short text, last word in red; four per A4 page for tables). Save, then press Download PDF and print at actual size (100%). Your sign also shows on your Home screen. The code never changes, so signs you have already printed keep working.
+    text: Pick a large sign (your text, subtitle and colour; one per A4 page) or a small sign (short text, last word in red; four per A4 page for tables). Either can have its own border colour, coloured corners on the code (keep them dark) and a line of text under TAP or SCAN, such as your company name, in the colour and font you choose. Save, then press Download PDF and print at actual size (100%). Your sign also shows on your Home screen. The code never changes, so signs you have already printed keep working.
   menus:
     title: Navigation links
     text: Add "Custom links" with the full web address, then press Save Menu. The links appear in your page header. To jump to a section of your price list, use its title with a # in front: "Hot drinks" becomes #hot-drinks. Remove all links for a standalone page.

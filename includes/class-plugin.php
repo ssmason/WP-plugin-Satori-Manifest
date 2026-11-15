@@ -288,6 +288,7 @@ class Plugin {
 		add_action( 'admin_post_' . Applications_Screen::ACTION, array( Applications_Screen::class, 'handle' ) );
 		add_action( 'admin_post_' . Design_Screen::ACTION, array( Design_Screen::class, 'handle' ) );
 		add_action( 'admin_post_' . Qr_Builder_Screen::ACTION, array( Qr_Builder_Screen::class, 'handle' ) );
+		add_action( 'wp_ajax_' . Qr_Builder_Screen::PREVIEW_ACTION, array( Qr_Builder_Screen::class, 'preview' ) );
 		add_action( 'admin_post_' . Clients_Screen::ACTION, array( Clients_Screen::class, 'handle' ) );
 		Branding_Screen::register();
 		Settings_Screen::register();

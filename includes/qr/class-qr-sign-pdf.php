@@ -58,7 +58,7 @@ final class Qr_Sign_Pdf {
 		$settings  = Qr_Sign::settings( $page_id );
 		$size      = $settings['size'];
 		$scale     = self::SCALE[ $size ];
-		[ $w, $h ] = Qr_Sign::BOX[ $size ];
+		[ $w, $h ] = Qr_Sign::box( $settings );
 		$pdf       = new Pdf_Document();
 		$matrix    = Page_Qr::matrix( $page_id );
 
@@ -120,9 +120,9 @@ final class Qr_Sign_Pdf {
 	 * @return void
 	 */
 	private static function draw( Pdf_Document $pdf, array $settings, array $matrix, float $x, float $y, float $s ): void {
-		$shape  = Qr_Sign::shape( $settings['size'] );
+		$shape  = Qr_Sign::shape( $settings['size'], '' !== $settings['footer'] );
 		$accent = Qr_Sign::accent( $settings );
-		$rgb    = static fn( string $role ): array => Print_Colour::from_hex( Qr_Sign::colour( $role, $accent ) );
+		$rgb    = static fn( string $role ): array => Print_Colour::from_hex( Qr_Sign::colour( $role, $accent, $settings ) );
 		$at     = static fn( float $px, float $py ): array => array( $x + $px * $s, $y + $py * $s );
 
 		foreach ( $shape['parts'] as $part ) {
@@ -191,11 +191,23 @@ final class Qr_Sign_Pdf {
 		[ $qx, $qy, $qsize ] = $shape['qr'];
 		$module              = $qsize * $s / max( 1, count( $matrix ) );
 		[ $px, $py ]         = $at( (float) $qx, (float) $qy );
-		Qr_Renderer::pdf( $pdf, $matrix, $px - 4 * $module, $py - 4 * $module, $qsize * $s + 8 * $module, array( 0.07, 0.07, 0.07 ), false );
+		Qr_Renderer::pdf( $pdf, $matrix, $px - 4 * $module, $py - 4 * $module, $qsize * $s + 8 * $module, Print_Colour::from_hex( Qr_Sign::INK ), false, false );
+		Qr_Renderer::pdf( $pdf, $matrix, $px - 4 * $module, $py - 4 * $module, $qsize * $s + 8 * $module, Print_Colour::from_hex( $settings['corners'] ), false, true );
 
 		[ $lx, $ly, $size ] = $shape['label'];
 		$label              = Font_Metrics::encode( __( 'TAP or SCAN', 'satori-manifest' ) );
 		[ $cx, $cy ]        = $at( (float) $lx, (float) $ly );
 		$pdf->text( $cx - Font_Metrics::width( $label, $size * $s, true ) / 2, $cy, $label, $size * $s, true, $rgb( 'white' ) );
+
+		// Line under the pill (e.g. the company name), in its own colour and font.
+		if ( null !== $shape['footer'] ) {
+			[ $fx, $fy, $size, $width ] = $shape['footer'];
+			$family                     = $settings['footer_font'];
+			$font                       = Qr_Sign::fit( $settings['footer'], (float) $size, (float) $width, $family ) * $s;
+			$text                       = Font_Metrics::encode( $settings['footer'] );
+			[ $cx, $cy ]                = $at( (float) $fx, (float) $fy );
+
+			$pdf->text( $cx - Font_Metrics::family_width( $text, $font, $family ) / 2, $cy, $text, $font, true, Print_Colour::from_hex( $settings['footer_colour'] ), $family );
+		}
 	}
 }

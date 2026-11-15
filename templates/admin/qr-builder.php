@@ -30,7 +30,7 @@ $satori_manifest_sizes = array(
 	'small' => array( __( 'Small sign', 'satori-manifest' ), __( 'Short text, our red. Four per A4 page, for tables.', 'satori-manifest' ) ),
 );
 ?>
-<div class="wrap sm-admin sm-qr-builder" data-sm-qr-builder>
+<div class="wrap sm-admin sm-qr-builder" data-sm-qr-builder data-sm-preview-url="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" data-sm-preview-action="<?php echo esc_attr( Qr_Builder_Screen::PREVIEW_ACTION ); ?>">
 	<header class="sm-page-header">
 		<div>
 			<p class="sm-eyebrow"><?php esc_html_e( 'QR builder', 'satori-manifest' ); ?></p>
@@ -77,6 +77,44 @@ $satori_manifest_sizes = array(
 				<span class="sm-qr-builder__label"><?php esc_html_e( 'Colour', 'satori-manifest' ); ?></span>
 				<input type="color" name="colour" value="<?php echo esc_attr( $satori_manifest_settings['colour'] ); ?>" data-sm-sign-input="colour" />
 			</label>
+
+			<div class="sm-qr-builder__colours">
+				<label class="sm-qr-builder__field sm-qr-builder__field--colour">
+					<span class="sm-qr-builder__label"><?php esc_html_e( 'Border', 'satori-manifest' ); ?></span>
+					<input type="color" name="border" value="<?php echo esc_attr( $satori_manifest_settings['border'] ); ?>" />
+				</label>
+				<label class="sm-qr-builder__field sm-qr-builder__field--colour">
+					<span class="sm-qr-builder__label"><?php esc_html_e( 'Code corners', 'satori-manifest' ); ?></span>
+					<input type="color" name="corners" value="<?php echo esc_attr( $satori_manifest_settings['corners'] ); ?>" />
+				</label>
+			</div>
+			<p class="sm-hint"><?php esc_html_e( 'Keep the corners dark so phones can read the code; a colour that is too light goes back to black.', 'satori-manifest' ); ?></p>
+
+			<fieldset class="sm-qr-builder__footer">
+				<legend class="sm-qr-builder__label"><?php esc_html_e( 'Text under "TAP or SCAN" (optional)', 'satori-manifest' ); ?></legend>
+				<input type="text" name="footer" maxlength="<?php echo esc_attr( (string) Qr_Sign::MAX_FOOTER ); ?>" value="<?php echo esc_attr( $satori_manifest_settings['footer'] ); ?>" placeholder="<?php esc_attr_e( 'e.g. your company name', 'satori-manifest' ); ?>" aria-label="<?php esc_attr_e( 'Text under the code', 'satori-manifest' ); ?>" />
+				<div class="sm-qr-builder__colours">
+					<label class="sm-qr-builder__field sm-qr-builder__field--colour">
+						<span class="sm-qr-builder__label"><?php esc_html_e( 'Text colour', 'satori-manifest' ); ?></span>
+						<input type="color" name="footer_colour" value="<?php echo esc_attr( $satori_manifest_settings['footer_colour'] ); ?>" />
+					</label>
+					<label class="sm-qr-builder__field">
+						<span class="sm-qr-builder__label"><?php esc_html_e( 'Font', 'satori-manifest' ); ?></span>
+						<select name="footer_font">
+							<?php
+							foreach ( array(
+								'sans'  => __( 'Modern (sans serif)', 'satori-manifest' ),
+								'serif' => __( 'Classic (serif)', 'satori-manifest' ),
+								'mono'  => __( 'Typewriter', 'satori-manifest' ),
+							) as $satori_manifest_font => $satori_manifest_font_label ) :
+								?>
+								<option value="<?php echo esc_attr( $satori_manifest_font ); ?>" <?php selected( $satori_manifest_settings['footer_font'], $satori_manifest_font ); ?>><?php echo esc_html( $satori_manifest_font_label ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</label>
+				</div>
+				<small><?php esc_html_e( 'Adding text makes the sign a little taller.', 'satori-manifest' ); ?></small>
+			</fieldset>
 
 			<div class="sm-qr-builder__actions">
 				<button type="submit" class="button button-primary"><?php esc_html_e( 'Save sign', 'satori-manifest' ); ?></button>

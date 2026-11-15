@@ -94,6 +94,30 @@
 		}
 	}
 
+	&__colours {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: end;
+		gap: $sm-space-lg;
+	}
+
+	&__footer {
+		display: grid;
+		gap: $sm-space-sm;
+		margin: 0;
+		padding: 0;
+		border: 0;
+
+		input[type="text"] {
+			width: 100%;
+			max-width: 32rem;
+		}
+
+		small {
+			color: $sm-color-text-light;
+		}
+	}
+
 	&__actions {
 		display: flex;
 		flex-wrap: wrap;

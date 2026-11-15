@@ -233,11 +233,12 @@ class Pdf_Document {
 	 * @param  float            $y     Baseline, from the top of the page.
 	 * @param  string           $text  Windows-1252 text (Font_Metrics::encode()).
 	 * @param  float            $size  Font size in points.
-	 * @param  bool             $bold  Helvetica-Bold instead of Helvetica.
-	 * @param  array<int,float> $rgb   Colour as 0–1 floats.
+	 * @param  bool             $bold    Helvetica-Bold instead of Helvetica.
+	 * @param  array<int,float> $rgb     Colour as 0–1 floats.
+	 * @param  string           $family  'sans' (Helvetica), 'serif' (Times-Bold) or 'mono' (Courier-Bold); serif and mono are bold only.
 	 * @return void
 	 */
-	public function text( float $x, float $y, string $text, float $size, bool $bold, array $rgb ): void {
+	public function text( float $x, float $y, string $text, float $size, bool $bold, array $rgb, string $family = 'sans' ): void {
 		if ( '' === $text ) {
 			return;
 		}
@@ -246,7 +247,11 @@ class Pdf_Document {
 			sprintf(
 				'BT %s rg /%s %.2F Tf %.2F %.2F Td (%s) Tj ET',
 				self::rgb( $rgb ),
-				$bold ? 'F2' : 'F1',
+				match ( $family ) {
+					'serif' => 'F3',
+					'mono'  => 'F4',
+					default => $bold ? 'F2' : 'F1',
+				},
 				$size,
 				$x,
 				$this->height - $y,
@@ -438,10 +443,10 @@ class Pdf_Document {
 			$this->add_page();
 		}
 
-		// Object numbers: 1 catalog, 2 page tree, 3–4 fonts, 5 info, then images, then pages.
+		// Object numbers: 1 catalog, 2 page tree, 3–4 and 6–7 fonts, 5 info, then images, then pages.
 		$objects    = array();
 		$image_refs = array();
-		$next       = 6;
+		$next       = 8;
 
 		foreach ( $this->images as $name => $image ) {
 			$image_refs[ $name ] = $next;
@@ -460,7 +465,7 @@ class Pdf_Document {
 			$xobjects .= sprintf( '/%s %d 0 R ', $name, $ref );
 		}
 
-		$resources = '<< /Font << /F1 3 0 R /F2 4 0 R >>' . ( '' !== $xobjects ? ' /XObject << ' . $xobjects . '>>' : '' ) . ' >>';
+		$resources = '<< /Font << /F1 3 0 R /F2 4 0 R /F3 6 0 R /F4 7 0 R >>' . ( '' !== $xobjects ? ' /XObject << ' . $xobjects . '>>' : '' ) . ' >>';
 		$page_refs = array();
 
 		foreach ( $this->pages as $index => $ops ) {
@@ -503,6 +508,8 @@ class Pdf_Document {
 		$objects[2] = sprintf( '<< /Type /Pages /Kids [%s] /Count %d >>', implode( ' ', $page_refs ), count( $page_refs ) );
 		$objects[3] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
 		$objects[4] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
+		$objects[6] = '<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold /Encoding /WinAnsiEncoding >>';
+		$objects[7] = '<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold /Encoding /WinAnsiEncoding >>';
 		$objects[5] = sprintf( '<< /Title (%s) /Producer (Satori Manifest) /CreationDate (D:%s) >>', self::escape( Font_Metrics::encode( $this->title ) ), gmdate( 'YmdHis' ) );
 		ksort( $objects );
 

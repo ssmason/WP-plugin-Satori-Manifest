@@ -90,6 +90,50 @@ class QrSignTest extends Test_Case {
 	}
 
 	/**
+	 * Border, corner colour and the footer line (taller sign, own colour and font).
+	 */
+	public function test_border_corners_and_footer(): void {
+		$page_id = Client_Repository::page_id( $this->make_client( 'Footer Bar' ) );
+		$plain   = Qr_Sign::clean( array() );
+
+		$this->assertSame( Qr_Sign::DARK, $plain['border'] );
+		$this->assertSame( Qr_Sign::INK, $plain['corners'] );
+		$this->assertSame( '', $plain['footer'] );
+		$this->assertSame( 'sans', $plain['footer_font'] );
+		$this->assertSame( Qr_Sign::BOX['large'], Qr_Sign::box( $plain ) );
+
+		// Too-light corners fall back to black; unknown fonts to sans.
+		$this->assertSame( Qr_Sign::INK, Qr_Sign::clean( array( 'corners' => '#ffee00' ) )['corners'] );
+		$this->assertSame( 'sans', Qr_Sign::clean( array( 'footer_font' => 'comic' ) )['footer_font'] );
+
+		$settings = Qr_Sign::save(
+			$page_id,
+			array(
+				'size'          => 'small',
+				'border'        => '#AA0000',
+				'corners'       => '#003366',
+				'footer'        => 'Footer & Co',
+				'footer_colour' => '#336699',
+				'footer_font'   => 'serif',
+			)
+		);
+		$svg      = Qr_Sign::svg( $page_id );
+
+		$this->assertSame( '#aa0000', $settings['border'] );
+		$this->assertSame( Qr_Sign::BOX['small'][1] + Qr_Sign::FOOTER_HEIGHT['small'], Qr_Sign::box( $settings )[1] );
+		$this->assertStringContainsString( 'viewBox="0 0 122 172"', $svg );
+		$this->assertStringContainsString( 'fill="#aa0000"', $svg );
+		$this->assertStringContainsString( '<path fill="#003366" d="M', $svg );
+		$this->assertStringContainsString( 'Footer &amp; Co', $svg );
+		$this->assertStringContainsString( 'fill="#336699"', $svg );
+		$this->assertStringContainsString( 'Georgia', $svg );
+
+		$pdf = Qr_Sign_Pdf::render( $page_id );
+		$this->assertStringContainsString( '/BaseFont /Times-Bold', $pdf );
+		$this->assertStringContainsString( '/Count 1', $pdf );
+	}
+
+	/**
 	 * Both sizes print on one A4 page; the download link is nonce-protected.
 	 */
 	public function test_pdf_and_download(): void {

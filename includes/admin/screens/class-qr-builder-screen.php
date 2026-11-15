@@ -37,6 +37,11 @@ final class Qr_Builder_Screen {
 	public const ACTION = 'satori_manifest_qr_sign';
 
 	/**
+	 * Ajax action for the live preview.
+	 */
+	public const PREVIEW_ACTION = 'satori_manifest_qr_preview';
+
+	/**
 	 * Renders the screen.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
@@ -87,18 +92,51 @@ final class Qr_Builder_Screen {
 			wp_die( esc_html__( 'Sorry, you cannot change this sign.', 'satori-manifest' ), 403 );
 		}
 
-		Qr_Sign::save(
-			$page_id,
-			array(
-				'size'     => isset( $_POST['size'] ) ? sanitize_key( wp_unslash( $_POST['size'] ) ) : '',
-				'title'    => isset( $_POST['title'] ) ? sanitize_text_field( wp_unslash( $_POST['title'] ) ) : '',
-				'subtitle' => isset( $_POST['subtitle'] ) ? sanitize_text_field( wp_unslash( $_POST['subtitle'] ) ) : '',
-				'colour'   => isset( $_POST['colour'] ) ? sanitize_hex_color( wp_unslash( $_POST['colour'] ) ) : '',
-			)
-		);
+		Qr_Sign::save( $page_id, self::input() );
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		wp_safe_redirect( add_query_arg( 'sm_notice', 'saved', Admin_Menu::url( Admin_Menu::QR_SLUG, Client_Repository::client_for_page( $page_id ) ) ) );
 		exit;
+	}
+
+	/**
+	 * Live preview: the sign as SVG for the form as it stands (not saved).
+	 * Hooked to wp_ajax_satori_manifest_qr_preview; the form's own nonce.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.12.0
+	 * @return void
+	 */
+	public static function preview(): void {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- verified with Security::verify_form_nonce() first.
+		$nonce   = isset( $_POST[ Security::NONCE_FIELD ] ) ? sanitize_text_field( wp_unslash( $_POST[ Security::NONCE_FIELD ] ) ) : '';
+		$page_id = isset( $_POST['page_id'] ) ? absint( $_POST['page_id'] ) : 0;
+
+		if ( ! Security::verify_form_nonce( $nonce, self::ACTION ) || ! Client_Repository::is_client_page( $page_id ) || ! current_user_can( 'edit_post', $page_id ) ) {
+			wp_send_json_error( null, 403 );
+		}
+
+		wp_send_json_success( array( 'svg' => Qr_Sign::svg( $page_id, Qr_Sign::clean( self::input(), $page_id ) ) ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+	}
+
+	/**
+	 * The sign fields from the posted form (Qr_Sign::clean() does the rest).
+	 * Callers verify the nonce first.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.12.0
+	 * @return array<string,string>
+	 */
+	private static function input(): array {
+		$input = array();
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- verified by the callers.
+		foreach ( array( 'size', 'title', 'subtitle', 'colour', 'border', 'corners', 'footer', 'footer_colour', 'footer_font' ) as $key ) {
+			$input[ $key ] = isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		return $input;
 	}
 }

@@ -123,7 +123,11 @@ Visitor ──Register form──▶ Application (pending)
 * **QR builder** - clients design a printable sign around their code (`Admin\Screens\Qr_Builder_Screen`,
   `Qr\Qr_Sign`, `Qr\Qr_Sign_Pdf`): **large** (top text, subtitle, their colour; one per A4 page,
   about 16 × 19.5 cm) or **small** (short text with the last word in red; four per A4 page, about
-  6.5 × 8 cm). Live preview while typing; settings in page meta `_sm_qr_sign`. One shape definition
+  6.5 × 8 cm). Both take a border colour, a colour for the code's corner squares (too-light colours
+  fall back to black so it scans) and an optional line under the pill (e.g. company name) in its own
+  colour and font (sans / serif / mono = Helvetica / Times-Bold / Courier-Bold in the PDF), which
+  makes the sign taller. The live preview is drawn by the server (ajax `satori_manifest_qr_preview`,
+  not saved); settings in page meta `_sm_qr_sign`. One shape definition
   feeds the SVG preview and a vector PDF (`Pdf_Document::path()` / `rounded_rect()`), so it prints as
   previewed. The sign shows on the Home card with "Download PDF" (`Qr_Download::url( $page, 'sign' )`)
   and is linked from Branding.

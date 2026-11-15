@@ -265,6 +265,110 @@ class Font_Metrics {
 	);
 
 	/**
+	 * Times-Bold widths, characters 32–126 (AFM).
+	 *
+	 * @since 3.12.0
+	 * @var   array<int,int>
+	 */
+	private const SERIF_BOLD = array(
+		250,
+		333,
+		555,
+		500,
+		500,
+		1000,
+		833,
+		333,
+		333,
+		333,
+		500,
+		570,
+		250,
+		333,
+		250,
+		278,
+		500,
+		500,
+		500,
+		500,
+		500,
+		500,
+		500,
+		500,
+		500,
+		500,
+		333,
+		333,
+		570,
+		570,
+		570,
+		500,
+		930,
+		722,
+		667,
+		722,
+		722,
+		667,
+		611,
+		778,
+		778,
+		389,
+		500,
+		778,
+		667,
+		944,
+		722,
+		778,
+		611,
+		778,
+		722,
+		556,
+		667,
+		722,
+		722,
+		1000,
+		722,
+		722,
+		667,
+		333,
+		278,
+		333,
+		581,
+		500,
+		333,
+		500,
+		556,
+		444,
+		556,
+		444,
+		333,
+		500,
+		556,
+		278,
+		333,
+		556,
+		278,
+		833,
+		556,
+		500,
+		556,
+		556,
+		444,
+		389,
+		333,
+		556,
+		500,
+		722,
+		500,
+		500,
+		444,
+		394,
+		220,
+		394,
+		520,
+	);
+
+	/**
 	 * Helvetica-Bold widths, characters 32–255.
 	 *
 	 * @since 3.2.0
@@ -531,6 +635,39 @@ class Font_Metrics {
 		for ( $i = 0; $i < $count; $i++ ) {
 			$code   = ord( $text[ $i ] );
 			$units += $code >= 32 ? $table[ $code - 32 ] : 0;
+		}
+
+		return $units * $size / 1000;
+	}
+
+	/**
+	 * Width of Windows-1252 text in one of the bold display families.
+	 *
+	 * Sans = Helvetica-Bold, serif = Times-Bold (printable ASCII from its AFM,
+	 * other characters at an average width), mono = Courier-Bold (all 600).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.12.0
+	 * @param  string $text    Windows-1252 text.
+	 * @param  float  $size    Font size in points.
+	 * @param  string $family  sans, serif or mono.
+	 * @return float
+	 */
+	public static function family_width( string $text, float $size, string $family ): float {
+		if ( 'mono' === $family ) {
+			return strlen( $text ) * 600 * $size / 1000;
+		}
+
+		if ( 'serif' !== $family ) {
+			return self::width( $text, $size, true );
+		}
+
+		$units = 0;
+		$count = strlen( $text );
+
+		for ( $i = 0; $i < $count; $i++ ) {
+			$code   = ord( $text[ $i ] );
+			$units += $code >= 32 && $code <= 126 ? self::SERIF_BOLD[ $code - 32 ] : 500;
 		}
 
 		return $units * $size / 1000;

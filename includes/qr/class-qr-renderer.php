@@ -75,13 +75,14 @@ class Qr_Renderer {
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.11.0
-	 * @param  array<int,array<int,bool>> $matrix  QR matrix.
+	 * @param  array<int,array<int,bool>> $matrix   QR matrix.
+	 * @param  bool|null                  $finders  Null for every module, true for only the three corner (finder) squares, false for all but them.
 	 * @return string
 	 */
-	public static function path( array $matrix ): string {
+	public static function path( array $matrix, ?bool $finders = null ): string {
 		$path = '';
 
-		foreach ( self::runs( $matrix ) as $run ) {
+		foreach ( self::runs( $matrix, $finders ) as $run ) {
 			$path .= sprintf( 'M%d %dh%dv1h-%dz', $run[0], $run[1], $run[2], $run[2] );
 		}
 
@@ -135,16 +136,17 @@ class Qr_Renderer {
 	 * @param  float                      $size    Total width (and height) in points.
 	 * @param  array<int,float>           $rgb         Dark colour as 0–1 floats.
 	 * @param  bool                       $background  Paint the quiet zone white (off when the code sits on a light card).
+	 * @param  bool|null                  $finders     Which modules: see path().
 	 * @return void
 	 */
-	public static function pdf( Pdf_Document $pdf, array $matrix, float $x, float $y, float $size, array $rgb, bool $background = true ): void {
+	public static function pdf( Pdf_Document $pdf, array $matrix, float $x, float $y, float $size, array $rgb, bool $background = true, ?bool $finders = null ): void {
 		$module = $size / ( count( $matrix ) + 2 * self::QUIET_ZONE );
 
 		if ( $background ) {
 			$pdf->rect( $x, $y, $size, $size, array( 1, 1, 1 ) );
 		}
 
-		foreach ( self::runs( $matrix ) as $run ) {
+		foreach ( self::runs( $matrix, $finders ) as $run ) {
 			$pdf->rect(
 				$x + ( $run[0] + self::QUIET_ZONE ) * $module,
 				$y + ( $run[1] + self::QUIET_ZONE ) * $module,
@@ -162,16 +164,22 @@ class Qr_Renderer {
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.3.0
-	 * @param  array<int,array<int,bool>> $matrix  QR matrix.
+	 * @param  array<int,array<int,bool>> $matrix   QR matrix.
+	 * @param  bool|null                  $finders  Which modules: see path().
 	 * @return array<int,array<int,int>>
 	 */
-	private static function runs( array $matrix ): array {
+	private static function runs( array $matrix, ?bool $finders = null ): array {
 		$runs = array();
+		$n    = count( $matrix );
 
 		foreach ( $matrix as $y => $row ) {
 			$start = -1;
 
 			foreach ( $row as $x => $dark ) {
+				if ( null !== $finders && self::is_finder( $x, $y, $n ) !== $finders ) {
+					$dark = false;
+				}
+
 				if ( $dark && $start < 0 ) {
 					$start = $x;
 				} elseif ( ! $dark && $start >= 0 ) {
@@ -186,6 +194,20 @@ class Qr_Renderer {
 		}
 
 		return $runs;
+	}
+
+	/**
+	 * Whether a module belongs to one of the three 7 × 7 corner squares.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.12.0
+	 * @param  int $x  Column.
+	 * @param  int $y  Row.
+	 * @param  int $n  Modules per side.
+	 * @return bool
+	 */
+	public static function is_finder( int $x, int $y, int $n ): bool {
+		return ( $x < 7 && $y < 7 ) || ( $x >= $n - 7 && $y < 7 ) || ( $x < 7 && $y >= $n - 7 );
 	}
 
 	/**
