@@ -111,7 +111,7 @@ class Assets {
 
 		if ( $is_manifest_edit || $is_plugin_screen || Client_Role::is_client() ) {
 			self::enqueue_style( 'satori-manifest-admin', 'build/css/admin.css', array( 'dashicons' ) );
-			wp_add_inline_style( 'satori-manifest-admin', Portal_Brand::css_variables() );
+			wp_add_inline_style( 'satori-manifest-admin', Portal_Brand::css_variables( Client_Role::is_client() ? get_current_user_id() : 0 ) );
 		}
 
 		if ( Admin_Menu::hook( Admin_Menu::HOME_SLUG ) === $hook_suffix ) {

@@ -59,7 +59,7 @@ body.is-satori-client {
 		margin: 0 0 8px;
 		padding: 16px;
 		border-bottom: 1px solid $sm-color-border;
-		background: var(--sm-portal-logo) center / auto 64px no-repeat content-box;
+		background: var(--sm-portal-logo) center / contain no-repeat content-box;
 	}
 
 	&.folded #adminmenuwrap::before {

@@ -16,6 +16,7 @@ declare( strict_types=1 );
 
 namespace SatoriManifest\Branding;
 
+use SatoriManifest\Clients\Client_Repository;
 use SatoriManifest\Core\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -128,24 +129,44 @@ class Portal_Brand {
 	}
 
 	/**
+	 * A client's own logo (Branding → Logo on their page), for their dashboard.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.12.4
+	 * @param  int    $user_id  Client.
+	 * @param  string $size     Image size.
+	 * @return string  URL, or '' when the client has no logo.
+	 */
+	public static function client_logo_url( int $user_id, string $size = 'medium' ): string {
+		$page_id = $user_id ? Client_Repository::page_id( $user_id ) : 0;
+		$logo_id = $page_id ? (int) Brand::for_page( $page_id )['logo_id'] : 0;
+
+		return $logo_id ? (string) wp_get_attachment_image_url( $logo_id, $size ) : '';
+	}
+
+	/**
 	 * Returns the CSS custom properties for the portal palette.
+	 *
+	 * With a client id, the logo is that client's own logo when they have one.
 	 *
 	 * Printed on the login screen and client admin screens; the stylesheets
 	 * read --sm-portal-* so a settings change needs no rebuild.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.0.0
+	 * @param  int $client_id  Client whose dashboard this is, or 0.
 	 * @return string  A ":root { … }" rule.
 	 */
-	public static function css_variables(): string {
+	public static function css_variables( int $client_id = 0 ): string {
 		$accent = self::accent();
+		$logo   = $client_id ? self::client_logo_url( $client_id ) : '';
 
 		return sprintf(
 			':root{--sm-portal-accent:%1$s;--sm-portal-accent-text:%2$s;--sm-portal-dark:%3$s;--sm-portal-logo:url("%4$s");}',
 			esc_attr( $accent ),
 			esc_attr( self::text_on( $accent ) ),
 			esc_attr( self::dark() ),
-			esc_url( self::logo_url() )
+			esc_url( '' !== $logo ? $logo : self::logo_url() )
 		);
 	}
 }
