@@ -78,6 +78,7 @@ class Sanitizer {
 				'title'       => isset( $section['title'] ) ? sanitize_text_field( (string) $section['title'] ) : '',
 				'description' => isset( $section['description'] ) ? sanitize_textarea_field( (string) $section['description'] ) : '',
 				'icon'        => self::image_id( $section['icon'] ?? 0 ),
+				'image'       => self::image_id( $section['image'] ?? 0 ),
 				'sort_order'  => count( $out ),
 				'items'       => self::sanitize_items( $raw_items ),
 			);

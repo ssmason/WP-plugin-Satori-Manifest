@@ -144,4 +144,58 @@ class PageBlocksTest extends Test_Case {
 		}
 		$this->assertSame( $original, (string) get_post_field( 'post_content', $page_id ) );
 	}
+
+	/**
+	 * A section image: kept by the sanitizer, set by the assistant only from the
+	 * client's own images, removed with 0, and drawn under the section title.
+	 */
+	public function test_section_image(): void {
+		$client = $this->make_client( 'Image Bar' );
+		$other  = $this->make_client( 'Other Bar' );
+		$store  = new Page_Store( Client_Context::for_user( $client ) );
+		$tools  = $this->tools( $store );
+		$file   = get_temp_dir() . 'sm-section.png';
+		$image  = imagecreatetruecolor( 40, 20 );
+
+		imagepng( $image, $file );
+
+		wp_set_current_user( $other );
+		$theirs = self::factory()->attachment->create_upload_object( $file );
+		wp_set_current_user( $client );
+		$mine = self::factory()->attachment->create_upload_object( $file );
+
+		$tools['add_section']->call( array( 'title' => 'Cakes' ) );
+		$id = (string) $store->sections()[0]['id'];
+
+		try {
+			$tools['update_section']->call(
+				array(
+					'section_id' => $id,
+					'image_id'   => $theirs,
+				)
+			);
+			$this->fail( 'Another client\'s image was accepted.' );
+		} catch ( Tool_Error $error ) {
+			$this->assertStringContainsString( 'list_images', $error->getMessage() );
+		}
+
+		$tools['update_section']->call(
+			array(
+				'section_id' => $id,
+				'image_id'   => $mine,
+			)
+		);
+		$this->assertSame( $mine, (int) $store->sections()[0]['image'] );
+		$this->assertSame( $mine, \SatoriManifest\Mcp\Price_List::to_public( $store->sections() )[0]['image_id'] );
+		$GLOBALS['post'] = get_post( Client_Repository::page_id( $client ) ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- render the block in the page's context.
+		$this->assertStringContainsString( 'satori-manifest-price-list__section-image', do_blocks( '<!-- wp:satori-manifest/price-list /-->' ) );
+
+		$tools['update_section']->call(
+			array(
+				'section_id' => $id,
+				'image_id'   => 0,
+			)
+		);
+		$this->assertSame( 0, (int) $store->sections()[0]['image'] );
+	}
 }

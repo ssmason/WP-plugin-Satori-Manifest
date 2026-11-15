@@ -44,7 +44,7 @@ class Post_Types {
 	 * Meta key for storing sections (each containing items) as JSON.
 	 *
 	 * Each element shape:
-	 * { "id": string, "title": string, "description": string, "icon": int, "sort_order": int,
+	 * { "id": string, "title": string, "description": string, "icon": int, "image": int, "sort_order": int,
 	 *   "items": [ { label, description, price, price_prefix, badge, sort_order } ] }
 	 *
 	 * @since 1.0.0

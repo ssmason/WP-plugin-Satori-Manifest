@@ -83,6 +83,8 @@ $satori_manifest_render_section = static function ( array $section, bool $expand
 	$items    = isset( $section['items'] ) && is_array( $section['items'] ) ? $section['items'] : array();
 	$icon_id  = isset( $section['icon'] ) ? absint( $section['icon'] ) : 0;
 	$icon_url = $icon_id ? (string) wp_get_attachment_image_url( $icon_id, 'thumbnail' ) : '';
+	$image_id = isset( $section['image'] ) ? absint( $section['image'] ) : 0;
+	$image    = $image_id ? (string) wp_get_attachment_image_url( $image_id, 'medium' ) : '';
 	?>
 	<section class="sm-section<?php echo $expanded ? '' : ' is-collapsed'; ?>" data-sm-id="<?php echo esc_attr( (string) ( $section['id'] ?? '' ) ); ?>">
 		<header class="sm-section__head">
@@ -121,6 +123,18 @@ $satori_manifest_render_section = static function ( array $section, bool $expand
 				<span class="screen-reader-text"><?php esc_html_e( 'Section description', 'satori-manifest' ); ?></span>
 				<textarea class="sm-section__description-input" rows="1" placeholder="<?php esc_attr_e( 'Optional intro shown under the section title', 'satori-manifest' ); ?>"><?php echo esc_textarea( (string) ( $section['description'] ?? '' ) ); ?></textarea>
 			</label>
+
+			<div class="sm-section__image<?php echo '' !== $image ? ' has-image' : ''; ?>">
+				<input type="hidden" class="sm-section__image-input" value="<?php echo esc_attr( '' !== $image ? (string) $image_id : '' ); ?>" />
+				<button type="button" class="sm-section__image-button" data-sm-action="section-image" title="<?php esc_attr_e( 'A photo shown under the section title, as wide as the column', 'satori-manifest' ); ?>">
+					<?php if ( '' !== $image ) : ?>
+						<img src="<?php echo esc_url( $image ); ?>" alt="" />
+					<?php else : ?>
+						<span class="dashicons dashicons-format-image" aria-hidden="true"></span> <?php esc_html_e( 'Add a section image', 'satori-manifest' ); ?>
+					<?php endif; ?>
+				</button>
+				<button type="button" class="button-link sm-section__image-remove" data-sm-action="section-image-remove"><?php esc_html_e( 'Remove image', 'satori-manifest' ); ?></button>
+			</div>
 
 			<div class="sm-items-head" aria-hidden="true">
 				<span></span>

@@ -187,6 +187,56 @@ $sm-item-columns: 18px minmax(140px, 1.3fr) minmax(140px, 1.6fr) 110px 80px 120p
 		display: block;
 	}
 
+	// Section image: a prompt, or a preview of the photo shown under the title.
+	&__image {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px 14px;
+		margin: 0 0 12px;
+	}
+
+	&__image-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 6px 10px;
+		overflow: hidden;
+		border: 1px dashed $sm-color-border;
+		border-radius: 8px;
+		background: #fff;
+		color: $sm-color-text-light;
+		font-size: 13px;
+		cursor: pointer;
+
+		img {
+			display: block;
+			width: auto;
+			max-width: 220px;
+			height: 90px;
+			object-fit: cover;
+		}
+
+		&:hover,
+		&:focus-visible {
+			border-color: $sm-color-primary;
+			color: $sm-color-primary;
+		}
+	}
+
+	&__image.has-image &__image-button {
+		padding: 0;
+		border-style: solid;
+	}
+
+	&__image-remove {
+		display: none;
+	}
+
+	&__image.has-image &__image-remove {
+		display: inline;
+	}
+
 	&__title-input {
 		width: 100%;
 		padding: 6px 10px !important; // stylelint-disable-line declaration-no-important

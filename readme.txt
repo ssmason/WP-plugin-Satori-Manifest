@@ -61,6 +61,7 @@ On Stripe's own pages (Checkout and the customer portal). Card details never rea
 = 3.12.0 =
 * Support tickets: clients raise tickets (Support screen, and the "Need a hand?" panel on Home) and follow the replies; staff answer under Manifest → Support tickets. Statuses Opened / In progress / Closed in colour. New tickets and client replies email the support address (config/support.yaml); staff replies email the client.
 * QR builder: border colour, colour for the code's corner squares, and an optional line under TAP or SCAN (e.g. company name) with its own colour and font; the sign grows taller to fit. Live preview is now drawn by the server, exactly as it prints.
+* Section image: each price list section can have a photo under its title, the full width of its column (16:9, capped in height). The AI assistant can set or remove it (update_section image_id, client's own images only). Not in the PDF.
 
 = 3.11.0 =
 * AI assistant: page blocks - get_page_layout, add_block, update_block, remove_block and list_images let clients add their own content (text, headings, lists, their images, buttons, separators, spacers, quotes, or any allowed editor block as markup) inside the page's groups. Price lists and heading banners stay with the price list. Undo now restores page content reliably (snapshots kept in post meta).

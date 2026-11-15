@@ -42,7 +42,7 @@ tabs:
     text: Click any text to change it. Use the + button to add a heading, paragraph or picture. Press Save when you are done. Your price list is the "Manifest" block. You can move it, but there is no need to edit it here.
   prices:
     title: Your price list
-    text: Each section is a group of services. Headings such as "Main Menu" sit above several sections and group them; untick "Show on page" to hide a whole menu (for example breakfast after 2 p.m.). Drag the handle (or use the arrows) to reorder. A "from" prefix shows as "from £25". Leave the price empty to turn an item into a sub-heading. Press Update to save.
+    text: Each section is a group of services. Headings such as "Main Menu" sit above several sections and group them; untick "Show on page" to hide a whole menu (for example breakfast after 2 p.m.). Drag the handle (or use the arrows) to reorder. A "from" prefix shows as "from £25". Leave the price empty to turn an item into a sub-heading. "Add a section image" puts a photo under the section title, as wide as the column. Press Update to save.
   design:
     title: Designs
     text: Apply a design to keep your current page content, or start fresh to load the design's own layout. Your branding and prices are never lost.

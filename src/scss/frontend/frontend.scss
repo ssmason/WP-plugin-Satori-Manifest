@@ -129,6 +129,19 @@ $b: ".satori-manifest-price-list";
 		object-fit: contain;
 	}
 
+	// Optional section photo: the full width of its column, cropped to 16:9 and
+	// capped in height so it never pushes the prices far down; corners from the design.
+	&__section-image {
+		display: block;
+		width: 100%;
+		height: auto;
+		max-height: 420px;
+		aspect-ratio: 16 / 9;
+		margin: 0 0 $sm-fe-space-md;
+		object-fit: cover;
+		border-radius: var(--sm-radius, #{$sm-fe-radius});
+	}
+
 	// Section intro ("Served until 2pm daily…"): bold, a size down from the items and in
 	// the page's accent colour (Branding → Colours), so each design and client differs.
 	&__section-desc {

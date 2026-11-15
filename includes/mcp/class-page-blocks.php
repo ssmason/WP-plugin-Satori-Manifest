@@ -325,13 +325,26 @@ final class Page_Blocks {
 	 * @throws Tool_Error When it is not one of the client's images.
 	 */
 	private function image_url( int $id ): string {
+		return (string) wp_get_attachment_image_url( $this->own_image( $id ), 'large' );
+	}
+
+	/**
+	 * Checks an image id is one of the client's own images.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.12.0
+	 * @param  int $id  Attachment id.
+	 * @return int  The id.
+	 * @throws Tool_Error When it is not one of the client's images.
+	 */
+	public function own_image( int $id ): int {
 		$post = $id ? get_post( $id ) : null;
 
 		if ( ! $post instanceof \WP_Post || 'attachment' !== $post->post_type || ! wp_attachment_is_image( $id ) || (int) $post->post_author !== $this->store->context()->user_id ) {
 			throw new Tool_Error( 'Use the image_id of one of the client\'s own images (list_images). New photos are uploaded in the dashboard under Media.' );
 		}
 
-		return (string) wp_get_attachment_image_url( $id, 'large' );
+		return $id;
 	}
 
 	/**

@@ -11,6 +11,7 @@ declare( strict_types=1 );
 
 namespace SatoriManifest\Mcp\Tools;
 
+use SatoriManifest\Mcp\Page_Blocks;
 use SatoriManifest\Mcp\Price_List;
 use SatoriManifest\Mcp\Server\Tool_Result;
 
@@ -51,7 +52,7 @@ final class Update_Section extends Client_Tool {
 	 * @return string
 	 */
 	public function description(): string {
-		return 'Changes one section\'s title or description, and/or replaces all of its items (pass the complete new list of items, in order). Fields left out stay as they are.';
+		return 'Changes one section\'s title or description, and/or replaces all of its items (pass the complete new list of items, in order). image_id puts one of the client\'s own photos (list_images) under the section title, full column width; 0 removes it. Fields left out stay as they are.';
 	}
 
 	/**
@@ -73,6 +74,10 @@ final class Update_Section extends Client_Tool {
 					'maxLength' => 500,
 				),
 				'items'       => self::items_schema(),
+				'image_id'    => array(
+					'type'    => 'integer',
+					'minimum' => 0,
+				),
 			),
 			array( 'section_id' )
 		);
@@ -94,8 +99,13 @@ final class Update_Section extends Client_Tool {
 	 * @return Tool_Result
 	 */
 	public function call( array $args ): Tool_Result {
-		$sections           = array_values( $this->store->sections() );
-		$index              = Price_List::section_index( $sections, (string) $args['section_id'] );
+		$sections = array_values( $this->store->sections() );
+		$index    = Price_List::section_index( $sections, (string) $args['section_id'] );
+
+		if ( ! empty( $args['image_id'] ) ) {
+			( new Page_Blocks( $this->store ) )->own_image( (int) $args['image_id'] );
+		}
+
 		$sections[ $index ] = Price_List::section( $args, $sections[ $index ] );
 		$saved              = $this->save_sections( sprintf( 'Changed the section "%s"', $sections[ $index ]['title'] ), $sections );
 

@@ -175,6 +175,11 @@
 				icon:
 					parseInt(valueOf(section, '.sm-section__icon-input'), 10) ||
 					0,
+				image:
+					parseInt(
+						valueOf(section, '.sm-section__image-input'),
+						10
+					) || 0,
 				sort_order: sectionIndex,
 				items,
 			};
@@ -383,6 +388,69 @@
 		frame.open();
 	}
 
+	// ── Section image ───────────────────────────────────────────────────────
+
+	/**
+	 * Shows a section's image (or the "Add" prompt) in the editor.
+	 *
+	 * @param {Element} section Section element.
+	 * @param {number}  id      Attachment id, 0 to clear.
+	 * @param {string}  url     Image URL.
+	 * @return {void}
+	 */
+	function setImage(section, id, url) {
+		const wrap = section.querySelector('.sm-section__image');
+		const button = wrap.querySelector('.sm-section__image-button');
+
+		if (id) {
+			button.replaceChildren(
+				Object.assign(document.createElement('img'), {
+					src: url,
+					alt: '',
+				})
+			);
+		} else {
+			button.replaceChildren(
+				Object.assign(document.createElement('span'), {
+					className: 'dashicons dashicons-format-image',
+				}),
+				document.createTextNode(
+					' ' + wp.i18n.__('Add a section image', 'satori-manifest')
+				)
+			);
+		}
+
+		wrap.querySelector('.sm-section__image-input').value = id ? id : '';
+		wrap.classList.toggle('has-image', Boolean(id));
+		serialise();
+	}
+
+	/**
+	 * Opens the media library to choose a section image.
+	 *
+	 * @param {Element} section Section element.
+	 * @return {void}
+	 */
+	function chooseImage(section) {
+		if (!window.wp?.media) {
+			return;
+		}
+
+		const frame = wp.media({
+			title: wp.i18n.__('Section image', 'satori-manifest'),
+			button: { text: wp.i18n.__('Use this image', 'satori-manifest') },
+			library: { type: 'image' },
+			multiple: false,
+		});
+
+		frame.on('select', () => {
+			const image = frame.state().get('selection').first().toJSON();
+			setImage(section, image.id, image.sizes?.medium?.url || image.url);
+		});
+
+		frame.open();
+	}
+
 	// ── Events ──────────────────────────────────────────────────────────────
 
 	const actions = {
@@ -400,6 +468,8 @@
 			confirmRemoveSection(button, section),
 		'section-icon': (button, section) => chooseIcon(section),
 		'section-icon-remove': (button, section) => setIcon(section, 0, ''),
+		'section-image': (button, section) => chooseImage(section),
+		'section-image-remove': (button, section) => setImage(section, 0, ''),
 		'item-add': (button, section) => addItem(section),
 		'item-up': (button, section, item) => move(item, -1),
 		'item-down': (button, section, item) => move(item, 1),

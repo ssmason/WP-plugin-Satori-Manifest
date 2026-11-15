@@ -68,6 +68,7 @@ final class Price_List {
 				'type'        => 'section',
 				'title'       => (string) ( $section['title'] ?? '' ),
 				'description' => (string) ( $section['description'] ?? '' ),
+				'image_id'    => (int) ( $section['image'] ?? 0 ),
 				'items'       => array_map(
 					static fn( array $item ): array => array(
 						'label'        => (string) ( $item['label'] ?? '' ),
@@ -135,10 +136,16 @@ final class Price_List {
 				'title'       => '',
 				'description' => '',
 				'icon'        => 0,
+				'image'       => 0,
 				'items'       => array(),
 			),
 			$base
 		);
+
+		// Checked by the tool first (the client's own image, or 0 to remove).
+		if ( array_key_exists( 'image_id', $input ) ) {
+			$section['image'] = absint( $input['image_id'] );
+		}
 
 		foreach ( array( 'title', 'description' ) as $field ) {
 			if ( array_key_exists( $field, $input ) ) {

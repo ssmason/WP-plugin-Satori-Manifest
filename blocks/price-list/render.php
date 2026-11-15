@@ -58,6 +58,7 @@ $manifests = $view['manifests'];
 				$section_title = isset( $section['title'] ) ? (string) $section['title'] : '';
 				$section_desc  = isset( $section['description'] ) ? (string) $section['description'] : '';
 				$section_icon  = isset( $section['icon'] ) ? absint( $section['icon'] ) : 0;
+				$section_image = isset( $section['image'] ) ? absint( $section['image'] ) : 0;
 				$items         = isset( $section['items'] ) && is_array( $section['items'] ) ? $section['items'] : array();
 
 				if ( '' === $section_title && empty( $items ) ) {
@@ -87,6 +88,22 @@ $manifests = $view['manifests'];
 							<span><?php echo esc_html( $section_title ); ?></span>
 						</h3>
 					<?php endif; ?>
+
+					<?php
+					// Optional photo under the title, as wide as the column it sits in.
+					if ( $section_image ) {
+						echo wp_get_attachment_image(
+							$section_image,
+							'large',
+							false,
+							array(
+								'class'   => 'satori-manifest-price-list__section-image',
+								'sizes'   => '(max-width: 760px) 100vw, 760px',
+								'loading' => 'lazy',
+							)
+						);
+					}
+					?>
 
 					<?php if ( $options['section_intros'] && '' !== $section_desc ) : ?>
 						<p class="satori-manifest-price-list__section-desc"><?php echo esc_html( $section_desc ); ?></p>
