@@ -146,6 +146,10 @@ final class Client_Tickets_Screen {
 			$satori_manifest_ticket = 0;
 		}
 
+		if ( $satori_manifest_ticket ) {
+			Tickets::mark_read( $satori_manifest_ticket );
+		}
+
 		$satori_manifest_tickets  = $satori_manifest_ticket ? array() : Tickets::list( $user_id );
 		$satori_manifest_messages = $satori_manifest_ticket ? Tickets::messages( $satori_manifest_ticket ) : array();
 		$satori_manifest_action   = self::ACTION;

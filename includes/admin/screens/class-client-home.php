@@ -22,6 +22,7 @@ use SatoriManifest\Clients\Embed_Code;
 use SatoriManifest\Qr\Qr_Sign;
 use SatoriManifest\Stats\Monthly_Summary;
 use SatoriManifest\Stats\Page_Views;
+use SatoriManifest\Support\Tickets;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -71,6 +72,7 @@ class Client_Home {
 			'scans' => 0,
 		);
 		$satori_manifest_wants   = Monthly_Summary::wants( Admin_Menu::current_client_id() );
+		$satori_manifest_replies = Tickets::unread( Admin_Menu::current_client_id() );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display-only flag set by our own redirect.
 		$satori_manifest_notice = isset( $_GET['sm_notice'] ) ? sanitize_key( wp_unslash( $_GET['sm_notice'] ) ) : '';

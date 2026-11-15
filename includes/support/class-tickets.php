@@ -47,6 +47,11 @@ final class Tickets {
 	public const META_STATUS = '_sm_ticket_status';
 
 	/**
+	 * Set while the client has a staff reply they have not opened yet.
+	 */
+	public const META_UNREAD = '_sm_ticket_unread';
+
+	/**
 	 * Statuses.
 	 */
 	public const OPEN        = 'open';
@@ -165,11 +170,17 @@ final class Tickets {
 		$id = self::add_message( $ticket, $user_id, $message );
 
 		if ( self::owner( $ticket ) === $user_id ) {
+			self::mark_read( $ticket );
+
 			if ( self::CLOSED === self::status( $ticket ) ) {
 				self::set_status( $ticket, self::OPEN );
 			}
-		} elseif ( self::OPEN === self::status( $ticket ) ) {
-			self::set_status( $ticket, self::IN_PROGRESS );
+		} else {
+			update_post_meta( $ticket, self::META_UNREAD, 1 );
+
+			if ( self::OPEN === self::status( $ticket ) ) {
+				self::set_status( $ticket, self::IN_PROGRESS );
+			}
 		}
 
 		return $id;
@@ -290,6 +301,35 @@ final class Tickets {
 		}
 
 		return get_posts( $args );
+	}
+
+	/**
+	 * A client's tickets with a staff reply they have not opened yet.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.12.2
+	 * @param  int $user_id  Client.
+	 * @return array<int,\WP_Post>
+	 */
+	public static function unread( int $user_id ): array {
+		return array_values(
+			array_filter(
+				$user_id ? self::list( $user_id ) : array(),
+				static fn( \WP_Post $ticket ): bool => (bool) get_post_meta( $ticket->ID, self::META_UNREAD, true )
+			)
+		);
+	}
+
+	/**
+	 * Marks a ticket's replies as seen by the client.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.12.2
+	 * @param  int $ticket  Ticket.
+	 * @return void
+	 */
+	public static function mark_read( int $ticket ): void {
+		delete_post_meta( $ticket, self::META_UNREAD );
 	}
 
 	/**

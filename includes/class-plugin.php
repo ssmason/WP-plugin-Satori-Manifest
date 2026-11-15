@@ -171,7 +171,7 @@ class Plugin {
 
 		// AI assistant (MCP): a self-contained module, see includes/mcp/class-mcp.php.
 		Mcp::register();
-		Support::register(); // Support tickets (client Support screen, Manifest → Support tickets).
+		Support::register(); // Support tickets (client Support screen, Support tickets menu).
 
 		if ( is_multisite() ) {
 			add_action( 'wpmu_new_blog', array( Multisite::class, 'new_site_setup' ) );

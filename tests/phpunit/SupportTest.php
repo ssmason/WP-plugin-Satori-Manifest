@@ -64,4 +64,25 @@ class SupportTest extends Test_Case {
 			)
 		);
 	}
+
+	/**
+	 * A staff reply is unread for the client until they open the ticket or reply.
+	 */
+	public function test_unread_replies(): void {
+		$client = $this->make_client( 'Unread Bar' );
+		$staff  = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$ticket = Tickets::create( $client, 'Menu', 'Help please.' );
+
+		$this->assertSame( array(), Tickets::unread( $client ) );
+
+		Tickets::reply( $ticket, $staff, 'On it.' );
+		$this->assertSame( array( $ticket ), wp_list_pluck( Tickets::unread( $client ), 'ID' ) );
+
+		Tickets::mark_read( $ticket );
+		$this->assertSame( array(), Tickets::unread( $client ) );
+
+		Tickets::reply( $ticket, $staff, 'Done.' );
+		Tickets::reply( $ticket, $client, 'Thanks.' );
+		$this->assertSame( array(), Tickets::unread( $client ) );
+	}
 }

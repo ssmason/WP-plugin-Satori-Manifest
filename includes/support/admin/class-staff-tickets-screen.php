@@ -1,6 +1,6 @@
 <?php
 /**
- * Staff screen: Manifest → Support tickets - answer tickets and set their status.
+ * Staff screen: Support tickets (own menu) - answer tickets and set their status.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -11,7 +11,6 @@ declare( strict_types=1 );
 
 namespace SatoriManifest\Support\Admin;
 
-use SatoriManifest\Admin\Admin_Menu;
 use SatoriManifest\Clients\Client_Role;
 use SatoriManifest\Core\Security;
 use SatoriManifest\Manifest\Post_Types;
@@ -65,7 +64,7 @@ final class Staff_Tickets_Screen {
 	}
 
 	/**
-	 * Adds Manifest → Support tickets, with a count of opened tickets.
+	 * Adds Support tickets as its own menu, below Manifest, with a count of opened tickets.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.12.0
@@ -79,13 +78,14 @@ final class Staff_Tickets_Screen {
 		$open  = Tickets::counts()[ Tickets::OPEN ];
 		$badge = $open ? ' <span class="awaiting-mod count-' . (int) $open . '"><span class="pending-count">' . (int) $open . '</span></span>' : '';
 
-		add_submenu_page(
-			Admin_Menu::MENU_SLUG,
+		add_menu_page(
 			__( 'Support tickets', 'satori-manifest' ),
 			__( 'Support tickets', 'satori-manifest' ) . $badge,
 			self::capability(),
 			self::SLUG,
-			array( self::class, 'render' )
+			array( self::class, 'render' ),
+			'dashicons-sos',
+			27
 		);
 	}
 

@@ -3,7 +3,7 @@
  * Support tickets module: wires storage, screens and clean-up.
  *
  * Clients raise and follow tickets under Support in their dashboard; staff
- * answer them under Manifest → Support tickets. See Tickets for the rules.
+ * answer them in the Support tickets menu. See Tickets for the rules.
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>

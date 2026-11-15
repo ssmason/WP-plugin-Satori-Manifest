@@ -1,6 +1,6 @@
 <?php
 /**
- * Staff screen: Manifest → Support tickets.
+ * Staff screen: Support tickets menu.
  *
  * Receives from Staff_Tickets_Screen::render(): $satori_manifest_ticket (0 = list),
  * $satori_manifest_tickets, $satori_manifest_messages, $satori_manifest_counts,
@@ -26,14 +26,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 $satori_manifest_notices = array(
 	'replied'        => array( 'success', __( 'Reply sent and emailed to the client.', 'satori-manifest' ) ),
 	'replied-unsent' => array( 'warning', __( 'Reply saved, but the email to the client could not be sent. They will still see it in their dashboard.', 'satori-manifest' ) ),
-	'saved'          => array( 'success', __( 'Saved.', 'satori-manifest' ) ),
+	'saved'          => array( 'success', __( 'Status updated.', 'satori-manifest' ) ),
 	'invalid'        => array( 'warning', __( 'That ticket no longer exists.', 'satori-manifest' ) ),
 );
 ?>
 <div class="wrap sm-admin sm-support">
 	<header class="sm-page-header">
 		<div>
-			<p class="sm-eyebrow"><?php esc_html_e( 'Manifest', 'satori-manifest' ); ?></p>
+			<p class="sm-eyebrow"><?php esc_html_e( 'Support', 'satori-manifest' ); ?></p>
 			<h1 class="sm-page-header__title"><?php esc_html_e( 'Support tickets', 'satori-manifest' ); ?></h1>
 			<p class="sm-page-header__lead"><?php esc_html_e( 'Clients raise tickets from their dashboard. Your reply is emailed to them and shown in their Support screen.', 'satori-manifest' ); ?></p>
 		</div>
@@ -85,7 +85,7 @@ $satori_manifest_notices = array(
 							<?php endforeach; ?>
 						</select>
 					</label>
-					<button type="submit" class="button button-primary"><?php esc_html_e( 'Save', 'satori-manifest' ); ?></button>
+					<button type="submit" class="button button-primary"><?php esc_html_e( 'Send reply', 'satori-manifest' ); ?></button>
 				</div>
 			</form>
 		</section>

@@ -8,6 +8,7 @@
  *   $satori_manifest_qr_svg   The page's printable QR sign as SVG markup (built by Qr_Sign), or ''.
  *   $satori_manifest_stats    Views and scans in the last 30 days.
  *   $satori_manifest_wants    Whether the client gets the monthly summary email.
+ *   $satori_manifest_replies  Support tickets with a reply the client has not opened (WP_Post[]).
  *   $satori_manifest_notice   Notice code from a redirect.
  *
  * @package SatoriManifest
@@ -28,6 +29,8 @@ use SatoriManifest\Core\Security;
 use SatoriManifest\Pdf\Pdf_Download;
 use SatoriManifest\Qr\Qr_Download;
 use SatoriManifest\Stats\Monthly_Summary;
+use SatoriManifest\Support\Admin\Client_Tickets_Screen;
+use SatoriManifest\Support\Tickets;
 
 $satori_manifest_s    = $satori_manifest_summary;
 $satori_manifest_name = $satori_manifest_s['brand']['name'] ?? ( $satori_manifest_s['user'] ? $satori_manifest_s['user']->display_name : '' );
@@ -176,6 +179,22 @@ $satori_manifest_cards = array(
 			<span class="sm-guide-banner__text"><?php esc_html_e( 'Follow the five-step getting started guide. Most people are done in twenty minutes.', 'satori-manifest' ); ?></span>
 			<span class="sm-guide-banner__cta"><?php esc_html_e( 'Open guide', 'satori-manifest' ); ?> <?php Icons::render( 'arrow', 16 ); ?></span>
 		</a>
+
+		<?php foreach ( $satori_manifest_replies as $satori_manifest_reply ) : ?>
+			<div class="sm-notice sm-notice--success sm-support-reply">
+				<?php Icons::render( 'check', 18 ); ?>
+				<span>
+					<?php
+					printf(
+						/* translators: %s: support ticket subject. */
+						esc_html__( 'We have replied to your support ticket "%s".', 'satori-manifest' ),
+						esc_html( Tickets::subject( $satori_manifest_reply ) )
+					);
+					?>
+				</span>
+				<a class="button" href="<?php echo esc_url( Client_Tickets_Screen::url( $satori_manifest_reply->ID ) ); ?>"><?php esc_html_e( 'Read reply', 'satori-manifest' ); ?></a>
+			</div>
+		<?php endforeach; ?>
 
 		<?php if ( 'welcome' === $satori_manifest_notice ) : ?>
 			<div class="sm-notice sm-notice--success"><?php Icons::render( 'check', 18 ); ?> <?php esc_html_e( 'Welcome! Your account is ready and your free trial has started.', 'satori-manifest' ); ?></div>

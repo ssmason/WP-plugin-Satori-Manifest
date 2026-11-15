@@ -12,4 +12,4 @@ details: |
   Page: {{page_url}}
 button_label: Open the ticket
 button_url: "{{link}}"
-footer: Reply in your dashboard (Manifest → Support tickets); the client is emailed your answer.
+footer: Reply in your dashboard (Support tickets); the client is emailed your answer.

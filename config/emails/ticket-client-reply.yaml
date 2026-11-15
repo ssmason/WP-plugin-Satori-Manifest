@@ -11,4 +11,4 @@ details: |
   From: {{client_name}} ({{client_email}})
 button_label: Open the ticket
 button_url: "{{link}}"
-footer: Reply in your dashboard (Manifest → Support tickets).
+footer: Reply in your dashboard (Support tickets).
