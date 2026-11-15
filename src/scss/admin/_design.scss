@@ -183,6 +183,70 @@ $sm-preview-scale: 0.25;
 	}
 }
 
+// Phones (portrait): two cards per row, smaller previews and text.
+@media (max-width: 600px) {
+
+	.sm-design-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: $sm-space-sm;
+	}
+
+	.sm-design-card {
+		border-radius: 12px;
+
+		&__radio {
+			top: 8px;
+			right: 8px;
+			width: 18px !important; // stylelint-disable-line declaration-no-important
+			height: 18px !important; // stylelint-disable-line declaration-no-important
+			box-shadow: 0 0 0 3px #fff;
+		}
+
+		&__preview {
+			height: 150px;
+
+			iframe {
+				height: 1200px;
+			}
+		}
+
+		&__body {
+			gap: 4px;
+			padding: 10px;
+		}
+
+		&__heading {
+			flex-wrap: wrap;
+			gap: 4px;
+		}
+
+		&__title {
+			font-size: 14px;
+		}
+
+		&__desc {
+			display: -webkit-box;
+			overflow: hidden;
+			font-size: 11.5px;
+			line-height: 1.4;
+			-webkit-line-clamp: 3;
+			-webkit-box-orient: vertical;
+		}
+
+		&__meta {
+			display: none;
+		}
+
+		&__open {
+			font-size: 11.5px;
+		}
+
+		.sm-swatches {
+			margin: 0;
+		}
+	}
+}
+
 .sm-swatches {
 	display: block;
 	margin: 4px 0;
