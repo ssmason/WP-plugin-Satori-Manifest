@@ -142,6 +142,22 @@ $b: ".satori-manifest-price-list";
 		border-radius: var(--sm-radius, #{$sm-fe-radius});
 	}
 
+	// Image row: a photo placed between the items, like the section photo.
+	&__item--image {
+		display: block;
+		padding: $sm-fe-space-sm 0;
+	}
+
+	&__item-image {
+		display: block;
+		width: 100%;
+		height: auto;
+		max-height: 420px;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+		border-radius: var(--sm-radius, #{$sm-fe-radius});
+	}
+
 	// Section intro ("Served until 2pm daily…"): bold, a size down from the items and in
 	// the page's accent colour (Branding → Colours), so each design and client differs.
 	&__section-desc {

@@ -129,7 +129,8 @@ class Sanitizer {
 	 *
 	 * Rebuilds the array with only expected keys, normalises price to a
 	 * two-decimal string, caps the badge at 24 characters and re-numbers
-	 * sort_order from the array position.
+	 * sort_order from the array position. An item with no name keeps a valid
+	 * image id: that is an image row.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  1.0.0
@@ -152,6 +153,12 @@ class Sanitizer {
 				'badge'        => isset( $item['badge'] ) ? mb_substr( sanitize_text_field( (string) $item['badge'] ), 0, 24 ) : '',
 				'sort_order'   => count( $out ),
 			);
+
+			// An image row: a photo among the items (no name, no price).
+			$image = self::image_id( $item['image'] ?? 0 );
+			if ( $image && '' === $out[ count( $out ) - 1 ]['label'] ) {
+				$out[ count( $out ) - 1 ]['image'] = $image;
+			}
 		}
 
 		return $out;

@@ -70,13 +70,15 @@ final class Price_List {
 				'description' => (string) ( $section['description'] ?? '' ),
 				'image_id'    => (int) ( $section['image'] ?? 0 ),
 				'items'       => array_map(
-					static fn( array $item ): array => array(
-						'label'        => (string) ( $item['label'] ?? '' ),
-						'description'  => (string) ( $item['description'] ?? '' ),
-						'price'        => '' === (string) ( $item['price'] ?? '' ) ? null : (string) $item['price'],
-						'price_prefix' => (string) ( $item['price_prefix'] ?? '' ),
-						'badge'        => (string) ( $item['badge'] ?? '' ),
-					),
+					static fn( array $item ): array => ! empty( $item['image'] ) && '' === (string) ( $item['label'] ?? '' )
+						? array( 'image_id' => (int) $item['image'] )
+						: array(
+							'label'        => (string) ( $item['label'] ?? '' ),
+							'description'  => (string) ( $item['description'] ?? '' ),
+							'price'        => '' === (string) ( $item['price'] ?? '' ) ? null : (string) $item['price'],
+							'price_prefix' => (string) ( $item['price_prefix'] ?? '' ),
+							'badge'        => (string) ( $item['badge'] ?? '' ),
+						),
 					array_values( (array) ( $section['items'] ?? array() ) )
 				),
 			),

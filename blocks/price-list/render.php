@@ -123,6 +123,23 @@ $manifests = $view['manifests'];
 									: ( isset( $item['price_prefix'] ) ? (string) $item['price_prefix'] : '' );
 
 								if ( '' === $label ) {
+									// An image row: a photo between the items, as wide as the column.
+									$row_image = isset( $item['image'] ) ? absint( $item['image'] ) : 0;
+
+									if ( $row_image ) {
+										echo '<li class="satori-manifest-price-list__item satori-manifest-price-list__item--image">';
+										echo wp_get_attachment_image(
+											$row_image,
+											'large',
+											false,
+											array(
+												'class'   => 'satori-manifest-price-list__item-image',
+												'sizes'   => '(max-width: 760px) 100vw, 760px',
+												'loading' => 'lazy',
+											)
+										);
+										echo '</li>';
+									}
 									continue;
 								}
 								?>

@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 3.12.0
+Stable tag: 3.12.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,9 @@ Plugin settings, the AI assistant's change history, the scheduled task, the clie
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.12.1 =
+* Image rows: "Add image" in a price list section places a photo among the items, as wide as the column; move it like any item. Image rows are skipped in the PDF and listed to the AI assistant as image_id.
 
 = 3.12.0 =
 * Support tickets: clients raise tickets (Support screen, and the "Need a hand?" panel on Home) and follow the replies; staff answer under Manifest → Support tickets. Statuses Opened / In progress / Closed in colour. New tickets and client replies email the support address (config/support.yaml); staff replies email the client.

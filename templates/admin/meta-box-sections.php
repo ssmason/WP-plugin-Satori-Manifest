@@ -31,12 +31,46 @@ $satori_manifest_badges = array(
 );
 
 /**
+ * Renders an image row: a photo placed among a section's items.
+ *
+ * @param array<string,mixed> $item  Item data with an image id (empty for the template).
+ * @return void
+ */
+$satori_manifest_render_image_row = static function ( array $item ): void {
+	$image_id = isset( $item['image'] ) ? absint( $item['image'] ) : 0;
+	$url      = $image_id ? (string) wp_get_attachment_image_url( $image_id, 'medium' ) : '';
+	?>
+	<div class="sm-item sm-item--image<?php echo '' !== $url ? ' has-image' : ''; ?>">
+		<span class="sm-item__grip dashicons dashicons-menu" data-sm-grip title="<?php esc_attr_e( 'Drag to move', 'satori-manifest' ); ?>" aria-hidden="true"></span>
+		<input type="hidden" class="sm-item__image" value="<?php echo esc_attr( '' !== $url ? (string) $image_id : '' ); ?>" />
+		<button type="button" class="sm-item__image-button" data-sm-action="item-image" title="<?php esc_attr_e( 'A photo shown between the items, as wide as the column', 'satori-manifest' ); ?>">
+			<?php if ( '' !== $url ) : ?>
+				<img src="<?php echo esc_url( $url ); ?>" alt="" />
+			<?php else : ?>
+				<span class="dashicons dashicons-format-image" aria-hidden="true"></span> <?php esc_html_e( 'Choose an image', 'satori-manifest' ); ?>
+			<?php endif; ?>
+		</button>
+		<span class="sm-item__actions">
+			<button type="button" class="sm-icon-button" data-sm-action="item-up" aria-label="<?php esc_attr_e( 'Move image up', 'satori-manifest' ); ?>"><span class="dashicons dashicons-arrow-up-alt2" aria-hidden="true"></span></button>
+			<button type="button" class="sm-icon-button" data-sm-action="item-down" aria-label="<?php esc_attr_e( 'Move image down', 'satori-manifest' ); ?>"><span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span></button>
+			<button type="button" class="sm-icon-button sm-icon-button--danger" data-sm-action="item-remove" aria-label="<?php esc_attr_e( 'Remove image', 'satori-manifest' ); ?>"><span class="dashicons dashicons-trash" aria-hidden="true"></span></button>
+		</span>
+	</div>
+	<?php
+};
+
+/**
  * Renders one item row.
  *
  * @param array<string,mixed> $item  Item data (empty for the template).
  * @return void
  */
-$satori_manifest_render_item = static function ( array $item ) use ( $satori_manifest_currency ): void {
+$satori_manifest_render_item = static function ( array $item ) use ( $satori_manifest_currency, &$satori_manifest_render_image_row ): void {
+	if ( ! empty( $item['image'] ) && '' === (string) ( $item['label'] ?? '' ) ) {
+		$satori_manifest_render_image_row( $item );
+		return;
+	}
+
 	$price  = isset( $item['price'] ) && '' !== (string) $item['price'] ? (string) (float) $item['price'] : '';
 	$symbol = (string) $satori_manifest_currency['symbol'];
 	?>
@@ -158,6 +192,10 @@ $satori_manifest_render_section = static function ( array $section, bool $expand
 				<button type="button" class="button" data-sm-action="item-add">
 					<span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
 					<?php esc_html_e( 'Add item', 'satori-manifest' ); ?>
+				</button>
+				<button type="button" class="button" data-sm-action="item-image-add">
+					<span class="dashicons dashicons-format-image" aria-hidden="true"></span>
+					<?php esc_html_e( 'Add image', 'satori-manifest' ); ?>
 				</button>
 				<span class="sm-hint"><?php esc_html_e( 'Tip: leave the price empty to use an item as a sub-heading.', 'satori-manifest' ); ?></span>
 			</div>
@@ -320,4 +358,8 @@ $satori_manifest_render_heading = static function ( array $heading ): void {
 
 <template id="satori-manifest-item-template">
 	<?php $satori_manifest_render_item( array() ); ?>
+</template>
+
+<template id="satori-manifest-image-row-template">
+	<?php $satori_manifest_render_image_row( array() ); ?>
 </template>

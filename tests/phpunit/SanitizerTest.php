@@ -94,4 +94,37 @@ class SanitizerTest extends Test_Case {
 		$this->assertStringNotContainsString( '<script>', $result[0]['items'][0]['label'] );
 		$this->assertEquals( 25.5, $result[0]['items'][0]['price'] );
 	}
+
+	/**
+	 * An item with no name keeps a valid image id (an image row); named items
+	 * and invalid ids do not.
+	 */
+	public function test_image_rows_keep_their_image(): void {
+		$file  = get_temp_dir() . 'sm-row.png';
+		$image = imagecreatetruecolor( 40, 20 );
+		imagepng( $image, $file );
+		$id = self::factory()->attachment->create_upload_object( $file );
+
+		$result = Sanitizer::sanitize_sections(
+			array(
+				array(
+					'title' => 'Cakes',
+					'items' => array(
+						array( 'image' => $id ),
+						array(
+							'label' => 'Scone',
+							'price' => '3',
+							'image' => $id,
+						),
+						array( 'image' => 999999 ),
+					),
+				),
+			)
+		);
+
+		$items = $result[0]['items'];
+		$this->assertSame( $id, $items[0]['image'] );
+		$this->assertArrayNotHasKey( 'image', $items[1] );
+		$this->assertArrayNotHasKey( 'image', $items[2] );
+	}
 }

@@ -353,6 +353,44 @@ $sm-item-columns: 18px minmax(140px, 1.3fr) minmax(140px, 1.6fr) 110px 80px 120p
 		background: $sm-color-primary-lt;
 	}
 
+	// Image row: a photo placed among the items.
+	&--image {
+		grid-template-columns: auto 1fr auto;
+	}
+
+	&__image-button {
+		justify-self: start;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 6px 10px;
+		overflow: hidden;
+		border: 1px dashed $sm-color-border;
+		border-radius: 8px;
+		background: #fff;
+		color: $sm-color-text-light;
+		font-size: 13px;
+		cursor: pointer;
+
+		img {
+			display: block;
+			width: auto;
+			max-width: 220px;
+			height: 90px;
+			object-fit: cover;
+		}
+
+		&:hover,
+		&:focus-visible {
+			border-color: $sm-color-primary;
+		}
+	}
+
+	&--image.has-image &__image-button {
+		padding: 0;
+		border-style: solid;
+	}
+
 	&__grip {
 		color: #c3c6d4;
 	}

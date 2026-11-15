@@ -40,6 +40,9 @@
 	const itemTemplate = document.getElementById(
 		'satori-manifest-item-template'
 	);
+	const imageRowTemplate = document.getElementById(
+		'satori-manifest-image-row-template'
+	);
 	const headingTemplate = document.getElementById(
 		'satori-manifest-heading-template'
 	);
@@ -137,7 +140,21 @@
 
 			sectionCount++;
 
-			const items = itemsOf(section).map((row, itemIndex) => {
+			const rows = itemsOf(section);
+			const items = rows.map((row, itemIndex) => {
+				if (row.matches('.sm-item--image')) {
+					return {
+						label: '',
+						description: '',
+						badge: '',
+						price_prefix: '',
+						price: '',
+						image:
+							parseInt(valueOf(row, '.sm-item__image'), 10) || 0,
+						sort_order: itemIndex,
+					};
+				}
+
 				const price = valueOf(row, '.sm-item__price');
 				const label = valueOf(row, '.sm-item__label');
 
@@ -156,14 +173,18 @@
 				};
 			});
 
-			totalItems += items.length;
+			const itemCount = rows.filter(
+				(row) => !row.matches('.sm-item--image')
+			).length;
+
+			totalItems += itemCount;
 
 			const count = section.querySelector('[data-sm-count]');
 			if (count) {
 				count.textContent = sprintf(
 					/* translators: %d: number of items. */
-					_n('%d item', '%d items', items.length, 'satori-manifest'),
-					items.length
+					_n('%d item', '%d items', itemCount, 'satori-manifest'),
+					itemCount
 				);
 			}
 
@@ -451,6 +472,64 @@
 		frame.open();
 	}
 
+	// ── Image rows ──────────────────────────────────────────────────────────
+
+	/**
+	 * Opens the media library for an image row; a new row with no image
+	 * chosen is removed again.
+	 *
+	 * @param {Element} row Image row.
+	 * @return {void}
+	 */
+	function chooseRowImage(row) {
+		if (!window.wp?.media) {
+			return;
+		}
+
+		const frame = wp.media({
+			title: wp.i18n.__('Image', 'satori-manifest'),
+			button: { text: wp.i18n.__('Use this image', 'satori-manifest') },
+			library: { type: 'image' },
+			multiple: false,
+		});
+
+		frame.on('select', () => {
+			const image = frame.state().get('selection').first().toJSON();
+
+			row.querySelector('.sm-item__image').value = image.id;
+			row.querySelector('.sm-item__image-button').replaceChildren(
+				Object.assign(document.createElement('img'), {
+					src: image.sizes?.medium?.url || image.url,
+					alt: '',
+				})
+			);
+			row.classList.add('has-image');
+			serialise();
+		});
+
+		frame.on('close', () => {
+			if (!row.classList.contains('has-image')) {
+				row.remove();
+				serialise();
+			}
+		});
+
+		frame.open();
+	}
+
+	/**
+	 * Appends an image row to a section and opens the media library.
+	 *
+	 * @param {Element} section Section element.
+	 * @return {void}
+	 */
+	function addImageRow(section) {
+		const items = section.querySelector('.sm-items');
+		items.appendChild(imageRowTemplate.content.cloneNode(true));
+		chooseRowImage(items.lastElementChild);
+		serialise();
+	}
+
 	// ── Events ──────────────────────────────────────────────────────────────
 
 	const actions = {
@@ -471,6 +550,8 @@
 		'section-image': (button, section) => chooseImage(section),
 		'section-image-remove': (button, section) => setImage(section, 0, ''),
 		'item-add': (button, section) => addItem(section),
+		'item-image-add': (button, section) => addImageRow(section),
+		'item-image': (button, section, item) => chooseRowImage(item),
 		'item-up': (button, section, item) => move(item, -1),
 		'item-down': (button, section, item) => move(item, 1),
 		'item-remove': (button, section, item) => {
