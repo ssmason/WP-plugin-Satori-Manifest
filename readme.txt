@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 3.12.2
+Stable tag: 3.12.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,9 @@ Plugin settings, the AI assistant's change history, the scheduled task, the clie
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.12.3 =
+* Image rows: choosing a photo in the media library now adds it (the row was removed when the library closed). Section images and image rows show in the page editor preview (My page) as on the page.
 
 = 3.12.2 =
 * Support: staff answer with "Send reply" (status-only changes say "Status updated"); Support tickets is its own admin menu below Manifest; a client's Home shows a green notice for each ticket with a reply they have not opened yet, cleared when they open it.

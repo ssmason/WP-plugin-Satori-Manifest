@@ -99,6 +99,36 @@ function wrapperStyle(attributes) {
 }
 
 /**
+ * A media library image by id, at the 'large' size (as render.php).
+ *
+ * @param {Object} props           Component props.
+ * @param {number} props.id        Attachment id.
+ * @param {string} props.className Class name.
+ * @return {Element|null} Image, or null while it loads.
+ */
+function MediaImage({ id, className }) {
+	const media = useSelect(
+		(select) => (id ? select('core').getMedia(id) : null),
+		[id]
+	);
+
+	if (!media?.source_url) {
+		return null;
+	}
+
+	return (
+		<img
+			className={className}
+			src={
+				media.media_details?.sizes?.large?.source_url ||
+				media.source_url
+			}
+			alt={media.alt_text || ''}
+		/>
+	);
+}
+
+/**
  * Renders one manifest's sections (same markup as render.php).
  *
  * @param {Object} props            Component props.
@@ -173,6 +203,13 @@ function Manifest({ sections, attributes }) {
 							</h3>
 						)}
 
+						{section.image > 0 && (
+							<MediaImage
+								id={section.image}
+								className="satori-manifest-price-list__section-image"
+							/>
+						)}
+
 						{showSectionDescriptions && section.description && (
 							<p className="satori-manifest-price-list__section-desc">
 								{section.description}
@@ -183,7 +220,17 @@ function Manifest({ sections, attributes }) {
 							<ul className="satori-manifest-price-list__items">
 								{items.map((item, ii) => {
 									if (!item.label) {
-										return null;
+										return item.image > 0 ? (
+											<li
+												key={`image-${ii}`}
+												className="satori-manifest-price-list__item satori-manifest-price-list__item--image"
+											>
+												<MediaImage
+													id={item.image}
+													className="satori-manifest-price-list__item-image"
+												/>
+											</li>
+										) : null;
 									}
 
 									const price = String(

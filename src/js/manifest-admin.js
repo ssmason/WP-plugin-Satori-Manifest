@@ -507,11 +507,15 @@
 			serialise();
 		});
 
+		// The library closes before it reports the choice, so wait a tick
+		// before treating a close as a cancel.
 		frame.on('close', () => {
-			if (!row.classList.contains('has-image')) {
-				row.remove();
-				serialise();
-			}
+			setTimeout(() => {
+				if (!row.classList.contains('has-image')) {
+					row.remove();
+					serialise();
+				}
+			}, 0);
 		});
 
 		frame.open();
