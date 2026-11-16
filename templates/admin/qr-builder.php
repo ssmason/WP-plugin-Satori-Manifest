@@ -35,7 +35,7 @@ $satori_manifest_sizes = array(
 		<div>
 			<p class="sm-eyebrow"><?php esc_html_e( 'QR builder', 'satori-manifest' ); ?></p>
 			<h1 class="sm-page-header__title"><?php esc_html_e( 'Your printable QR sign', 'satori-manifest' ); ?></h1>
-			<p class="sm-page-header__lead"><?php esc_html_e( 'Choose a size, add your wording and download a print-ready PDF. The code always opens your latest prices.', 'satori-manifest' ); ?></p>
+			<p class="sm-page-header__lead"><?php esc_html_e( 'Design a paper sign to print yourself: choose a size, add your wording and download a print-ready PDF. The code always opens your latest prices.', 'satori-manifest' ); ?></p>
 		</div>
 	</header>
 
@@ -138,6 +138,7 @@ $satori_manifest_sizes = array(
 					</div>
 				<?php endforeach; ?>
 				<p class="sm-hint"><?php esc_html_e( 'Printed in black and your colour on white. Print at actual size (100%) and cut along the outline.', 'satori-manifest' ); ?></p>
+				<p class="sm-qr-builder__paper-note"><?php esc_html_e( 'For printing on paper only. Our 3D-printed codes are made separately and ordered below.', 'satori-manifest' ); ?></p>
 			</div>
 
 			<?php

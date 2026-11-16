@@ -200,3 +200,15 @@
 		}
 	}
 }
+
+// "For printing on paper only": tells the paper sign apart from the 3D-printed codes.
+.sm-qr-builder__paper-note {
+	margin: $sm-space-sm 0 0;
+	padding: 8px 10px;
+	border-left: 3px solid $sm-color-primary;
+	border-radius: 4px;
+	background: $sm-color-primary-lt;
+	font-size: 13px;
+	font-weight: 600;
+}
+

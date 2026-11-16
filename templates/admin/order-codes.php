@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <section class="sm-panel sm-codes-panel">
 	<h2 class="sm-panel__title"><?php esc_html_e( 'Order printed QR codes', 'satori-manifest' ); ?></h2>
-	<p class="sm-hint"><?php esc_html_e( '3D-printed and self-adhesive, for tables, the counter or the window. Posted to you.', 'satori-manifest' ); ?></p>
+	<p class="sm-hint"><?php esc_html_e( '3D-printed and self-adhesive, for tables, the counter or the window. Posted to you. Not the paper sign above: we make these for you.', 'satori-manifest' ); ?></p>
 	<form class="sm-codes-panel__form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 		<input type="hidden" name="action" value="<?php echo esc_attr( Printed_Codes::ACTION ); ?>" />
 		<?php Security::output_form_nonce( Printed_Codes::ACTION ); ?>
