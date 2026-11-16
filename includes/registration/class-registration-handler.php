@@ -125,6 +125,7 @@ class Registration_Handler {
 			'design'        => Design_Registry::exists( $design ) ? $design : '',
 			'codes'         => Code_Catalogue::encode( Printed_Codes::order_from_input( isset( $_POST[ Printed_Codes::FIELD ] ) ? array_map( 'intval', (array) wp_unslash( $_POST[ Printed_Codes::FIELD ] ) ) : array() ) ),
 			'ship_region'   => Code_Catalogue::region( isset( $_POST[ Printed_Codes::REGION_FIELD ] ) ? sanitize_key( wp_unslash( $_POST[ Printed_Codes::REGION_FIELD ] ) ) : '' ),
+			'setup'         => ! empty( $_POST['setup'] ) && Plans::setup_price() > 0 && ! Plans::setup_included( $plan ) ? '1' : '',
 			'message'       => isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '',
 		);
 		$consent = ! empty( $_POST['consent'] );

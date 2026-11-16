@@ -6,6 +6,8 @@
 # plans      Keyed by slug - the slug is stored on applications and subscriptions.
 #   prices         Amount per billing interval, in whole currency units (12 = €12.00).
 #                  Offer both "month" and "year" to show the Monthly / Yearly toggle.
+#   codes          Standard printed QR codes included at sign-up (see printed-codes.yaml).
+#   setup_included true when "we set it up for you" is part of the plan.
 #   stripe_prices  Optional Stripe Price IDs (price_…) per interval. Leave empty to
 #                  let the plugin create the price on the fly at checkout - no setup
 #                  in the Stripe dashboard needed.
@@ -14,6 +16,9 @@
 # WordPress site (≈ €20–40 a month in total), Stripe takes ≈ 1.5% + €0.25 per EU card
 # payment, and printed codes cost a few euros per client. Yearly = two months free.
 #
+# setup      Optional "we set it up for you" service, one-off. free_with_yearly: no
+#            charge on yearly billing. It is added to the first payment after the trial.
+#
 # Override by copying this file to {theme}/satori-manifest/plans.yaml.
 
 currency: eur
@@ -21,39 +26,62 @@ trial_days: 30
 
 # Printed QR codes (sizes, prices, postage): see printed-codes.yaml.
 
+setup:
+  price: 49
+  free_with_yearly: true
+
 plans:
   self-managed:
-    title: Self-managed
-    tagline: You build and update your own page.
+    title: Starter
+    tagline: Your own price list page, updated by you.
+    codes: 1
     prices:
-      month: 9
-      year: 90
+      month: 12
+      year: 120
     stripe_prices:
       month: ""
       year: ""
     features:
-      - Your own QR code, printed and posted to you
+      - One printed QR code, posted to you
       - Choice of nine professional designs
       - Your logo, colours, fonts and contact details
-      - Update prices and services any time, from any device
-      - Optional navigation back to your website
-      - Secure private login just for your page
+      - Update prices any time, from any device
+      - Printable PDF price list and QR signs
       - Email support
 
-  managed:
-    title: Fully managed
-    tagline: We create and look after it for you.
-    badge: Hands-free
+  plus:
+    title: Plus
+    tagline: Update everything in seconds by chatting with AI.
+    badge: Most popular
+    codes: 3
     prices:
-      month: 24
-      year: 240
+      month: 15
+      year: 150
     stripe_prices:
       month: ""
       year: ""
     features:
-      - Everything in Self-managed
-      - We design and build your page from your price list
-      - Branding set up to match your business
-      - Updates made for you whenever you need them
-      - Seasonal and special-offer changes included
+      - Everything in Starter
+      - AI assistant - change prices and menus by chat (ChatGPT or Claude)
+      - Three printed QR codes, posted to you
+      - Seasonal menus you switch on and off
       - Priority support
+
+  managed:
+    title: Managed
+    tagline: We build it and keep it up to date for you.
+    badge: Hands-free
+    codes: 5
+    setup_included: true
+    prices:
+      month: 39
+      year: 390
+    stripe_prices:
+      month: ""
+      year: ""
+    features:
+      - Everything in Plus
+      - We set up your page from your menu or price list
+      - Up to four changes a month made for you
+      - Five printed QR codes, posted to you
+      - Priority support by phone or WhatsApp

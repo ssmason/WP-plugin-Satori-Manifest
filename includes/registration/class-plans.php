@@ -133,6 +133,61 @@ class Plans {
 	}
 
 	/**
+	 * Number of standard printed codes included with a plan at sign-up.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.13.0
+	 * @param  string $slug  Plan slug.
+	 * @return int
+	 */
+	public static function codes_included( string $slug ): int {
+		return (int) ( self::get( $slug )['codes'] ?? 1 );
+	}
+
+	/**
+	 * Price of the optional "we set it up for you" service (0 when not offered).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.13.0
+	 * @return float
+	 */
+	public static function setup_price(): float {
+		return self::catalogue()['setup']['price'];
+	}
+
+	/**
+	 * What setup costs on a plan and billing period: 0 when it is part of the
+	 * plan (Managed) or free with yearly billing.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.13.0
+	 * @param  string $slug      Plan slug.
+	 * @param  string $interval  "month" or "year".
+	 * @return float
+	 */
+	public static function setup_cost( string $slug, string $interval ): float {
+		$setup = self::catalogue()['setup'];
+
+		if ( ! empty( self::get( $slug )['setup'] ) || ( $setup['free_yearly'] && 'year' === $interval ) ) {
+			return 0.0;
+		}
+
+		return $setup['price'];
+	}
+
+	/**
+	 * Whether setup is part of a plan (no need to ask for it).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.13.0
+	 * @param  string $slug  Plan slug.
+	 * @return bool
+	 */
+	public static function setup_included( string $slug ): bool {
+		return ! empty( self::get( $slug )['setup'] );
+	}
+
+	/**
 	 * Returns the billing intervals a plan can be bought on.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
@@ -263,7 +318,7 @@ class Plans {
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.0.0
-	 * @return array{currency:string,trial_days:int,plans:array<string,array<string,mixed>>}
+	 * @return array{currency:string,trial_days:int,setup:array{price:float,free_yearly:bool},plans:array<string,array<string,mixed>>}
 	 */
 	private static function catalogue(): array {
 		if ( null !== self::$catalogue ) {
@@ -293,12 +348,18 @@ class Plans {
 				'features'      => array_map( 'strval', (array) ( $plan['features'] ?? array() ) ),
 				'prices'        => $prices,
 				'stripe_prices' => $stripe,
+				'codes'         => min( 50, absint( $plan['codes'] ?? 1 ) ),
+				'setup'         => ! empty( $plan['setup_included'] ),
 			);
 		}
 
 		self::$catalogue = array(
 			'currency'   => sanitize_key( (string) ( $config['currency'] ?? 'eur' ) ),
 			'trial_days' => min( 730, absint( $config['trial_days'] ?? 0 ) ),
+			'setup'      => array(
+				'price'       => max( 0.0, (float) ( $config['setup']['price'] ?? 0 ) ),
+				'free_yearly' => ! empty( $config['setup']['free_with_yearly'] ),
+			),
 			'plans'      => $plans,
 		);
 

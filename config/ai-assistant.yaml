@@ -16,6 +16,7 @@
 enabled: true
 
 plans:
+  - plus
   - managed
 
 rate_limit:

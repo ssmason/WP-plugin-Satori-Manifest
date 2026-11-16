@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 3.12.5
+Stable tag: 3.13.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,10 @@ Plugin settings, the AI assistant's change history, the scheduled task, the clie
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.13.0 =
+* Plans: Starter €12 (€120/yr, 1 printed code), Plus €15 (€150/yr, 3 codes, AI assistant) and Managed €39 (€390/yr, 5 codes, setup and up to four changes a month). Yearly stays two months free. The Starter slug is still self-managed so existing subscriptions carry on.
+* Sign-up: plans include their printed codes (standard size); extra codes on the form are charged on the first payment. New "Set it up for me" option (€49, free with yearly, included with Managed), added to the first payment after the trial; staff are told in the new-subscription email.
 
 = 3.12.5 =
 * Printed QR codes: four sizes in line with the Etsy shop (XS €3.50, S €4.50, M €5.50, L €6.50). The order form moved from Home to the QR builder, under the preview, and is more compact.

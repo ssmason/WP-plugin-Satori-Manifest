@@ -81,6 +81,7 @@ class Applications {
 			'design'        => __( 'Preferred design', 'satori-manifest' ),
 			'codes'         => __( 'Printed QR codes', 'satori-manifest' ),
 			'ship_region'   => __( 'Post codes to', 'satori-manifest' ),
+			'setup'         => __( 'Set it up for me', 'satori-manifest' ),
 			'message'       => __( 'Anything else?', 'satori-manifest' ),
 		);
 	}

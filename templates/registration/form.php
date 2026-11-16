@@ -168,21 +168,28 @@ foreach ( array_keys( $satori_manifest_plans ) as $satori_manifest_plan_slug ) {
 						<?php
 						echo esc_html(
 							sprintf(
-								/* translators: 1: standard size label, e.g. "M – 35 × 46 mm". */
-								__( 'One %1$s printed QR code is included free and posted after your first payment. Choose another size or add more below; anything extra is added to that payment.', 'satori-manifest' ),
-								$satori_manifest_code_sizes[ $satori_manifest_code_std ]['label']
+								/* translators: 1: standard size label, e.g. "M – 35 × 46 mm", 2: codes per plan, e.g. "Starter 1, Plus 3". */
+								__( 'Your plan includes printed %1$s QR codes (%2$s), posted after your first payment. Want more, or other sizes? Add them below; they are added to that payment.', 'satori-manifest' ),
+								$satori_manifest_code_sizes[ $satori_manifest_code_std ]['label'],
+								implode(
+									', ',
+									array_map(
+										static fn( string $slug ): string => Plans::title( $slug ) . ' ' . Plans::codes_included( $slug ),
+										array_keys( $satori_manifest_plans )
+									)
+								)
 							)
 						);
 						?>
 					</p>
 					<details class="sm-form__codes-more">
-						<summary><?php esc_html_e( 'Choose sizes and how many', 'satori-manifest' ); ?></summary>
+						<summary><?php esc_html_e( 'Add extra codes', 'satori-manifest' ); ?></summary>
 						<div class="sm-codes-grid">
 							<?php foreach ( $satori_manifest_code_sizes as $satori_manifest_size => $satori_manifest_size_terms ) : ?>
 								<label class="sm-codes-grid__row">
 									<span class="sm-codes-grid__label"><?php echo esc_html( $satori_manifest_size_terms['label'] ); ?></span>
 									<span class="sm-codes-grid__price"><?php echo esc_html( \SatoriManifest\Registration\Plans::format( $satori_manifest_size_terms['price'] ) ); ?></span>
-									<input type="number" name="<?php echo esc_attr( \SatoriManifest\Billing\Printed_Codes::FIELD . '[' . $satori_manifest_size . ']' ); ?>" value="<?php echo esc_attr( $satori_manifest_size === $satori_manifest_code_std ? '1' : '0' ); ?>" min="0" max="<?php echo esc_attr( (string) \SatoriManifest\Billing\Code_Catalogue::max() ); ?>" step="1" inputmode="numeric" />
+									<input type="number" name="<?php echo esc_attr( \SatoriManifest\Billing\Printed_Codes::FIELD . '[' . $satori_manifest_size . ']' ); ?>" value="0" min="0" max="<?php echo esc_attr( (string) \SatoriManifest\Billing\Code_Catalogue::max() ); ?>" step="1" inputmode="numeric" />
 								</label>
 							<?php endforeach; ?>
 						</div>
@@ -200,6 +207,23 @@ foreach ( array_keys( $satori_manifest_plans ) as $satori_manifest_plan_slug ) {
 						</select>
 					</p>
 				</fieldset>
+			<?php endif; ?>
+
+			<?php if ( Plans::setup_price() > 0 ) : ?>
+				<p class="sm-form__consent sm-form__setup">
+					<input type="checkbox" id="sm-setup" name="setup" value="1" />
+					<label for="sm-setup">
+						<?php
+						echo esc_html(
+							sprintf(
+								/* translators: %s: setup price. */
+								__( 'Set it up for me: we build your page from your menu or price list (%s, free with yearly billing and included with Managed).', 'satori-manifest' ),
+								Plans::format( Plans::setup_price() )
+							)
+						);
+						?>
+					</label>
+				</p>
 			<?php endif; ?>
 
 			<fieldset class="sm-form__designs">

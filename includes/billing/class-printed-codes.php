@@ -138,7 +138,11 @@ class Printed_Codes {
 	}
 
 	/**
-	 * Handles a completed sign-up: stores the address and adds extra codes and postage to the first invoice.
+	 * Handles a completed sign-up: stores the address, and adds extra codes, postage
+	 * and the setup service to the first invoice.
+	 *
+	 * The plan's included codes (Plans::codes_included()) are standard size and
+	 * free; codes chosen on the form come on top at full price.
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.8.0
@@ -148,11 +152,12 @@ class Printed_Codes {
 	 * @return string  Line for the staff email.
 	 */
 	public static function on_signup( int $user_id, array $app, array $session ): string {
-		$order = Code_Catalogue::decode( (string) ( $app['codes'] ?? '' ) );
-		$order = $order ? $order : array( Code_Catalogue::standard() => 1 );
+		$extras = Code_Catalogue::decode( (string) ( $app['codes'] ?? '' ) );
+		$order  = self::signup_order( (string) ( $app['plan'] ?? '' ), $extras );
 
 		$region  = Code_Catalogue::region( (string) ( $app['ship_region'] ?? '' ) );
 		$address = self::address_from_session( $session );
+		$setup   = self::signup_setup( $app );
 
 		update_user_meta( $user_id, self::META_PENDING, Code_Catalogue::encode( $order ) );
 		if ( '' !== $address ) {
@@ -161,11 +166,55 @@ class Printed_Codes {
 
 		if ( ! empty( $session['customer'] ) ) {
 			// Pending invoice items join the subscription's next invoice: the first payment after the trial.
-			self::add_invoice_item( $session, Code_Catalogue::codes_cost( $order, true ), __( 'Printed QR codes (one standard code included)', 'satori-manifest' ) );
+			self::add_invoice_item( $session, Code_Catalogue::codes_cost( $extras ), __( 'Extra printed QR codes', 'satori-manifest' ) );
 			self::add_invoice_item( $session, Code_Catalogue::postage( $region, Code_Catalogue::count( $order ) ), __( 'Postage for printed QR codes', 'satori-manifest' ) );
+			self::add_invoice_item( $session, $setup, __( 'Page set up for you', 'satori-manifest' ) );
 		}
 
-		return self::summary( $order, $address );
+		$line = self::summary( $order, $address );
+
+		if ( ! empty( $app['setup'] ) || Plans::setup_included( (string) ( $app['plan'] ?? '' ) ) ) {
+			$line .= ' ' . ( $setup > 0
+				/* translators: %s: setup price. */
+				? sprintf( __( 'Set up the page for them (%s, on the first payment).', 'satori-manifest' ), Plans::format( $setup ) )
+				: __( 'Set up the page for them (included).', 'satori-manifest' ) );
+		}
+
+		return $line;
+	}
+
+	/**
+	 * Codes to post after sign-up: the plan's included standard codes plus any extras.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.13.0
+	 * @param  string            $plan    Plan slug.
+	 * @param  array<string,int> $extras  Extra codes chosen on the form.
+	 * @return array<string,int>
+	 */
+	public static function signup_order( string $plan, array $extras ): array {
+		$order    = $extras;
+		$standard = Code_Catalogue::standard();
+
+		$order[ $standard ] = ( $order[ $standard ] ?? 0 ) + Plans::codes_included( $plan );
+
+		return array_filter( $order );
+	}
+
+	/**
+	 * What the setup service costs this applicant (0 when not asked for, included or free).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.13.0
+	 * @param  array<string,mixed> $app  Application.
+	 * @return float
+	 */
+	public static function signup_setup( array $app ): float {
+		if ( empty( $app['setup'] ) ) {
+			return 0.0;
+		}
+
+		return Plans::setup_cost( (string) ( $app['plan'] ?? '' ), Plans::normalize_interval( (string) ( $app['interval'] ?? '' ) ) );
 	}
 
 	/**
