@@ -1,6 +1,7 @@
 # Printed QR codes (3D-printed, self-adhesive) posted to clients.
 #
 # sizes      Keyed by slug: label shown to clients and price per code (currency of plans.yaml).
+#            Kept in line with the Etsy shop, 50c cheaper.
 # standard   One code of this size is free with every new sign-up. Picking another size
 #            for it costs only the difference; extra codes are charged in full.
 # max        Most codes in one order (all sizes together).
@@ -11,13 +12,10 @@
 # Override by copying this file to {theme}/satori-manifest/printed-codes.yaml.
 
 sizes:
-  xs:   { label: "XS – 15 × 20 mm", price: 2.00 }
-  s:    { label: "S – 25 × 33 mm", price: 2.50 }
-  m:    { label: "M – 35 × 46 mm (standard)", price: 3.00 }
-  l:    { label: "L – 40 × 52 mm", price: 3.50 }
-  xl:   { label: "XL – 45 × 59 mm", price: 4.00 }
-  xxl:  { label: "XXL – 55 × 72 mm", price: 4.50 }
-  xxxl: { label: "XXXL – 60 × 75 mm", price: 5.00 }
+  xs: { label: "XS – 15 × 20 mm", price: 3.50 }
+  s:  { label: "S – 25 × 33 mm", price: 4.50 }
+  m:  { label: "M – 35 × 46 mm (standard)", price: 5.50 }
+  l:  { label: "L – 40 × 52 mm", price: 6.50 }
 
 standard: m
 max: 50

@@ -354,33 +354,6 @@
 	}
 }
 
-// "Order printed QR codes" panel.
-.sm-codes-panel__sizes {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-	gap: $sm-space-sm $sm-space-lg;
-	margin-bottom: $sm-space-md;
-}
-
-.sm-codes-panel__size {
-	display: grid;
-	grid-template-columns: 1fr auto 4.5rem;
-	align-items: center;
-	gap: $sm-space-sm;
-
-	input[type="number"] {
-		width: 100%;
-	}
-}
-
-.sm-codes-panel__region {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: $sm-space-sm;
-	margin: 0;
-}
-
 // "Need a hand?" contact panel.
 .sm-contact-panel {
 	margin-top: $sm-space-lg;

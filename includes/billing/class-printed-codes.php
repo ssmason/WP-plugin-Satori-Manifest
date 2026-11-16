@@ -201,14 +201,14 @@ class Printed_Codes {
 		$region = Code_Catalogue::region( isset( $_POST[ self::REGION_FIELD ] ) ? sanitize_key( wp_unslash( $_POST[ self::REGION_FIELD ] ) ) : '' );
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
-		$home = Admin_Menu::url( Admin_Menu::HOME_SLUG );
+		$back = Admin_Menu::url( Admin_Menu::QR_SLUG ); // The order form sits on the QR builder.
 
 		if ( ! Security::verify_form_nonce( $nonce, self::ACTION ) || ! Client_Role::is_client() || ! self::can_order() ) {
 			wp_die( esc_html__( 'Sorry, you cannot order printed codes.', 'satori-manifest' ), 403 );
 		}
 
 		if ( ! $order ) {
-			wp_safe_redirect( add_query_arg( 'sm_notice', 'codes-empty', $home ) );
+			wp_safe_redirect( add_query_arg( 'sm_notice', 'codes-empty', $back ) );
 			exit;
 		}
 
@@ -239,8 +239,8 @@ class Printed_Codes {
 					'ship_region' => $region,
 				),
 				'locale'      => 'auto',
-				'success_url' => add_query_arg( 'sm_notice', 'codes-ordered', $home ),
-				'cancel_url'  => $home,
+				'success_url' => add_query_arg( 'sm_notice', 'codes-ordered', $back ),
+				'cancel_url'  => $back,
 			),
 			'' !== $customer ? array( 'customer' => $customer ) : array( 'customer_email' => $user->user_email ),
 			self::shipping_params( $region )
@@ -249,7 +249,7 @@ class Printed_Codes {
 		$session = Stripe_Client::request( 'POST', 'checkout/sessions', $params );
 
 		if ( ! is_array( $session ) || empty( $session['url'] ) ) {
-			wp_safe_redirect( add_query_arg( 'sm_notice', 'codes-failed', $home ) );
+			wp_safe_redirect( add_query_arg( 'sm_notice', 'codes-failed', $back ) );
 			exit;
 		}
 

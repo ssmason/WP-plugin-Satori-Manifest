@@ -41,6 +41,12 @@ $satori_manifest_sizes = array(
 
 	<?php if ( 'saved' === $satori_manifest_notice ) : ?>
 		<div class="sm-notice sm-notice--success"><?php Icons::render( 'check', 18 ); ?> <?php esc_html_e( 'Saved. Your sign is ready to download, and it now shows on your Home screen.', 'satori-manifest' ); ?></div>
+	<?php elseif ( 'codes-ordered' === $satori_manifest_notice ) : ?>
+		<div class="sm-notice sm-notice--success"><?php Icons::render( 'check', 18 ); ?> <?php esc_html_e( 'Thank you! Your printed QR codes are paid for. We will print and post them to you shortly.', 'satori-manifest' ); ?></div>
+	<?php elseif ( 'codes-empty' === $satori_manifest_notice ) : ?>
+		<div class="sm-notice sm-notice--warning"><?php esc_html_e( 'Please enter how many codes you would like in at least one size.', 'satori-manifest' ); ?></div>
+	<?php elseif ( 'codes-failed' === $satori_manifest_notice ) : ?>
+		<div class="sm-notice sm-notice--warning"><?php esc_html_e( 'We could not start the payment just now. Please try again in a few minutes.', 'satori-manifest' ); ?></div>
 	<?php endif; ?>
 
 	<div class="sm-qr-builder__layout">
@@ -123,14 +129,22 @@ $satori_manifest_sizes = array(
 			<p class="sm-hint" data-sm-sign-unsaved hidden><?php esc_html_e( 'You have unsaved changes: save first, then download.', 'satori-manifest' ); ?></p>
 		</form>
 
-		<div class="sm-panel sm-qr-builder__preview">
-			<p class="sm-qr-builder__label"><?php esc_html_e( 'Preview', 'satori-manifest' ); ?></p>
-			<?php foreach ( $satori_manifest_previews as $satori_manifest_key => $satori_manifest_svg ) : ?>
-				<div class="sm-qr-builder__sign sm-qr-builder__sign--<?php echo esc_attr( $satori_manifest_key ); ?>" data-sm-preview="<?php echo esc_attr( $satori_manifest_key ); ?>"<?php echo $satori_manifest_key !== $satori_manifest_settings['size'] ? ' hidden' : ''; ?>>
-					<?php echo $satori_manifest_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG built by Qr_Sign; every value escaped there. ?>
-				</div>
-			<?php endforeach; ?>
-			<p class="sm-hint"><?php esc_html_e( 'Printed in black and your colour on white. Print at actual size (100%) and cut along the outline.', 'satori-manifest' ); ?></p>
+		<div class="sm-qr-builder__side">
+			<div class="sm-panel sm-qr-builder__preview">
+				<p class="sm-qr-builder__label"><?php esc_html_e( 'Preview', 'satori-manifest' ); ?></p>
+				<?php foreach ( $satori_manifest_previews as $satori_manifest_key => $satori_manifest_svg ) : ?>
+					<div class="sm-qr-builder__sign sm-qr-builder__sign--<?php echo esc_attr( $satori_manifest_key ); ?>" data-sm-preview="<?php echo esc_attr( $satori_manifest_key ); ?>"<?php echo $satori_manifest_key !== $satori_manifest_settings['size'] ? ' hidden' : ''; ?>>
+						<?php echo $satori_manifest_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG built by Qr_Sign; every value escaped there. ?>
+					</div>
+				<?php endforeach; ?>
+				<p class="sm-hint"><?php esc_html_e( 'Printed in black and your colour on white. Print at actual size (100%) and cut along the outline.', 'satori-manifest' ); ?></p>
+			</div>
+
+			<?php
+			if ( \SatoriManifest\Billing\Printed_Codes::can_order() ) {
+				require __DIR__ . '/order-codes.php';
+			}
+			?>
 		</div>
 	</div>
 </div>

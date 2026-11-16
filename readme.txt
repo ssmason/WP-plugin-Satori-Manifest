@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 3.12.4
+Stable tag: 3.12.5
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,9 @@ Plugin settings, the AI assistant's change history, the scheduled task, the clie
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.12.5 =
+* Printed QR codes: four sizes in line with the Etsy shop (XS €3.50, S €4.50, M €5.50, L €6.50). The order form moved from Home to the QR builder, under the preview, and is more compact.
 
 = 3.12.4 =
 * Client dashboard: the logo above the menu is the client's own logo (Branding) when they have one, otherwise the portal logo. Wide logos fit the space.

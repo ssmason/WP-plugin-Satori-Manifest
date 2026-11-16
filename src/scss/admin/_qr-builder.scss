@@ -155,3 +155,48 @@
 		}
 	}
 }
+
+// Preview column: the sign preview, then the printed-codes order form.
+.sm-qr-builder__side {
+	display: grid;
+	gap: $sm-space-lg;
+	min-width: 0;
+}
+
+// "Order printed QR codes": one compact row per size (name, price, quantity).
+.sm-codes-panel {
+
+	.sm-panel__title {
+		margin-bottom: 4px;
+	}
+
+	&__sizes {
+		display: grid;
+		gap: 6px;
+		margin: $sm-space-md 0;
+	}
+
+	&__size {
+		display: grid;
+		grid-template-columns: 1fr auto 4rem;
+		align-items: center;
+		gap: $sm-space-sm;
+		font-size: 13px;
+
+		input[type="number"] {
+			width: 100%;
+			min-height: 30px;
+		}
+	}
+
+	&__region {
+		display: flex;
+		align-items: center;
+		gap: $sm-space-sm;
+		margin: 0 0 $sm-space-md;
+
+		select {
+			flex: 1;
+		}
+	}
+}

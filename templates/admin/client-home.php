@@ -212,47 +212,6 @@ $satori_manifest_cards = array(
 			<div class="sm-notice sm-notice--success"><?php Icons::render( 'check', 18 ); ?> <?php esc_html_e( 'Your email preference is saved.', 'satori-manifest' ); ?></div>
 		<?php endif; ?>
 
-		<?php if ( 'codes-ordered' === $satori_manifest_notice ) : ?>
-			<div class="sm-notice sm-notice--success"><?php Icons::render( 'check', 18 ); ?> <?php esc_html_e( 'Thank you! Your printed QR codes are paid for. We will print and post them to you shortly.', 'satori-manifest' ); ?></div>
-		<?php elseif ( 'codes-empty' === $satori_manifest_notice ) : ?>
-			<div class="sm-notice sm-notice--warning"><?php esc_html_e( 'Please enter how many codes you would like in at least one size.', 'satori-manifest' ); ?></div>
-		<?php elseif ( 'codes-failed' === $satori_manifest_notice ) : ?>
-			<div class="sm-notice sm-notice--warning"><?php esc_html_e( 'We could not start the payment just now. Please try again in a few minutes.', 'satori-manifest' ); ?></div>
-		<?php endif; ?>
-
-		<?php if ( \SatoriManifest\Billing\Printed_Codes::can_order() ) : ?>
-			<section class="sm-panel sm-codes-panel">
-				<h2 class="sm-panel__title"><?php esc_html_e( 'Order printed QR codes', 'satori-manifest' ); ?></h2>
-				<p class="sm-panel__intro"><?php esc_html_e( 'Durable 3D-printed, self-adhesive QR codes for tables, the counter or the window, posted to you. Until they arrive you can download and print your code above.', 'satori-manifest' ); ?></p>
-				<form class="sm-codes-panel__form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-					<input type="hidden" name="action" value="<?php echo esc_attr( \SatoriManifest\Billing\Printed_Codes::ACTION ); ?>" />
-					<?php \SatoriManifest\Core\Security::output_form_nonce( \SatoriManifest\Billing\Printed_Codes::ACTION ); ?>
-					<div class="sm-codes-panel__sizes">
-						<?php foreach ( \SatoriManifest\Billing\Code_Catalogue::sizes() as $satori_manifest_size => $satori_manifest_size_terms ) : ?>
-							<label class="sm-codes-panel__size">
-								<span><?php echo esc_html( $satori_manifest_size_terms['label'] ); ?></span>
-								<span class="sm-muted"><?php echo esc_html( \SatoriManifest\Registration\Plans::format( $satori_manifest_size_terms['price'] ) ); ?></span>
-								<input type="number" name="<?php echo esc_attr( \SatoriManifest\Billing\Printed_Codes::FIELD . '[' . $satori_manifest_size . ']' ); ?>" value="0" min="0" max="<?php echo esc_attr( (string) \SatoriManifest\Billing\Code_Catalogue::max() ); ?>" step="1" inputmode="numeric" />
-							</label>
-						<?php endforeach; ?>
-					</div>
-					<p class="sm-codes-panel__region">
-						<label for="sm-codes-region"><?php esc_html_e( 'Post to', 'satori-manifest' ); ?></label>
-						<select id="sm-codes-region" name="<?php echo esc_attr( \SatoriManifest\Billing\Printed_Codes::REGION_FIELD ); ?>">
-							<?php foreach ( \SatoriManifest\Billing\Code_Catalogue::regions() as $satori_manifest_region => $satori_manifest_region_terms ) : ?>
-								<option value="<?php echo esc_attr( $satori_manifest_region ); ?>">
-									<?php
-									echo esc_html( \SatoriManifest\Billing\Code_Catalogue::region_label( $satori_manifest_region ) );
-									?>
-								</option>
-							<?php endforeach; ?>
-						</select>
-						<button type="submit" class="button button-primary"><?php esc_html_e( 'Order and pay', 'satori-manifest' ); ?></button>
-					</p>
-				</form>
-			</section>
-		<?php endif; ?>
-
 		<?php if ( '' !== $satori_manifest_embed ) : ?>
 			<section class="sm-panel sm-embed-panel">
 				<div class="sm-embed-panel__text">
