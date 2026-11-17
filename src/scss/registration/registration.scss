@@ -202,16 +202,16 @@
 		}
 	}
 
-	// "Set it up for me": an optional paid extra, highlighted under the plans.
+	// "Set it up for me": an optional paid extra, highlighted in a light green (an offer, not a warning).
 	&__setup {
 		display: flex;
 		gap: 0.75rem;
 		align-items: flex-start;
 		margin: 1rem 0 1.5rem;
 		padding: 1rem 1.15rem;
-		border: 2px dashed var(--sm-form-accent);
+		border: 2px dashed color-mix(in srgb, var(--sm-form-success) 55%, transparent);
 		border-radius: var(--sm-form-radius);
-		background: color-mix(in srgb, var(--sm-form-accent) 10%, var(--sm-form-surface));
+		background: color-mix(in srgb, var(--sm-form-success) 7%, var(--sm-form-surface));
 		cursor: pointer;
 		transition: background 0.15s ease, border-color 0.15s ease;
 
@@ -220,12 +220,13 @@
 			width: 1.15rem;
 			height: 1.15rem;
 			margin-top: 0.2rem;
-			accent-color: var(--sm-form-accent-strong);
+			accent-color: var(--sm-form-success);
 		}
 
 		&:has(input:checked) {
 			border-style: solid;
-			background: color-mix(in srgb, var(--sm-form-accent) 20%, var(--sm-form-surface));
+			border-color: var(--sm-form-success);
+			background: color-mix(in srgb, var(--sm-form-success) 13%, var(--sm-form-surface));
 		}
 	}
 
