@@ -415,6 +415,7 @@ class Webhooks {
 				'status'      => 'failed',
 				'amount'      => $amount,
 				'currency'    => (string) ( $invoice['currency'] ?? '' ),
+				'description' => self::invoice_label( $invoice, $user_id, false ),
 				'invoice_url' => (string) ( $invoice['hosted_invoice_url'] ?? '' ),
 				'reason'      => (string) ( $invoice['last_finalization_error']['message'] ?? '' ),
 			)

@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 3.15.1
+Stable tag: 3.15.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,11 @@ Plugin settings, the AI assistant's change history, the scheduled task, the clie
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.15.2 =
+* Failed payments get a label in the payment list ("Renewal: Plus").
+* No change-plan card once a client has cancelled (their plan is ending).
+* Full Stripe test-mode run with test clocks: sign-ups, €39 setup, trial conversion on day 30, monthly and yearly renewals, upgrades/downgrades in trial and paid, a declined renewal and recovery, cancellation via the Stripe portal and the subscription ending; every email checked as accepted by Brevo.
 
 = 3.15.1 =
 * Billing fix: Stripe sends several events at once; saving one no longer overwrites what another just stored (the renewal date stayed on the trial end after a yearly trial converted).

@@ -204,6 +204,8 @@ class BillingTest extends Test_Case {
 		);
 
 		$this->assertSame( 'past_due', Subscriptions::for_user( $user_id )['status'] );
+		$failed = array_values( array_filter( Payments::recent( 10, $user_id ), static fn( array $payment ): bool => 'failed' === $payment['status'] ) );
+		$this->assertSame( 'Renewal: Starter', $failed[0]['description'] ); // Failed payments are labelled too.
 		$this->assertContains( 'Your payment didn\'t go through', $this->sent_subjects() );
 	}
 
@@ -481,6 +483,10 @@ class BillingTest extends Test_Case {
 			)
 		);
 		$this->assertNull( \SatoriManifest\Billing\Plan_Change::offer( 999999 ) );
+
+		// A plan set to end offers no change.
+		Subscriptions::save( $user_id, array( 'cancel_at_period_end' => true ) );
+		$this->assertNull( \SatoriManifest\Billing\Plan_Change::offer( $user_id ) );
 	}
 
 	/**

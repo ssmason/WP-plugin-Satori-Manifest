@@ -74,7 +74,8 @@ final class Plan_Change {
 	public static function offer( int $user_id ): ?array {
 		$sub = Subscriptions::for_user( $user_id );
 
-		if ( '' === $sub['id'] || ! in_array( $sub['status'], array( 'trialing', 'active' ), true ) || ! Plans::get( $sub['plan'] ) ) {
+		// Not for staff-made accounts, lapsed plans or a plan already set to end.
+		if ( '' === $sub['id'] || ! in_array( $sub['status'], array( 'trialing', 'active' ), true ) || $sub['cancel_at_period_end'] || ! Plans::get( $sub['plan'] ) ) {
 			return null;
 		}
 
