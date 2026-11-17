@@ -202,6 +202,45 @@
 		}
 	}
 
+	// "Set it up for me": an optional paid extra, highlighted under the plans.
+	&__setup {
+		display: flex;
+		gap: 0.75rem;
+		align-items: flex-start;
+		margin: 1rem 0 1.5rem;
+		padding: 1rem 1.15rem;
+		border: 2px dashed var(--sm-form-accent);
+		border-radius: var(--sm-form-radius);
+		background: color-mix(in srgb, var(--sm-form-accent) 10%, var(--sm-form-surface));
+		cursor: pointer;
+		transition: background 0.15s ease, border-color 0.15s ease;
+
+		input {
+			flex: none;
+			width: 1.15rem;
+			height: 1.15rem;
+			margin-top: 0.2rem;
+			accent-color: var(--sm-form-accent-strong);
+		}
+
+		&:has(input:checked) {
+			border-style: solid;
+			background: color-mix(in srgb, var(--sm-form-accent) 20%, var(--sm-form-surface));
+		}
+	}
+
+	&__setup-text {
+		display: grid;
+		gap: 0.2rem;
+		color: var(--sm-form-muted);
+		font-size: 0.9rem;
+
+		strong {
+			color: var(--sm-form-text);
+			font-size: 1.02rem;
+		}
+	}
+
 	&__consent {
 		display: flex;
 		gap: 0.6rem;

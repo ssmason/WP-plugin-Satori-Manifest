@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 3.14.1
+Stable tag: 3.14.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,9 @@ Plugin settings, the AI assistant's change history, the scheduled task, the clie
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.14.2 =
+* Register form: "Set it up for me" is a highlighted box with the price in its title (accent colour; solid when ticked).
 
 = 3.14.1 =
 * Register form: "Set it up for me" sits directly under the plans.

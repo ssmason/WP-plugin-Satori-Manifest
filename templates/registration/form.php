@@ -121,20 +121,18 @@ foreach ( array_keys( $satori_manifest_plans ) as $satori_manifest_plan_slug ) {
 					<?php endforeach; ?>
 				</fieldset>
 				<?php if ( Plans::setup_price() > 0 ) : ?>
-					<p class="sm-form__consent sm-form__setup">
+					<label class="sm-form__setup" for="sm-setup">
 						<input type="checkbox" id="sm-setup" name="setup" value="1" />
-						<label for="sm-setup">
-							<?php
-							echo esc_html(
-								sprintf(
-									/* translators: %s: setup price. */
-									__( 'Set it up for me: we build your page from your menu or price list (%s one-off, paid when you sign up; the free trial still covers your plan).', 'satori-manifest' ),
-									Plans::format( Plans::setup_price() )
-								)
-							);
-							?>
-						</label>
-					</p>
+						<span class="sm-form__setup-text">
+							<strong>
+								<?php
+								/* translators: %s: setup price. */
+								echo esc_html( sprintf( __( 'Set it up for me · %s', 'satori-manifest' ), Plans::format( Plans::setup_price() ) ) );
+								?>
+							</strong>
+							<span><?php esc_html_e( 'Send us your menu or price list and we build your page for you. One-off, paid when you sign up; the free trial still covers your plan.', 'satori-manifest' ); ?></span>
+						</span>
+					</label>
 				<?php endif; ?>
 				<?php if ( ! $satori_manifest_pay_now ) : ?>
 					<p class="sm-form__hint sm-plans__note"><?php esc_html_e( 'Nothing to pay today. We review your application first, then email you a secure payment link.', 'satori-manifest' ); ?></p>
