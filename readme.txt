@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 3.14.0
+Stable tag: 3.14.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,9 @@ Plugin settings, the AI assistant's change history, the scheduled task, the clie
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.14.1 =
+* Register form: "Set it up for me" sits directly under the plans.
 
 = 3.14.0 =
 * Plans: Starter €12 and Plus €15 (AI assistant); Managed is no longer sold (an existing Managed client keeps working and keeps AI).
