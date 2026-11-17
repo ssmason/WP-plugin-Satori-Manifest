@@ -80,6 +80,11 @@ class Subscriptions {
 	 * @return void
 	 */
 	public static function save( int $user_id, array $values ): void {
+		// Stripe sends several events at once (invoice.paid, subscription.updated) and each is
+		// its own request: merge into the latest saved copy, not one this request read
+		// earlier, or a parallel update (e.g. the new renewal date) gets overwritten.
+		wp_cache_delete( $user_id, 'user_meta' );
+
 		$data            = array_merge( self::for_user( $user_id ), array_intersect_key( $values, self::defaults() ) );
 		$data['updated'] = time();
 

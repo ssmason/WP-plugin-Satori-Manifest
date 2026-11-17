@@ -298,7 +298,7 @@ class Webhooks {
 				'status'      => 'paid',
 				'amount'      => $amount,
 				'currency'    => (string) ( $invoice['currency'] ?? '' ),
-				'description' => (string) ( $invoice['lines']['data'][0]['description'] ?? '' ),
+				'description' => self::invoice_label( $invoice, $user_id, $first ),
 				'invoice_url' => (string) ( $invoice['hosted_invoice_url'] ?? '' ),
 			)
 		);
@@ -359,6 +359,34 @@ class Webhooks {
 		}
 
 		return true;
+	}
+
+	/**
+	 * A clear label for a paid invoice in the client's payment list (Stripe's first
+	 * line can be an extra code or a proration, which reads oddly on its own).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.15.0
+	 * @param  array<string,mixed> $invoice  Stripe invoice.
+	 * @param  int                 $user_id  Client.
+	 * @param  bool                $first    Whether this is the first subscription payment.
+	 * @return string
+	 */
+	private static function invoice_label( array $invoice, int $user_id, bool $first ): string {
+		$plan = Plans::title( Subscriptions::for_user( $user_id )['plan'] );
+
+		if ( $first ) {
+			/* translators: %s: plan title. */
+			return sprintf( __( 'First payment: %s', 'satori-manifest' ), $plan );
+		}
+
+		if ( 'subscription_update' === ( $invoice['billing_reason'] ?? '' ) ) {
+			/* translators: %s: plan title. */
+			return sprintf( __( 'Plan change: %s', 'satori-manifest' ), $plan );
+		}
+
+		/* translators: %s: plan title. */
+		return sprintf( __( 'Renewal: %s', 'satori-manifest' ), $plan );
 	}
 
 	/**

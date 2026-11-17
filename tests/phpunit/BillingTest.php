@@ -459,7 +459,17 @@ class BillingTest extends Test_Case {
 		$this->assertTrue( \SatoriManifest\Billing\Plan_Change::change( $user_id, 'plus' ) );
 		$this->assertCount( 2, array_filter( $this->requests, static fn( array $request ): bool => 'products' === $request[1] ) );
 
-		// Yearly upgrades pay the difference now.
+		// Yearly changes settle now, both ways.
+		$this->assertSame(
+			'always_invoice',
+			\SatoriManifest\Billing\Plan_Change::proration(
+				array(
+					'trial'    => false,
+					'upgrade'  => false,
+					'interval' => 'year',
+				)
+			)
+		);
 		$this->assertSame(
 			'always_invoice',
 			\SatoriManifest\Billing\Plan_Change::proration(
@@ -471,6 +481,37 @@ class BillingTest extends Test_Case {
 			)
 		);
 		$this->assertNull( \SatoriManifest\Billing\Plan_Change::offer( 999999 ) );
+	}
+
+	/**
+	 * Two Stripe events handled at once: a save must not write back a stale copy
+	 * over a renewal date another request has just stored.
+	 */
+	public function test_save_does_not_overwrite_parallel_update(): void {
+		global $wpdb;
+
+		$user_id = self::factory()->user->create();
+		Subscriptions::save( $user_id, array( 'current_period_end' => 1000 ) );
+		Subscriptions::for_user( $user_id ); // This request now holds the old copy in its cache.
+
+		// Another request stores the new renewal date directly in the database.
+		$fresh                       = Subscriptions::for_user( $user_id );
+		$fresh['current_period_end'] = 2000;
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.SlowDBQuery -- simulates the other request's write.
+		$wpdb->update(
+			$wpdb->usermeta,
+			array( 'meta_value' => maybe_serialize( $fresh ) ),
+			array(
+				'user_id'  => $user_id,
+				'meta_key' => Subscriptions::META,
+			)
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery,WordPress.DB.SlowDBQuery
+
+		Subscriptions::save( $user_id, array( 'status' => 'active' ) );
+
+		$this->assertSame( 2000, Subscriptions::for_user( $user_id )['current_period_end'] );
+		$this->assertSame( 'active', Subscriptions::for_user( $user_id )['status'] );
 	}
 
 	/**

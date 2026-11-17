@@ -8,7 +8,8 @@
  *   - Monthly upgrade: the difference for the rest of the month joins the next payment.
  *   - Yearly upgrade: the difference for the rest of the year is charged now (otherwise
  *     the upgrade would be free until the renewal).
- *   - Downgrade: the unused part becomes a credit on the next payment.
+ *   - Downgrade: the unused part becomes a credit (monthly: on the next payment;
+ *     yearly: account credit straight away, used by the next charge first).
  *
  * The plan is saved locally straight away (so the AI assistant switches on or off at
  * once) and again by the customer.subscription.updated webhook. The client and
@@ -196,7 +197,9 @@ final class Plan_Change {
 			return 'none';
 		}
 
-		return $offer['upgrade'] && 'year' === $offer['interval'] ? 'always_invoice' : 'create_prorations';
+		// Yearly changes settle now, both ways: an upgrade pays the difference and a downgrade
+		// becomes account credit that the next charge uses first (so down-then-up costs nothing).
+		return 'year' === $offer['interval'] ? 'always_invoice' : 'create_prorations';
 	}
 
 	/**
@@ -320,6 +323,11 @@ final class Plan_Change {
 		if ( $offer['trial'] ) {
 			/* translators: 1: date, 2: price and period, e.g. "€15 per month". */
 			return sprintf( __( 'Nothing to pay now. Your first payment on %1$s will be %2$s.', 'satori-manifest' ), $date, $price );
+		}
+
+		if ( ! $offer['upgrade'] && 'year' === $offer['interval'] ) {
+			/* translators: 1: estimated credit, 2: price and period, 3: date. */
+			return sprintf( __( 'The unused part of your current plan (about %1$s) is kept as credit and comes off your next charge. Then %2$s from %3$s.', 'satori-manifest' ), $about, $price, $date );
 		}
 
 		if ( ! $offer['upgrade'] ) {

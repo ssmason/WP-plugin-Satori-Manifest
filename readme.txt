@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 3.15.0
+Stable tag: 3.15.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,12 @@ Plugin settings, the AI assistant's change history, the scheduled task, the clie
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.15.1 =
+* Billing fix: Stripe sends several events at once; saving one no longer overwrites what another just stored (the renewal date stayed on the trial end after a yearly trial converted).
+* Yearly plan changes settle at once both ways: a downgrade becomes account credit that the next charge uses first, so changing back costs nothing.
+* Payment list labels: "First payment: Plus", "Plan change: Plus", "Renewal: Plus" instead of Stripe's first invoice line.
+* Tested end to end in Stripe test mode: Plus monthly with setup and an extra code, Starter yearly, trial conversion, and upgrades/downgrades monthly and yearly.
 
 = 3.15.0 =
 * Plan changes: clients upgrade (Starter → Plus) or downgrade on the Billing screen, and Starter clients upgrade from the AI assistant screen. A right-hand card shows what they gain or lose and what they pay, with a confirm step. Same billing period and renewal date; Stripe prorates: nothing during the trial, monthly upgrades join the next payment, yearly upgrades pay the difference now, downgrades become a credit. The AI assistant switches on or off at once; the client gets a "Your plan is now…" email and staff are told.
