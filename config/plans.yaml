@@ -16,8 +16,8 @@
 # WordPress site (≈ €20–40 a month in total), Stripe takes ≈ 1.5% + €0.25 per EU card
 # payment, and printed codes cost a few euros per client. Yearly = two months free.
 #
-# setup      Optional "we set it up for you" service, one-off. free_with_yearly: no
-#            charge on yearly billing. It is added to the first payment after the trial.
+# setup      Optional "we set it up for you" service, one-off, paid at sign-up (the free
+#            trial covers the plan only). free_with_yearly: no charge on yearly billing.
 #
 # Override by copying this file to {theme}/satori-manifest/plans.yaml.
 
@@ -27,8 +27,8 @@ trial_days: 30
 # Printed QR codes (sizes, prices, postage): see printed-codes.yaml.
 
 setup:
-  price: 49
-  free_with_yearly: true
+  price: 39
+  free_with_yearly: false
 
 plans:
   self-managed:
@@ -64,24 +64,4 @@ plans:
       - Everything in Starter
       - AI assistant - change prices and menus by chat (ChatGPT or Claude)
       - Three printed QR codes, posted to you
-      - Seasonal menus you switch on and off
       - Priority support
-
-  managed:
-    title: Managed
-    tagline: We build it and keep it up to date for you.
-    badge: Hands-free
-    codes: 5
-    setup_included: true
-    prices:
-      month: 39
-      year: 390
-    stripe_prices:
-      month: ""
-      year: ""
-    features:
-      - Everything in Plus
-      - We set up your page from your menu or price list
-      - Up to four changes a month made for you
-      - Five printed QR codes, posted to you
-      - Priority support by phone or WhatsApp

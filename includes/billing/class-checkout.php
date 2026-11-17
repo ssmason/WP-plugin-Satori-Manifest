@@ -193,6 +193,12 @@ class Checkout {
 			'cancel_url'                 => self::return_url( $app, 'payment-cancelled' ),
 		);
 
+		// "Set it up for me": a one-off charge paid now; the free trial covers the plan only.
+		$setup = Printed_Codes::signup_setup( $app );
+		if ( $setup > 0 ) {
+			$params['line_items'][] = Printed_Codes::line_item( __( 'Page set up for you', 'satori-manifest' ), $setup, 1 );
+		}
+
 		// Postal address for the printed QR codes.
 		$params = array_merge( $params, Printed_Codes::shipping_params( (string) ( $app['ship_region'] ?? '' ) ) );
 

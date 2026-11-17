@@ -21,7 +21,7 @@ class PlansTest extends Test_Case {
 		$plans = Plans::all();
 
 		$this->assertArrayHasKey( 'self-managed', $plans );
-		$this->assertArrayHasKey( 'managed', $plans );
+		$this->assertArrayHasKey( 'plus', $plans );
 		$this->assertGreaterThan( 0, Plans::price( 'self-managed', 'month' ) );
 		$this->assertGreaterThan( 0, Plans::price( 'self-managed', 'year' ) );
 		$this->assertSame( 'eur', Plans::currency() );
@@ -31,11 +31,11 @@ class PlansTest extends Test_Case {
 	 * Yearly billing is cheaper than twelve months.
 	 */
 	public function test_yearly_saving(): void {
-		$monthly = Plans::price( 'managed', 'month' );
-		$yearly  = Plans::price( 'managed', 'year' );
+		$monthly = Plans::price( 'plus', 'month' );
+		$yearly  = Plans::price( 'plus', 'year' );
 
-		$this->assertEqualsWithDelta( $monthly * 12 - $yearly, Plans::yearly_saving( 'managed' ), 0.001 );
-		$this->assertGreaterThan( 0, Plans::yearly_saving( 'managed' ) );
+		$this->assertEqualsWithDelta( $monthly * 12 - $yearly, Plans::yearly_saving( 'plus' ), 0.001 );
+		$this->assertGreaterThan( 0, Plans::yearly_saving( 'plus' ) );
 		$this->assertTrue( Plans::has_interval_choice() );
 	}
 

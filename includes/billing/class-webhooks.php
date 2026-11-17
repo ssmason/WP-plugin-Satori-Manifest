@@ -46,6 +46,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Webhooks {
 
 	/**
+	 * User meta: the invoice that paid the one-off setup at sign-up (not a
+	 * subscription payment, so it must not count as the first payment).
+	 */
+	public const META_SETUP_INVOICE = '_satori_manifest_setup_invoice';
+
+	/**
 	 * REST namespace.
 	 *
 	 * @since 3.0.0
@@ -201,7 +207,7 @@ class Webhooks {
 				'status'   => 'active',
 				'plan'     => (string) $app['plan'],
 				'interval' => $interval,
-				'amount'   => Stripe_Client::from_minor_units( (int) ( $session['amount_total'] ?? 0 ) ),
+				'amount'   => Plans::price( (string) $app['plan'], $interval ),
 				'currency' => (string) ( $session['currency'] ?? Plans::currency() ),
 			)
 		);
@@ -216,8 +222,13 @@ class Webhooks {
 		}
 
 		$amount = Stripe_Client::from_minor_units( (int) ( $session['amount_total'] ?? 0 ) );
+		$trial  = Plans::trial_days() > 0;
 
-		// Nothing is charged at the start of a free trial, so there is no payment to record.
+		// During a free trial the only charge at checkout is the one-off setup (if chosen).
+		if ( $amount > 0 && $trial ) {
+			update_user_meta( $user_id, self::META_SETUP_INVOICE, (string) ( $session['invoice'] ?? '' ) );
+		}
+
 		if ( $amount > 0 ) {
 			Payments::record(
 				array(
@@ -226,8 +237,10 @@ class Webhooks {
 					'status'      => 'paid',
 					'amount'      => $amount,
 					'currency'    => (string) ( $session['currency'] ?? '' ),
-					/* translators: %s: plan title. */
-					'description' => sprintf( __( 'First payment: %s', 'satori-manifest' ), Plans::title( (string) $app['plan'] ) ),
+					'description' => $trial
+						? __( 'Page set up for you', 'satori-manifest' )
+						/* translators: %s: plan title. */
+						: sprintf( __( 'First payment: %s', 'satori-manifest' ), Plans::title( (string) $app['plan'] ) ),
 				)
 			);
 		}
@@ -239,7 +252,7 @@ class Webhooks {
 			__( 'New subscription', 'satori-manifest' ),
 			(string) $app['business_name'],
 			(string) $app['email'],
-			( $amount > 0
+			( ! $trial
 				? Plans::title( (string) $app['plan'] ) . ', ' . $price . '. ' . $codes
 				/* translators: 1: plan title, 2: trial length in days, 3: price and period, e.g. "€9.00 per month". */
 				: sprintf( __( '%1$s, free for %2$d days, then %3$s. Send the digital QR code now; print and post the stand after the first payment.', 'satori-manifest' ), Plans::title( (string) $app['plan'] ), Plans::trial_days(), $price ) . ' ' . $codes )
@@ -267,6 +280,11 @@ class Webhooks {
 
 		// The €0 invoice at the start of a free trial is not a payment.
 		if ( $amount <= 0 ) {
+			return;
+		}
+
+		// The one-off setup paid at sign-up: already recorded at checkout, and not a subscription payment.
+		if ( '' !== (string) ( $invoice['id'] ?? '' ) && get_user_meta( $user_id, self::META_SETUP_INVOICE, true ) === $invoice['id'] ) {
 			return;
 		}
 
@@ -327,7 +345,13 @@ class Webhooks {
 	 * @return bool
 	 */
 	private static function is_first_payment( int $user_id, string $invoice_id ): bool {
+		$setup = (string) get_user_meta( $user_id, self::META_SETUP_INVOICE, true );
+
 		foreach ( Payments::recent( 50, $user_id ) as $payment ) {
+			if ( '' !== $setup && $payment['invoice'] === $setup ) {
+				continue;
+			}
+
 			// Printed-code orders (recorded by Checkout session, cs_…) are not subscription payments.
 			if ( $payment['amount'] > 0 && $payment['invoice'] !== $invoice_id && ! str_starts_with( $payment['invoice'], 'cs_' ) ) {
 				return false;

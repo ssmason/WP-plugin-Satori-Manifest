@@ -217,7 +217,7 @@ foreach ( array_keys( $satori_manifest_plans ) as $satori_manifest_plan_slug ) {
 						echo esc_html(
 							sprintf(
 								/* translators: %s: setup price. */
-								__( 'Set it up for me: we build your page from your menu or price list (%s, free with yearly billing and included with Managed).', 'satori-manifest' ),
+								__( 'Set it up for me: we build your page from your menu or price list (%s one-off, paid now; the free trial still covers your plan).', 'satori-manifest' ),
 								Plans::format( Plans::setup_price() )
 							)
 						);

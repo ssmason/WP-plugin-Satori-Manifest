@@ -66,7 +66,7 @@ class BillingTest extends Test_Case {
 	public function test_checkout_session_parameters(): void {
 		$app     = $this->make_application(
 			array(
-				'plan'     => 'managed',
+				'plan'     => 'plus',
 				'interval' => 'year',
 			)
 		);
@@ -78,7 +78,7 @@ class BillingTest extends Test_Case {
 		$this->assertSame( 'subscription', $params['mode'] );
 		$this->assertSame( (string) $app['id'], $params['client_reference_id'] );
 		$this->assertSame( 'year', $params['line_items'][0]['price_data']['recurring']['interval'] );
-		$this->assertSame( (int) ( Plans::price( 'managed', 'year' ) * 100 ), $params['line_items'][0]['price_data']['unit_amount'] );
+		$this->assertSame( (int) ( Plans::price( 'plus', 'year' ) * 100 ), $params['line_items'][0]['price_data']['unit_amount'] );
 		$this->assertSame( 'eur', $params['line_items'][0]['price_data']['currency'] );
 		$this->assertSame( '30', $params['subscription_data']['trial_period_days'] );
 		$this->assertSame( 'always', $params['payment_method_collection'] );
@@ -271,8 +271,9 @@ class BillingTest extends Test_Case {
 	}
 
 	/**
-	 * Plus, monthly, with setup: 3 standard codes posted, extras and €49 setup
-	 * added to the first invoice, staff told to set the page up.
+	 * Plus, monthly, with setup: setup is a one-off line item paid at checkout; the
+	 * plan's 3 standard codes plus extras are posted; the setup charge never counts
+	 * as the first subscription payment.
 	 */
 	public function test_signup_codes_and_setup(): void {
 		$app = $this->make_application(
@@ -284,7 +285,13 @@ class BillingTest extends Test_Case {
 			)
 		);
 		Application_Approver::approve( $app, '', '', false, true );
-		$user_id = $this->complete_checkout( (int) $app['id'], 0 );
+
+		Checkout::create_session( Applications::get( (int) $app['id'] ) );
+		$session = end( $this->requests )[2];
+		$this->assertCount( 2, $session['line_items'] );
+		$this->assertSame( 3900, $session['line_items'][1]['price_data']['unit_amount'] );
+
+		$user_id = $this->complete_checkout( (int) $app['id'], 3900 );
 
 		$items = array_values(
 			array_filter(
@@ -294,20 +301,48 @@ class BillingTest extends Test_Case {
 		);
 		$sizes = \SatoriManifest\Billing\Code_Catalogue::sizes();
 
-		$this->assertSame( array( (string) ( $sizes['l']['price'] * 100 ), '4900' ), array_values( array_map( static fn( array $request ): string => $request[2]['amount'], $items ) ) );
+		// Only the extra L code goes on the first invoice after the trial.
+		$this->assertSame( array( (string) ( $sizes['l']['price'] * 100 ) ), array_map( static fn( array $request ): string => $request[2]['amount'], $items ) );
 		$this->assertSame( 'l:1,m:3', get_user_meta( $user_id, \SatoriManifest\Billing\Printed_Codes::META_PENDING, true ) );
+		$this->assertSame( 15.0, Subscriptions::for_user( $user_id )['amount'] );
+		$this->assertSame( 'Page set up for you', Payments::recent( 10, $user_id )[0]['description'] );
+
+		// Stripe's invoice for the setup is not the first payment...
+		$this->event(
+			'invoice.paid',
+			array(
+				'id'             => 'in_1',
+				'customer'       => 'cus_1',
+				'amount_paid'    => 3900,
+				'currency'       => 'eur',
+				'billing_reason' => 'subscription_create',
+			)
+		);
+		$this->assertSame( array(), preg_grep( '/^First payment received/', $this->sent_subjects() ) );
+
+		// ...the payment when the trial ends is.
+		$this->event(
+			'invoice.paid',
+			array(
+				'id'             => 'in_2',
+				'customer'       => 'cus_1',
+				'amount_paid'    => 2150,
+				'currency'       => 'eur',
+				'billing_reason' => 'subscription_cycle',
+			)
+		);
+		$this->assertCount( 1, preg_grep( '/^First payment received/', $this->sent_subjects() ) );
 	}
 
 	/**
-	 * Setup is free with yearly billing and part of Managed.
+	 * Setup costs the same on every plan and period; included codes follow the plan.
 	 */
 	public function test_setup_cost_rules(): void {
-		$this->assertSame( 49.0, Plans::setup_cost( 'plus', 'month' ) );
-		$this->assertSame( 0.0, Plans::setup_cost( 'plus', 'year' ) );
-		$this->assertSame( 0.0, Plans::setup_cost( 'managed', 'month' ) );
+		$this->assertSame( 39.0, Plans::setup_cost( 'plus', 'month' ) );
+		$this->assertSame( 39.0, Plans::setup_cost( 'plus', 'year' ) );
+		$this->assertSame( 39.0, Plans::setup_cost( 'self-managed', 'month' ) );
 		$this->assertSame( 1, Plans::codes_included( 'self-managed' ) );
 		$this->assertSame( 3, Plans::codes_included( 'plus' ) );
-		$this->assertSame( 5, Plans::codes_included( 'managed' ) );
 		$this->assertSame(
 			0.0,
 			\SatoriManifest\Billing\Printed_Codes::signup_setup(

@@ -166,7 +166,7 @@ class AiAssistantTest extends Test_Case {
 		Subscriptions::save(
 			$client,
 			array(
-				'plan'   => 'managed',
+				'plan'   => 'plus',
 				'status' => 'active',
 			)
 		);

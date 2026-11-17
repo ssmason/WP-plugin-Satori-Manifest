@@ -138,8 +138,9 @@ class Printed_Codes {
 	}
 
 	/**
-	 * Handles a completed sign-up: stores the address, and adds extra codes, postage
-	 * and the setup service to the first invoice.
+	 * Handles a completed sign-up: stores the address, and adds extra codes and
+	 * postage to the first invoice. The setup service is paid at checkout (see
+	 * Checkout::create_session()).
 	 *
 	 * The plan's included codes (Plans::codes_included()) are standard size and
 	 * free; codes chosen on the form come on top at full price.
@@ -168,16 +169,13 @@ class Printed_Codes {
 			// Pending invoice items join the subscription's next invoice: the first payment after the trial.
 			self::add_invoice_item( $session, Code_Catalogue::codes_cost( $extras ), __( 'Extra printed QR codes', 'satori-manifest' ) );
 			self::add_invoice_item( $session, Code_Catalogue::postage( $region, Code_Catalogue::count( $order ) ), __( 'Postage for printed QR codes', 'satori-manifest' ) );
-			self::add_invoice_item( $session, $setup, __( 'Page set up for you', 'satori-manifest' ) );
 		}
 
 		$line = self::summary( $order, $address );
 
-		if ( ! empty( $app['setup'] ) || Plans::setup_included( (string) ( $app['plan'] ?? '' ) ) ) {
-			$line .= ' ' . ( $setup > 0
-				/* translators: %s: setup price. */
-				? sprintf( __( 'Set up the page for them (%s, on the first payment).', 'satori-manifest' ), Plans::format( $setup ) )
-				: __( 'Set up the page for them (included).', 'satori-manifest' ) );
+		if ( $setup > 0 ) {
+			/* translators: %s: setup price. */
+			$line .= ' ' . sprintf( __( 'Set up the page for them (%s, paid at sign-up).', 'satori-manifest' ), Plans::format( $setup ) );
 		}
 
 		return $line;
@@ -417,7 +415,7 @@ class Printed_Codes {
 	 * @param  int    $quantity  Quantity.
 	 * @return array<string,mixed>
 	 */
-	private static function line_item( string $name, float $price, int $quantity ): array {
+	public static function line_item( string $name, float $price, int $quantity ): array {
 		return array(
 			'quantity'   => $quantity,
 			'price_data' => array(

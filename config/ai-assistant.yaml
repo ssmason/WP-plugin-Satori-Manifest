@@ -17,7 +17,7 @@ enabled: true
 
 plans:
   - plus
-  - managed
+  - managed # no longer sold; kept for any existing Managed client
 
 rate_limit:
   requests: 120
