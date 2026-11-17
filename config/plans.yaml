@@ -7,6 +7,8 @@
 #   prices         Amount per billing interval, in whole currency units (12 = €12.00).
 #                  Offer both "month" and "year" to show the Monthly / Yearly toggle.
 #   codes          Standard printed QR codes included at sign-up (see printed-codes.yaml).
+#   extras         What this plan adds over the cheaper one: shown when a client
+#                  upgrades (what they get) or downgrades (what they lose).
 #   setup_included true when "we set it up for you" is part of the plan.
 #   stripe_prices  Optional Stripe Price IDs (price_…) per interval. Leave empty to
 #                  let the plugin create the price on the fly at checkout - no setup
@@ -54,6 +56,9 @@ plans:
     tagline: Update everything in seconds by chatting with AI.
     badge: Most popular
     codes: 3
+    extras:
+      - AI assistant - change prices and menus by chat (ChatGPT or Claude)
+      - Priority support
     prices:
       month: 15
       year: 150

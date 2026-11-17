@@ -46,6 +46,11 @@ class BillingTest extends Test_Case {
 			function ( $pre, string $method, string $path, array $params ) {
 				$this->requests[] = array( $method, $path, $params );
 
+				// A test may answer a request itself (an earlier filter).
+				if ( null !== $pre ) {
+					return $pre;
+				}
+
 				if ( 'checkout/sessions' === $path ) {
 					return array(
 						'id'  => 'cs_test_1',
@@ -352,6 +357,120 @@ class BillingTest extends Test_Case {
 				)
 			)
 		);
+	}
+
+	/**
+	 * Starter → Plus during the trial (no charge, AI on at once), then Plus → Starter
+	 * once paying (credit on the next payment); both emailed.
+	 */
+	public function test_plan_change_both_ways(): void {
+		add_filter(
+			'satori_manifest_pre_stripe_request',
+			function ( $pre, string $method, string $path, array $params ) {
+				if ( 'GET' === $method && 'subscriptions/sub_1' === $path ) {
+					return array(
+						'id'    => 'sub_1',
+						'items' => array( 'data' => array( array( 'id' => 'si_1' ) ) ),
+					);
+				}
+				if ( 'products' === $path ) {
+					return array( 'id' => 'prod_' . $params['metadata']['plan'] );
+				}
+				if ( 'POST' === $method && 'subscriptions/sub_1' === $path && isset( $params['items'] ) ) {
+					return array(
+						'id'                 => 'sub_1',
+						'customer'           => 'cus_1',
+						'status'             => \SatoriManifest\Billing\Subscriptions::for_user( (int) get_current_user_id() )['status'],
+						'metadata'           => $params['metadata'],
+						'current_period_end' => time() + 20 * DAY_IN_SECONDS,
+						'items'              => array(
+							'data' => array(
+								array(
+									'id'    => 'si_1',
+									'price' => array(
+										'unit_amount' => $params['items'][0]['price_data']['unit_amount'],
+										'currency'    => 'eur',
+										'recurring'   => array( 'interval' => 'month' ),
+									),
+								),
+							),
+						),
+					);
+				}
+				return $pre;
+			},
+			5,
+			4
+		);
+
+		$app = $this->make_application(
+			array(
+				'plan'     => 'self-managed',
+				'interval' => 'month',
+			)
+		);
+		Application_Approver::approve( $app, '', '', false, true );
+		$user_id = $this->complete_checkout( (int) $app['id'], 0 );
+		wp_set_current_user( $user_id );
+		Subscriptions::save(
+			$user_id,
+			array(
+				'status'             => 'trialing',
+				'current_period_end' => time() + 20 * DAY_IN_SECONDS,
+			)
+		);
+
+		$this->assertFalse( \SatoriManifest\Mcp\Access::allowed( $user_id ) );
+
+		$offer = \SatoriManifest\Billing\Plan_Change::offer( $user_id );
+		$this->assertSame( 'plus', $offer['to'] );
+		$this->assertTrue( $offer['upgrade'] );
+		$this->assertTrue( $offer['trial'] );
+		$this->assertStringContainsString( 'Nothing to pay now', \SatoriManifest\Billing\Plan_Change::payment_note( $offer ) );
+
+		$this->assertTrue( \SatoriManifest\Billing\Plan_Change::change( $user_id, 'plus' ) );
+
+		$update = end( $this->requests );
+		$this->assertSame( 'subscriptions/sub_1', $update[1] );
+		$this->assertSame( 'none', $update[2]['proration_behavior'] );
+		$this->assertSame( 'si_1', $update[2]['items'][0]['id'] );
+		$this->assertSame( 'prod_plus', $update[2]['items'][0]['price_data']['product'] );
+		$this->assertSame( 1500, $update[2]['items'][0]['price_data']['unit_amount'] );
+		$this->assertSame( 'plus', Subscriptions::for_user( $user_id )['plan'] );
+		$this->assertTrue( \SatoriManifest\Mcp\Access::allowed( $user_id ) );
+		$this->assertContains( 'Your plan is now Plus', $this->sent_subjects() );
+		$this->assertCount( 1, preg_grep( '/^Plan upgraded/', $this->sent_subjects() ) );
+
+		// Paying customer now: downgrade gives a credit on the next payment.
+		Subscriptions::save( $user_id, array( 'status' => 'active' ) );
+		$offer = \SatoriManifest\Billing\Plan_Change::offer( $user_id );
+		$this->assertSame( 'self-managed', $offer['to'] );
+		$this->assertFalse( $offer['upgrade'] );
+		$this->assertContains( 'Priority support', $offer['changes'] );
+
+		$this->assertTrue( \SatoriManifest\Billing\Plan_Change::change( $user_id, 'self-managed' ) );
+		$this->assertSame( 'create_prorations', end( $this->requests )[2]['proration_behavior'] );
+		$this->assertSame( 'self-managed', Subscriptions::for_user( $user_id )['plan'] );
+		$this->assertFalse( \SatoriManifest\Mcp\Access::allowed( $user_id ) );
+		$this->assertCount( 1, preg_grep( '/^Plan downgraded/', $this->sent_subjects() ) );
+
+		// The product made for each plan is reused, not created again.
+		$this->assertCount( 2, array_filter( $this->requests, static fn( array $request ): bool => 'products' === $request[1] ) );
+		$this->assertTrue( \SatoriManifest\Billing\Plan_Change::change( $user_id, 'plus' ) );
+		$this->assertCount( 2, array_filter( $this->requests, static fn( array $request ): bool => 'products' === $request[1] ) );
+
+		// Yearly upgrades pay the difference now.
+		$this->assertSame(
+			'always_invoice',
+			\SatoriManifest\Billing\Plan_Change::proration(
+				array(
+					'trial'    => false,
+					'upgrade'  => true,
+					'interval' => 'year',
+				)
+			)
+		);
+		$this->assertNull( \SatoriManifest\Billing\Plan_Change::offer( 999999 ) );
 	}
 
 	/**

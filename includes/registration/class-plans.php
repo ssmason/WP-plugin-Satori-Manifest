@@ -145,6 +145,18 @@ class Plans {
 	}
 
 	/**
+	 * What a plan adds over the cheaper one (for upgrade and downgrade screens).
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.15.0
+	 * @param  string $slug  Plan slug.
+	 * @return array<int,string>
+	 */
+	public static function extras( string $slug ): array {
+		return (array) ( self::get( $slug )['extras'] ?? array() );
+	}
+
+	/**
 	 * Price of the optional "we set it up for you" service (0 when not offered).
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
@@ -349,6 +361,7 @@ class Plans {
 				'prices'        => $prices,
 				'stripe_prices' => $stripe,
 				'codes'         => min( 50, absint( $plan['codes'] ?? 1 ) ),
+				'extras'        => array_map( 'strval', (array) ( $plan['extras'] ?? array() ) ),
 				'setup'         => ! empty( $plan['setup_included'] ),
 			);
 		}

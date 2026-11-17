@@ -16,6 +16,7 @@ declare( strict_types=1 );
 namespace SatoriManifest\Mcp\Admin;
 
 use SatoriManifest\Admin\Assets;
+use SatoriManifest\Billing\Plan_Change;
 use SatoriManifest\Branding\Portal_Brand;
 use SatoriManifest\Clients\Client_Role;
 use SatoriManifest\Core\Security;
@@ -148,6 +149,12 @@ final class Connect_Screen {
 		$satori_manifest_support  = Portal_Brand::support_email();
 		$satori_manifest_site     = wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES );
 		$satori_manifest_action   = self::ACTION;
+		$satori_manifest_offer    = $satori_manifest_allowed ? null : Plan_Change::offer( $user_id );
+
+		// Only an upgrade that brings the assistant is offered here.
+		if ( $satori_manifest_offer && ( ! $satori_manifest_offer['upgrade'] || ! in_array( $satori_manifest_offer['to'], Assistant_Config::plans(), true ) ) ) {
+			$satori_manifest_offer = null;
+		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display-only flag set by our own redirect.
 		$satori_manifest_notice = isset( $_GET['sm_ai'] ) ? sanitize_key( wp_unslash( $_GET['sm_ai'] ) ) : '';

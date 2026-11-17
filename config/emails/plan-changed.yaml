@@ -1,0 +1,18 @@
+# Sent to the client when they switch plan (Billing or AI assistant screen).
+# Placeholders: contact_name, business_name, plan, old_plan, price, change_note, payment_note, billing_url.
+
+subject: Your plan is now {{plan}}
+preheader: You've switched from {{old_plan}} to {{plan}}.
+heading: All done, {{contact_name}}
+body: |
+  {{business_name}} is now on the {{plan}} plan.
+
+  {{change_note}}
+
+  {{payment_note}}
+details: |
+  Plan: {{plan}}
+  Price: {{price}}
+button_label: View billing
+button_url: "{{billing_url}}"
+footer: You can switch plan again any time under Billing when you log in.

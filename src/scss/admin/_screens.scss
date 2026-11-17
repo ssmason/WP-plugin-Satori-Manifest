@@ -279,6 +279,133 @@
 	}
 }
 
+// Billing and AI screens: main content, with an optional right-hand column
+// for changing plan. Without that column the main panels sit side by side.
+.sm-billing-layout {
+	display: grid;
+	gap: $sm-space-lg;
+	align-items: start;
+
+	&.has-side {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 360px);
+	}
+
+	&:not(.has-side) &__main {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+		gap: $sm-space-lg;
+		align-items: start;
+	}
+
+	&__main {
+		display: grid;
+		gap: $sm-space-lg;
+		min-width: 0;
+	}
+
+	@media (max-width: 960px) {
+
+		&.has-side,
+		&:not(.has-side) .sm-billing-layout__main {
+			grid-template-columns: 1fr;
+		}
+	}
+}
+
+// "Upgrade" / "Change plan" card: what changes, what is paid, then a confirm step.
+.sm-plan-change {
+	border-top: 4px solid $sm-color-success;
+
+	&--down {
+		border-top-color: $sm-color-border;
+	}
+
+	&__title {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 4px 10px;
+		margin: 4px 0 $sm-space-md;
+		color: $sm-ink;
+		font-size: 22px;
+	}
+
+	&__price {
+		color: $sm-color-text-light;
+		font-size: 15px;
+		font-weight: 400;
+	}
+
+	&__lead {
+		margin: 0 0 6px;
+		font-weight: 600;
+	}
+
+	&__list {
+		display: grid;
+		gap: 6px;
+		margin: 0 0 $sm-space-md;
+		padding: 0;
+		list-style: none;
+
+		li {
+			display: flex;
+			gap: 8px;
+			align-items: flex-start;
+		}
+
+		svg {
+			flex: none;
+			margin-top: 2px;
+			color: $sm-color-success;
+		}
+	}
+
+	&--down &__list svg {
+		color: $sm-color-danger;
+	}
+
+	&__note {
+		margin: 0 0 $sm-space-md;
+		padding: 10px 12px;
+		border-radius: 8px;
+		background: $sm-color-bg;
+		color: $sm-color-text;
+		font-size: 13px;
+	}
+
+	&__confirm {
+
+		summary {
+			display: inline-flex;
+			list-style: none;
+
+			&::-webkit-details-marker {
+				display: none;
+			}
+		}
+
+		&[open] summary {
+			display: none;
+		}
+	}
+
+	&__box {
+		padding: 12px;
+		border: 1px solid $sm-color-border;
+		border-radius: 8px;
+		background: $sm-color-success-lt;
+
+		p {
+			margin: 0 0 10px;
+		}
+	}
+
+	&--down &__box {
+		background: $sm-color-warning-lt;
+	}
+}
+
 // ─── Help ────────────────────────────────────────────────────────────────────
 
 .sm-guide {

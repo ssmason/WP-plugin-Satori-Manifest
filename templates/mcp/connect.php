@@ -5,7 +5,8 @@
  * Receives from Connect_Screen::render():
  *   $satori_manifest_allowed, $satori_manifest_token, $satori_manifest_new_link,
  *   $satori_manifest_changes, $satori_manifest_support, $satori_manifest_site,
- *   $satori_manifest_action, $satori_manifest_notice.
+ *   $satori_manifest_action, $satori_manifest_notice, $satori_manifest_offer (upgrade to a
+ *   plan with the assistant, or null).
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -25,6 +26,7 @@ $satori_manifest_notices  = array(
 	'connected'    => __( 'Your private link is ready. Copy it now: it is only shown once.', 'satori-manifest' ),
 	'disconnected' => __( 'Disconnected. AI apps using the old link can no longer change your page.', 'satori-manifest' ),
 	'undone'       => __( 'The last change has been undone.', 'satori-manifest' ),
+	'upgraded'     => __( 'Upgraded. The AI assistant is now part of your plan: follow the steps below to connect it. We have emailed you the details.', 'satori-manifest' ),
 	'nothing'      => __( 'There was nothing to undo.', 'satori-manifest' ),
 );
 $satori_manifest_examples = array(
@@ -53,6 +55,7 @@ $satori_manifest_examples = array(
 	<?php endif; ?>
 
 	<?php if ( ! $satori_manifest_allowed ) : ?>
+		<div class="sm-billing-layout<?php echo $satori_manifest_offer ? ' has-side' : ''; ?>">
 		<section class="sm-panel sm-ai-upsell">
 			<h2 class="sm-panel__title"><?php esc_html_e( 'Look after your page by just asking', 'satori-manifest' ); ?></h2>
 			<ul class="sm-ai-list">
@@ -61,11 +64,22 @@ $satori_manifest_examples = array(
 				<li><?php esc_html_e( 'Price rises across the whole list, previewed before anything changes.', 'satori-manifest' ); ?></li>
 				<li><?php esc_html_e( 'Every change can be undone.', 'satori-manifest' ); ?></li>
 			</ul>
-			<p class="sm-panel__intro">
-				<?php esc_html_e( 'The AI assistant is not part of your plan yet. To add it, email us:', 'satori-manifest' ); ?>
-				<a href="<?php echo esc_url( 'mailto:' . $satori_manifest_support ); ?>"><?php echo esc_html( $satori_manifest_support ); ?></a>
-			</p>
+			<?php if ( ! $satori_manifest_offer ) : ?>
+				<p class="sm-panel__intro">
+					<?php esc_html_e( 'The AI assistant is not part of your plan yet. To add it, email us:', 'satori-manifest' ); ?>
+					<a href="<?php echo esc_url( 'mailto:' . $satori_manifest_support ); ?>"><?php echo esc_html( $satori_manifest_support ); ?></a>
+				</p>
+			<?php endif; ?>
 		</section>
+		<?php if ( $satori_manifest_offer ) : ?>
+			<aside class="sm-billing-layout__side">
+				<?php
+				$satori_manifest_return = 'ai';
+				require SATORI_MANIFEST_PATH . 'templates/billing/plan-change.php';
+				?>
+			</aside>
+		<?php endif; ?>
+		</div>
 	<?php else : ?>
 		<div class="sm-two-col">
 			<div>

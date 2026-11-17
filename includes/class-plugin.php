@@ -55,6 +55,7 @@ use SatoriManifest\Admin\Screens\Payments_Screen;
 use SatoriManifest\Admin\Screens\Qr_Builder_Screen;
 use SatoriManifest\Admin\Screens\Settings_Screen;
 use SatoriManifest\Billing\Billing_Portal;
+use SatoriManifest\Billing\Plan_Change;
 use SatoriManifest\Billing\Checkout;
 use SatoriManifest\Billing\Checkout_Return;
 use SatoriManifest\Billing\Printed_Codes;
@@ -235,6 +236,7 @@ class Plugin {
 		Printed_Codes::register();
 		First_Password::register();
 		Billing_Portal::register();
+		Plan_Change::register();
 		Core_Emails::register();
 		WP_Mail_Relay::register();
 		Contact_Form::register();

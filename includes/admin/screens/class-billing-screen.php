@@ -17,6 +17,7 @@ namespace SatoriManifest\Admin\Screens;
 
 use SatoriManifest\Admin\Admin_Menu;
 use SatoriManifest\Billing\Payments;
+use SatoriManifest\Billing\Plan_Change;
 use SatoriManifest\Billing\Stripe_Settings;
 use SatoriManifest\Billing\Subscriptions;
 use SatoriManifest\Branding\Portal_Brand;
@@ -62,9 +63,12 @@ class Billing_Screen {
 		$satori_manifest_subscription = Subscriptions::for_user( $satori_manifest_user_id );
 		$satori_manifest_payments     = Payments::recent( 24, $satori_manifest_user_id );
 		$satori_manifest_support      = Portal_Brand::support_email();
+		$satori_manifest_offer        = Plan_Change::offer( $satori_manifest_user_id );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display-only flag set by our own redirect.
 		$satori_manifest_error = isset( $_GET['sm_error'] ) ? sanitize_key( wp_unslash( $_GET['sm_error'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display-only flag set by our own redirect.
+		$satori_manifest_notice = isset( $_GET['sm_notice'] ) ? sanitize_key( wp_unslash( $_GET['sm_notice'] ) ) : '';
 
 		require SATORI_MANIFEST_PATH . 'templates/admin/billing.php';
 	}
