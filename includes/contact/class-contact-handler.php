@@ -88,9 +88,15 @@ class Contact_Handler {
 		$return = isset( $_POST['_sm_return'] ) ? esc_url_raw( wp_unslash( $_POST['_sm_return'] ) ) : home_url( '/' );
 		$return = wp_validate_redirect( $return, home_url( '/' ) );
 
+		$data = array(
+			'name'    => isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '',
+			'email'   => isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '',
+			'message' => isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '',
+		);
+
 		$nonce = isset( $_POST[ Security::NONCE_FIELD ] ) ? sanitize_text_field( wp_unslash( $_POST[ Security::NONCE_FIELD ] ) ) : '';
 		if ( ! Security::verify_form_nonce( $nonce, Contact_Form::ACTION ) ) {
-			self::finish( $return, 'expired' );
+			self::finish( $return, 'expired', $data );
 		}
 
 		// Honeypot and fill time: pretend success to bots.
@@ -101,7 +107,7 @@ class Contact_Handler {
 		}
 
 		if ( ! self::within_rate_limit() ) {
-			self::finish( $return, 'slow-down' );
+			self::finish( $return, 'slow-down', $data );
 		}
 
 		$user = wp_get_current_user();
@@ -109,18 +115,13 @@ class Contact_Handler {
 		if ( ! $user->exists() ) {
 			$token = isset( $_POST[ Turnstile::FIELD ] ) ? sanitize_text_field( wp_unslash( $_POST[ Turnstile::FIELD ] ) ) : '';
 			if ( ! Turnstile::verify( $token ) ) {
-				self::finish( $return, 'spam-check' );
+				self::finish( $return, 'spam-check', $data );
 			}
 		}
 
-		$data = array(
-			'name'    => isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '',
-			'email'   => isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '',
-			'message' => isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '',
-		);
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
-		self::finish( $return, self::send( $data, $user->exists() ? (int) $user->ID : 0 ) );
+		self::finish( $return, self::send( $data, $user->exists() ? (int) $user->ID : 0 ), $data );
 	}
 
 	/**
@@ -195,11 +196,19 @@ class Contact_Handler {
 	 *
 	 * @author Stephen Mason <steve@satori-digital.com>
 	 * @since  3.8.0
-	 * @param  string $url     Page to return to.
-	 * @param  string $result  Result code (see Contact_Form::messages()).
+	 * When the message was not sent, what the visitor typed is kept for a few
+	 * minutes so the form can fill it back in (Contact_Form::draft()).
+	 *
+	 * @param  string               $url     Page to return to.
+	 * @param  string               $result  Result code (see Contact_Form::messages()).
+	 * @param  array<string,string> $data    Sanitised fields to keep on failure.
 	 * @return never
 	 */
-	private static function finish( string $url, string $result ): void {
+	private static function finish( string $url, string $result, array $data = array() ): void {
+		if ( 'sent' !== $result && array() !== $data ) {
+			set_transient( Contact_Form::draft_key(), $data, 10 * MINUTE_IN_SECONDS );
+		}
+
 		wp_safe_redirect( add_query_arg( Contact_Form::RESULT_VAR, $result, remove_query_arg( Contact_Form::RESULT_VAR, $url ) ) . '#sm-contact' );
 		exit;
 	}

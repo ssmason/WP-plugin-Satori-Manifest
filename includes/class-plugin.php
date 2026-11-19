@@ -82,6 +82,7 @@ use SatoriManifest\Core\Page_Cache;
 use SatoriManifest\Fields\Field_Loader;
 use SatoriManifest\Frontend\Client_Page;
 use SatoriManifest\Frontend\Design_Preview;
+use SatoriManifest\Frontend\Demo_Links;
 use SatoriManifest\Frontend\Example_Bar;
 use SatoriManifest\Frontend\Editor;
 use SatoriManifest\Frontend\Embed;
@@ -266,6 +267,7 @@ class Plugin {
 		Client_Page::register();
 		Design_Preview::register();
 		Example_Bar::register();
+		Demo_Links::register();
 		Embed::register();
 		Pdf_Download::register();
 		Qr_Download::register();

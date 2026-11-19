@@ -4,7 +4,7 @@ Tags: price list, menu, qr code, restaurant, salon
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 3.15.2
+Stable tag: 3.16.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,13 @@ Plugin settings, the AI assistant's change history, the scheduled task, the clie
 On Stripe's own pages (Checkout and the customer portal). Card details never reach your site.
 
 == Changelog ==
+
+= 3.16.0 =
+* Demo pages: every link that leaves the site (menu, header button, socials, phone, email, page content) points to "#", so visitors never land on a made-up site. Real client pages are untouched.
+* Client pages: breathing room between the header and the opening text, and under a heading banner before its first section.
+* Examples bar: the space it needs is now in the footer's colour, not an empty strip below the footer.
+* Price list editor: dragging a section or heading folds every section so the whole list fits on screen; they open again after the drop.
+* Contact form: what the visitor typed is kept if the message could not be sent.
 
 = 3.15.2 =
 * Failed payments get a label in the payment list ("Renewal: Plus").

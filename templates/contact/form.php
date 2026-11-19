@@ -3,7 +3,8 @@
  * Template: contact form block.
  *
  * Receives from Contact_Form::render():
- *   $satori_manifest_result, $satori_manifest_wrapper, $satori_manifest_user.
+ *   $satori_manifest_result, $satori_manifest_wrapper, $satori_manifest_user,
+ *   $satori_manifest_draft (what the visitor typed before a failed send).
  *
  * @package SatoriManifest
  * @author  Stephen Mason <steve@satori-digital.com>
@@ -45,17 +46,17 @@ $satori_manifest_return   = remove_query_arg( Contact_Form::RESULT_VAR, (string)
 			<div class="sm-form__grid">
 				<p class="sm-form__field">
 					<label for="sm-contact-name"><?php esc_html_e( 'Your name', 'satori-manifest' ); ?> <span aria-hidden="true">*</span></label>
-					<input type="text" id="sm-contact-name" name="name" required autocomplete="name" value="<?php echo esc_attr( $satori_manifest_user->exists() ? $satori_manifest_user->display_name : '' ); ?>" />
+					<input type="text" id="sm-contact-name" name="name" required autocomplete="name" value="<?php echo esc_attr( $satori_manifest_user->exists() ? $satori_manifest_user->display_name : $satori_manifest_draft['name'] ); ?>" />
 				</p>
 				<p class="sm-form__field">
 					<label for="sm-contact-email"><?php esc_html_e( 'Email', 'satori-manifest' ); ?> <span aria-hidden="true">*</span></label>
-					<input type="email" id="sm-contact-email" name="email" required autocomplete="email" value="<?php echo esc_attr( $satori_manifest_user->exists() ? $satori_manifest_user->user_email : '' ); ?>" />
+					<input type="email" id="sm-contact-email" name="email" required autocomplete="email" value="<?php echo esc_attr( $satori_manifest_user->exists() ? $satori_manifest_user->user_email : $satori_manifest_draft['email'] ); ?>" />
 				</p>
 			</div>
 
 			<p class="sm-form__field sm-form__field--full">
 				<label for="sm-contact-message"><?php esc_html_e( 'How can we help?', 'satori-manifest' ); ?> <span aria-hidden="true">*</span></label>
-				<textarea id="sm-contact-message" name="message" rows="6" required maxlength="5000"></textarea>
+				<textarea id="sm-contact-message" name="message" rows="6" required maxlength="5000"><?php echo esc_textarea( $satori_manifest_draft['message'] ); ?></textarea>
 			</p>
 
 			<p class="sm-form__note"><?php esc_html_e( 'We only use your details to reply to you.', 'satori-manifest' ); ?></p>

@@ -595,6 +595,9 @@
 
 	let dragged = null;
 
+	// Sections that were open before a section or heading drag folded them.
+	let folded = [];
+
 	/**
 	 * The row a drag handle belongs to.
 	 *
@@ -630,6 +633,20 @@
 		dragged.classList.add('is-dragging');
 		event.dataTransfer.effectAllowed = 'move';
 		event.dataTransfer.setData('text/plain', '');
+
+		// Moving a section or heading: fold every section so the whole list
+		// fits on screen (changing the page inside dragstart cancels the drag).
+		if (!dragged.matches('.sm-item')) {
+			const row = dragged;
+
+			setTimeout(() => {
+				folded = Array.from(
+					list.querySelectorAll('.sm-section:not(.is-collapsed)')
+				);
+				folded.forEach((section) => setOpen(section, false));
+				row.scrollIntoView({ block: 'nearest' });
+			}, 0);
+		}
 	});
 
 	editor.addEventListener('dragover', (event) => {
@@ -680,6 +697,9 @@
 
 		dragged.classList.remove('is-dragging');
 		dragged.draggable = false;
+		folded.forEach((section) => setOpen(section, true));
+		folded = [];
+		dragged.scrollIntoView({ block: 'nearest' });
 		dragged = null;
 		serialise();
 	});

@@ -16,6 +16,7 @@ declare( strict_types=1 );
 namespace SatoriManifest\Contact;
 
 use SatoriManifest\Core\Page_Cache;
+use SatoriManifest\Hardening\Client_Ip;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -93,10 +94,47 @@ class Contact_Form {
 		$satori_manifest_result  = self::result();
 		$satori_manifest_wrapper = $wrapper_attributes;
 		$satori_manifest_user    = wp_get_current_user();
+		$satori_manifest_draft   = self::draft();
 
 		ob_start();
 		require SATORI_MANIFEST_PATH . 'templates/contact/form.php';
 		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Transient key for the visitor's unsent message.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.16.0
+	 * @return string
+	 */
+	public static function draft_key(): string {
+		return 'sm_contact_draft_' . Client_Ip::hash( 'contact' );
+	}
+
+	/**
+	 * What the visitor typed before a failed send (read once), so the form
+	 * can fill it back in.
+	 *
+	 * @author Stephen Mason <steve@satori-digital.com>
+	 * @since  3.16.0
+	 * @return array{name:string,email:string,message:string}
+	 */
+	public static function draft(): array {
+		$empty = array(
+			'name'    => '',
+			'email'   => '',
+			'message' => '',
+		);
+
+		if ( '' === self::result() || 'sent' === self::result() ) {
+			return $empty;
+		}
+
+		$draft = get_transient( self::draft_key() );
+		delete_transient( self::draft_key() );
+
+		return is_array( $draft ) ? array_map( 'strval', array_intersect_key( $draft, $empty ) ) + $empty : $empty;
 	}
 
 	/**

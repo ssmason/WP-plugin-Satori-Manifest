@@ -481,6 +481,17 @@ a.sm-button,
 		border-block: var(--sm-manifest-border, 1px) solid var(--sm-background);
 	}
 
+	// Text that opens the page gets breathing room under the header; full-width
+	// photos and coloured bands still meet it.
+	> :first-child:not(.alignfull, .wp-block-cover, .sm-flush-top) {
+		padding-top: clamp(2rem, 5vw, 3.5rem);
+	}
+
+	// A heading banner keeps its menu off its bottom edge.
+	> .sm-auto-heading {
+		margin-bottom: clamp(1.25rem, 3vw, 2rem);
+	}
+
 	h1,
 	h2,
 	h3,
@@ -742,7 +753,11 @@ body.sm-embed {
 
 /* Examples bar (demo pages only): links to every other example. Neutral
    colours and system type so it sits on any design. */
-.sm-client-page:has(.sm-examples) {
+.sm-client-page:has(.sm-examples) .sm-footer {
+	padding-bottom: 5.5rem; // Room for the bar, in the footer's own colour.
+}
+
+.sm-client-page:has(.sm-examples):not(:has(.sm-footer)) {
 	padding-bottom: 4.5rem;
 }
 
